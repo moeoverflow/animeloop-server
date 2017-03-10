@@ -1,0 +1,16 @@
+{
+  "name": "Animeloop-Server",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/moeoverflow/animeloop-server.git",
+    "type": "git"
+  },
+  "author": "Dolia Wu <doliawoo@gmail.com>, Shincurry <shincurry@gmail.com>",
+  "license": "GPLv3",
+  "dependencies": {
+    "express": "^4.15.2",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {}
+}
