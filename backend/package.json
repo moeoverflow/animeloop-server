@@ -1,0 +1,13 @@
+{
+  "name": "animeloop-backend",
+  "version": "0.0.1",
+  "description": "Backend of animeloop server",
+  "main": "index.js",
+  "scripts": {
+    "test": "cd test && node test.js",
+    "start": "node index.js"
+  },
+  "author": "Doliawu <doliawoo@gmail.com>",
+  "license": "GPL-3.0",
+  "dependencies": {}
+}
