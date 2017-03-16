@@ -4,7 +4,7 @@
   "description": "Backend of animeloop server",
   "main": "index.js",
   "scripts": {
-    "test": "cd test && node test.js",
+    "test": "cd test && DEBUG=backend node test.js",
     "start": "node index.js"
   },
   "author": "Doliawu <doliawoo@gmail.com>",

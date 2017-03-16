@@ -1,5 +1,5 @@
 {
-  "name": "Animeloop-Server",
+  "name": "animeloop-server",
   "version": "0.0.1",
   "main": "index.js",
   "repository": {
@@ -9,8 +9,9 @@
   "author": "Dolia Wu <doliawoo@gmail.com>, Shincurry <shincurry@gmail.com>",
   "license": "GPLv3",
   "dependencies": {
+    "debug": "^2.6.3",
     "express": "^4.15.2",
-    "path": "^0.12.7"
+    "mysql": "^2.13.0"
   },
   "devDependencies": {}
 }
