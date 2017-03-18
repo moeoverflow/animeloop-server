@@ -1,11 +1,10 @@
 {
   "name": "animeloop-server",
-  "version": "0.0.1",
-  "main": "index.js",
   "repository": {
     "url": "https://github.com/moeoverflow/animeloop-server.git",
     "type": "git"
   },
+  "version": "0.0.0",
   "author": "Dolia Wu <doliawoo@gmail.com>, Shincurry <shincurry@gmail.com>",
   "license": "GPLv3",
   "dependencies": {
@@ -13,5 +12,14 @@
     "express": "^4.15.2",
     "mysql": "^2.13.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "body-parser": "~1.12.4",
+    "cookie-parser": "~1.3.5",
+    "debug": "~2.2.0",
+    "ejs": "^2.5.6",
+    "express": "~4.12.4",
+    "morgan": "~1.5.3",
+    "serve-favicon": "~2.2.1",
+    "watch": "^1.0.2"
+  }
 }
