@@ -1,7 +1,7 @@
-const fs  = require('fs'),
-    path  = require('path')
-    mysql = require('mysql')
-    debug = require('debug')('backend');
+const   fs  = require('fs'),
+      path  = require('path'),
+      debug = require('debug')('backend'),
+  DBManager = require('./database/dbmanager');
 
 class Processor {
   constructor(rawDataDir, dataDir, processDelay, database) {
@@ -40,8 +40,8 @@ class Processor {
       }
 
       let info = JSON.parse(data),
-         title = info.title,
          loops = info.loops;
+
       Promise.all(loops.map((loop) => {
         let           dir = path.dirname(jsonDir),
             coverFilename = path.join(dir, loop.cover_filename),
@@ -64,50 +64,23 @@ class Processor {
       })).then(() => {
         debug('All images and videos are moved, writing to database...');
         // Insert into DB
-        this.insertDB({jsonDir: jsonDir, json: info});
+        // this.insertDB({jsonDir: jsonDir, json: info});
+        let manager = new DBManager();
+        manager.insertLoops({jsonDir: jsonDir, json: info});
+
         return new Promise((resolve, reject) => {
           fs.rename(jsonDir, path.join(this.dataDir, path.basename(jsonDir)), (err) => {
-            if (err) {reject(err);}
+            if (err) throw err;
             resolve();
           });
         });
       }).then(() => {
         // TODO remove empty folders
-        console.log(info.title + ' moved')
+        debug(info.title + ' moved');
       });
 
       // Remove event from set
       this.set.delete(jsonDir);
-    });
-  }
-  /**
-   * @param {Info} data 
-   * data.json: the json content
-   * data.jsonDir: the directory of json
-   */
-  insertDB(data) {
-    let title = data.json.title,
-        loops = data.json.loops;
-    // Get DB Connection
-    var conn = mysql.createConnection(this.database);
-    conn.connect();
-    let sql = 'INSERT INTO Episode(name) VALUES(?)';
-    conn.query(sql, [title], (err, results, fields) => {
-      if (err) {console.error(err);}
-      console.log("Episode inserted, insertId: " + results.insertId);
-      // Insert loops
-      loops.forEach((loop, i, arr) => {
-        let         dir = path.dirname(data.jsonDir),
-          coverFilename = path.join(dir, loop.cover_filename),
-          videoFilename = path.join(dir, loop.video_filename);
-        conn.query('INSERT INTO `Loop`(cover_filename, video_filename, episode_id) VALUES(?, ?, ?)'
-          ,[data.coverFilename, data.videoFilename, results.insertId]
-          ,(err, results, fields) => {
-            if (err) console.error(err);
-            conn.end();
-          }
-        );
-      });
     });
   }
 }

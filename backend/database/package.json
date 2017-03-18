@@ -1,0 +1,8 @@
+{
+  "name": "database",
+  "version": "0.0.1",
+  "description": "database for anime loop backend",
+  "main": "index.js",
+  "author": "DoliaWu <doliawu@outlook.com>",
+  "license": "MIT"
+}
