@@ -23,6 +23,33 @@ class DBManager {
     }
     return this.connection;
   }
+
+  getTheNumberOfLoops() {
+    const conn = this.getConnection();
+    conn.connect();
+    let sql = 'SELECT COUNT(*) FROM `Loop`';
+    return new Promise((resolve, reject) => {
+      conn.query(sql, (err, results, fields) => {
+        if (err) reject(err);
+        resolve(results[0]);
+        conn.end();
+      });
+    })
+  }
+
+  getLoopById(id) {
+    const conn = this.getConnection();
+    conn.connect();
+    let sql = "SELECT * FROM `Loop` WHERE id = ?";
+    return new Promise((resolve, reject) => {
+      conn.query(sql, [id], (err, results, fields) => {
+        if (err) return reject(err);
+        console.log("getLoopById: " + results[0])
+        resolve(results[0]);
+        conn.end();
+      })
+    })
+  }
   /**
    * @param data
    * data.json   : the json content
