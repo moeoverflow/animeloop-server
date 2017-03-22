@@ -14,14 +14,14 @@ class Processor {
 
   start() {
     fs.watch(this.rawDataDir, {recursive: true},  (eventType, filename) => {
-      debug("EventType: " + eventType + " For: " + filename);
+      debug(`EventType: ${eventType} For: ${filename}`);
       if (filename && path.extname(filename) === ".json") {
         const jsonDir = path.join(this.rawDataDir, filename);
 
         // Filter unnecessary events
         if (this.set.has(jsonDir)) { return; }
         this.set.add(jsonDir);
-        debug("Current event set: " + this.set);
+        debug(`Current event set: ${this.set}`);
 
         // Delay for coping files or something
         setTimeout(this.process.bind(this), this.processDelay * 1000, jsonDir);
@@ -33,7 +33,7 @@ class Processor {
       if (err) {
         if (err.code === "ENOENT") {
           this.set.delete(jsonDir);
-          return debug('%s not exist, stop processing', jsonDir);
+          return debug(`${jsonDir} not exist, stop processing`);
         } else {
           throw err;
         }
@@ -76,7 +76,7 @@ class Processor {
         });
       }).then(() => {
         // TODO remove empty folders
-        debug(info.title + ' moved');
+        debug(`${info.title} moved`);
       });
 
       // Remove event from set

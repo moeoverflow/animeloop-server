@@ -4,28 +4,24 @@ const mysql = require('mysql'),
       debug = require('debug')('backend');
 
 class DBManager {
-  constructor() {
-    this.host     = config.database.host;
-    this.user     = config.database.user;
-    this.password = config.database.password;
-    this.database = config.database.database;
-    this.connection = null;
+  constructor({host, user, password, database}) {
+    this.host     = host;
+    this.user     = user;
+    this.password = password;
+    this.database = database;
   }
 
-  getConnection() {
-    if (!this.connection) {
-      this.connection =  mysql.createConnection({
-        host     : this.host,
-        user     : this.user,
-        password : this.password,
-        database : this.database
-      });
-    }
-    return this.connection;
+  createConnection() {
+    return  mysql.createConnection({
+      host     : this.host,
+      user     : this.user,
+      password : this.password,
+      database : this.database
+    });
   }
 
   getTheNumberOfLoops() {
-    const conn = this.getConnection();
+    const conn = this.createConnection();
     conn.connect();
     let sql = 'SELECT COUNT(*) FROM `Loop`';
     return new Promise((resolve, reject) => {
@@ -38,14 +34,18 @@ class DBManager {
   }
 
   getLoopById(id) {
-    const conn = this.getConnection();
+    const conn = this.createConnection();
     conn.connect();
     let sql = "SELECT * FROM `Loop` WHERE id = ?";
     return new Promise((resolve, reject) => {
       conn.query(sql, [id], (err, results, fields) => {
         if (err) return reject(err);
-        console.log("getLoopById: " + results[0])
-        resolve(results[0]);
+        if (results.length > 0) {
+          console.log(`getLoopById: ${results[0]}`);
+          resolve(results[0]);
+        } else {
+          reject(`no loop for id = ${id}`)
+        }
         conn.end();
       })
     })
@@ -58,7 +58,7 @@ class DBManager {
   insertLoops(data) {
     let title = data.json.title,
         loops = data.json.loops;
-    const conn = this.getConnection();
+    const conn = this.createConnection();
     conn.connect();
     new Promise((resolve, reject) => {
       // Insert Episode
@@ -66,8 +66,8 @@ class DBManager {
       conn.query(sql, [title], (err, results, fields) => {
         if (err) throw err;
         // Get the auto increment id
-        debug("Insert results: " + results);
-        debug("Episode inserted, insertId: " + results.insertId);
+        debug(`Insert results: ${results}`);
+        debug(`Episode inserted, insertId: ${results.insertId}`);
         resolve(results.insertId);
       });
     }).then((insertId) => {

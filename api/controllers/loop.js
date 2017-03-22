@@ -28,7 +28,7 @@ function getLoopById(req, res) {
       else {
         let id = parseInt(req.swagger.params.id.value);
         if (isNaN(id)) {
-          reject("Illegal param id");
+          reject(`Illegal param id: ${id}`);
         }
         resolve(id);
       }
@@ -36,7 +36,7 @@ function getLoopById(req, res) {
   }
 
   function onSuccess(loop) {
-    debug("Resoving: " + loop);
+    debug(`Resoving: ${loop}`);
     res.json(JSON.stringify(loop));
   }
 
