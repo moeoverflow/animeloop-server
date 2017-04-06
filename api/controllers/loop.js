@@ -1,7 +1,6 @@
 'use strict';
 const DBManager = require('../../backend/database'),
           debug = require('debug')('api');
-// console.log("DBManager: " + DBManager)
 /*
   Functions in a127 controllers used for operations should take two parameters:
 

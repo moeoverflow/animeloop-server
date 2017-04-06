@@ -1,7 +1,6 @@
-const mysql = require('mysql'),
-     config = require('../config'),
-       path = require('path'),
-      debug = require('debug')('backend');
+const mysql = require('mysql');
+const path = require('path');
+const debug = require('debug')('backend');
 
 class DBManager {
   constructor({host, user, password, database}) {
@@ -19,8 +18,8 @@ class DBManager {
       database : this.database
     });
   }
-
-  getTheNumberOfLoops() {
+  
+  getLoopsCount() {
     const conn = this.createConnection();
     conn.connect();
     let sql = 'SELECT COUNT(*) FROM `Loop`';
@@ -32,7 +31,11 @@ class DBManager {
       });
     })
   }
-
+  /**
+   * Get Loop with specified id
+   * Return type: Promise
+   * @param {Number} id 
+   */
   getLoopById(id) {
     const conn = this.createConnection();
     conn.connect();
@@ -56,37 +59,78 @@ class DBManager {
    * data.jsonDir: the directory of json
    */
   insertLoops(data) {
-    let title = data.json.title,
-        loops = data.json.loops;
+    let title = data.json.title;
+    let loops = data.json.loops;
+    let seriesName = data.json.series;
     const conn = this.createConnection();
     conn.connect();
-    new Promise((resolve, reject) => {
-      // Insert Episode
-      let sql = 'INSERT INTO Episode(name) VALUES(?)';
-      conn.query(sql, [title], (err, results, fields) => {
-        if (err) throw err;
-        // Get the auto increment id
-        debug(`Insert results: ${results}`);
-        debug(`Episode inserted, insertId: ${results.insertId}`);
-        resolve(results.insertId);
+    addSeries()
+    .then(addEpisode)
+    .then(addLoops)
+    .then(() => {
+      conn.end();
+    })
+
+    function addSeries() {
+      return new Promise((resolve, reject) => {
+        // Insert addSeries
+        let sql = 'INSERT INTO Series(name) VALUES(?)';
+        conn.query(sql, [seriesName], (err, results, fields) => {
+          if (err) throw err;
+          resolve(results.insertId)
+        })
+      })
+    }
+
+    function addEpisode(seriesId) {
+      return new Promise((resolve, reject) => {
+        // Insert Episode
+        let sql = 'INSERT INTO Episode(name, series_id) VALUES(?, ?)';
+        conn.query(sql, [title, seriesId], (err, results, fields) => {
+          if (err) throw err;
+          // Get the auto increment id
+          debug(`Insert results: ${results}`);
+          debug(`Episode inserted, insertId: ${results.insertId}`);
+          resolve(results.insertId);
+        });
       });
-    }).then((insertId) => {
+    }
+
+    function addMedia({name, type}) {
+      return new Promise((resolve, reject) => {
+        let sql = 'INSERT INTO `Media`(name, type) VALUES(?, ?)';
+        conn.query(sql, [name, type], (err, results, fields) => {
+          if (err) { reject(err);}
+          resolve(results.insertId);
+        })
+      })
+    }
+    
+    function addLoops(episodeId) {
       return new Promise((resolve, reject) => {
         // Insert loops
         loops.forEach((loop) => {
-          let         dir = path.dirname(data.jsonDir),
-            coverFilename = path.join(dir, loop.cover_filename),
-            videoFilename = path.join(dir, loop.video_filename);
-          let sql = 'INSERT INTO `Loop`(cover_filename, video_filename, episode_id) VALUES(?, ?, ?)';
-          conn.query(sql, [coverFilename, videoFilename, insertId], (err, results, fields) => {
-            if (err) {reject(err);}
-            resolve();
-          });
+          let coverFilename = loop.cover_filename,
+              videoFilename = loop.video_filename;
+
+          let videoId = addMedia({name: videoFilename, type: 'video'});
+          let coverId = addMedia({name: coverFilename, type: 'image'});
+
+          Promise
+          .all([coverId, videoId])
+          .then(([coverId, videoId]) => {
+            let sql = 'INSERT INTO '
+            + '`Loop`(episode_id, cover_id, video_id, duration, frame_start, frame_end, time_start, time_end) '
+            + 'VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
+            let values = [episodeId, coverId, videoId, loop.duration, loop.frame.start, loop.frame.end, loop.time.start, loop.time.end];
+            conn.query(sql, values, (err, results, fields) => {
+              if (err) { reject(err);}
+              resolve();
+            });
+          }, (err) => {console.error(err)});
         });
       });
-    }).then(() => {
-      conn.end();
-    })
+    }
   }
 }
 
