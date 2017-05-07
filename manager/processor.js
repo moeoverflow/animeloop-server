@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const debug = require('debug')('backend');
+const debug = require('debug')('manager');
 const DBManager = require('./database');
 const uuidV1 = require('uuid/v1');
 

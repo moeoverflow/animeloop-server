@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const path = require('path');
-const debug = require('debug')('backend');
+const debug = require('debug')('manager');
 
 class DBManager {
   constructor({host, user, password, database}) {

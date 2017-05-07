@@ -1,11 +1,10 @@
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-var async = require('async');
+// var async = require('async');
 
 var Schema = mongoose.Schema,
     ObjectId = Schema.Types.ObjectId;
 
-mongoose.connect('mongodb://localhost/animeloop');
 
 var seriesSchema = new Schema({
     title_zh: { type: String, unique: true, require: true },
@@ -40,9 +39,19 @@ var loopSchema = new Schema({
     }
 });
 
-var Series  = mongoose.model('Series', seriesSchema);
-var Episode  = mongoose.model('Episode', episodeSchema);
-var Loop = mongoose.model('Loop', loopSchema);
+
+class DatabaseManager {
+    constructor(url) {
+        this.mongoose.connect(url);
+    }
+    static Series  = mongoose.model('Series', seriesSchema);
+    static Episode  = mongoose.model('Episode', episodeSchema);
+    static Loop = mongoose.model('Loop', loopSchema);
+
+    add
+}
+
+
 
 var series = new Series({
     title_zh: "series_title3"
