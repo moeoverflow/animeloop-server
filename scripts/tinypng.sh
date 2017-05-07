@@ -1,8 +1,8 @@
-mp4_dir=""
-webm_dir=""
+img_dir=""
+compressed_dir=""
 
 
-webm_temp_dir="$webm_dir/temp"
+compressed_temp_dir="compressed_dir/temp"
 
 cd $mp4_dir;
 mkdir $webm_dir;
