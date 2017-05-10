@@ -1,4 +1,4 @@
-const config = require('../../config');
+const config = require('../config');
 const fs = require('fs');
 const path = require('path');
 
@@ -18,7 +18,7 @@ class FileHandler {
     }
   }
 
-  saveFile(entity, files, jsonPath) {
+  saveFile(entity, files) {
     try {
       if (files.mp4_1080p) {
         fs.renameSync(files.mp4_1080p, path.join(this.dirs.mp4_1080p, entity._id + '.mp4'));
@@ -26,7 +26,6 @@ class FileHandler {
       if (files.jpg_1080p) {
         fs.renameSync(files.jpg_1080p, path.join(this.dirs.jpg_1080p, entity._id + '.jpg'));
       }
-      fs.unlinkSync(jsonPath);
     }catch(err) {
       console.error(err);
     }

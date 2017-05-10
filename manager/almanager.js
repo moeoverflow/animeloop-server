@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 const config = require('../config');
-const DatabaseHandler = require('./database/databasehandler');
-const FileHandler = require('./storage/filehandler');
+const DatabaseHandler = require('./databasehandler');
+const FileHandler = require('./filehandler');
 
 
 class ALManager {
@@ -43,7 +43,7 @@ class ALManager {
     try {
       let data = JSON.parse(fs.readFileSync(jsonPath));
       data.loops.forEach((loop) => {
-        let entity = this.databaseHandler.LoopModel({
+        let entity = DatabaseHandler.LoopModel({
           duration: loop.duration,
           period: {
             begin: loop.time.start,
@@ -65,9 +65,11 @@ class ALManager {
         this.databaseHandler
             .addLoop(entity)
             .then(() => {
-              this.fileHandler.saveFile(entity, files, jsonPath);
+              this.fileHandler.saveFile(entity, files);
             });
       });
+
+      fs.unlinkSync(jsonPath);
 
     } catch(err) {
       console.error(err);
@@ -76,4 +78,4 @@ class ALManager {
 }
 
 
-var alManager = new ALManager();
+module.exports = ALManager;
