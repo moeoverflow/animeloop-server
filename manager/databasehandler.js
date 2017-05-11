@@ -12,12 +12,15 @@ class DatabaseHandler {
   }
 
   addLoop(entity) {
-    return new Promise((resolve, reject) => {
-      entity.save((err, saved, isOK) => {
-        if (isOK) {
-          resolve(true);
-        }
-      });
+    return entity.save();
+  }
+
+  addLoops(entities, callback) {
+    DatabaseHandler.LoopModel.insertMany(entities, (err, docs) => {
+      if (err) {
+        console.error(err);
+      }
+      callback();
     });
   }
 }

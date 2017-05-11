@@ -20,7 +20,6 @@ class ALManager {
   }
 
   watching() {
-
     fs.watch(config.storage.dir.localUpload, {recursive: true},  (eventType, filename) => {
       if (filename && path.extname(filename) === ".json") {
         const jsonPath = path.join(config.storage.dir.localUpload, filename);
@@ -37,7 +36,6 @@ class ALManager {
     });
   }
 
-
   addLoopsFromLocal(jsonPath) {
     let dir = path.dirname(jsonPath);
     try {
@@ -50,7 +48,7 @@ class ALManager {
             end: loop.time.end
           },
           frame: {
-            begin: loop.frame.begin,
+            begin: loop.frame.start,
             end: loop.frame.end
           },
           md5: loop.md5,
@@ -65,7 +63,7 @@ class ALManager {
         this.databaseHandler
             .addLoop(entity)
             .then(() => {
-              this.fileHandler.saveFile(entity, files);
+              this.fileHandler.saveFile(entity, files, () => {});
             });
       });
 

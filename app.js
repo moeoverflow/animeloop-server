@@ -57,5 +57,5 @@ app.use(apiRouter);
 const alManager = new ALManager();
 
 app.listen(config.app.port, config.app.host, () => {
-  console.log("app run in " + config.app.url + ":" + config.app.port);
+  console.log("app run in " + config.app.host + ":" + config.app.port);
 });

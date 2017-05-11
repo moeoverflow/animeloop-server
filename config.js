@@ -2,7 +2,7 @@ const path = require('path');
 
 const config = {
   app: {
-    url: 'http://127.0.0.1:7777',
+    url: 'https://loop.moeoverflow.org',
     host: '127.0.0.1',
     port: 7777
   },
