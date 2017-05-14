@@ -1,0 +1,49 @@
+#left-menu {
+  ul.nav.nav-list {
+    .logo {
+      margin: 0 auto;
+      text-align: center;
+
+      img {
+        width: 75%;
+      }
+    }
+  }
+}
+
+#mimin-mobile {
+  ul.nav.nav-list {
+    .logo {
+      display: none;
+    }
+  }
+}
+
+#content {
+  .loop-card {
+    .panel-body {
+      padding: 0;
+
+      .gif {
+        width: 100%;
+      }
+    }
+
+    .panel-footer {
+      padding: 5px 7.5px;
+
+      .info {
+        padding: 0;
+        margin: 0;
+
+        li {
+          font-size: 10px;
+        }
+
+        .title {
+        }
+      }
+    }
+
+  }
+}

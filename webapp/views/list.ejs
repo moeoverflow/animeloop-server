@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="description" content="Animeloop webpage.">
+    <meta name="author" content="ShinCurry">
+    <meta name="keyword" content="moeoverflow, animeloop, anime">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Animeloop</title>
+
+    <%- include('partials/head') %>
+</head>
+
+<body id="mimin" class="dashboard">
+
+<!-- start: Header -->
+<%- include('partials/header') %>
+<!-- end: Header -->
+
+<div class="container-fluid mimin-wrapper">
+    <!-- start:Left Menu -->
+    <%- include('partials/menu') %>
+    <!-- end: Left Menu -->
+
+    <!-- start: content -->
+    <div id="content">
+        <div class="post col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <%- data %>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end: content -->
+
+</div>
+
+<!-- start: Mobile -->
+<%- include('partials/mobile-menu') %>
+<!-- end: Mobile -->
+
+<!-- start: Javascript -->
+<%- include('partials/scripts') %>
+<!-- end: Javascript -->
+</body>
+</html>

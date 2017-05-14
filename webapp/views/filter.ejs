@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="description" content="Animeloop webpage.">
+    <meta name="author" content="ShinCurry">
+    <meta name="keyword" content="moeoverflow, animeloop, anime">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Animeloop</title>
+
+    <%- include('partials/head') %>
+</head>
+
+<body id="mimin" class="dashboard">
+
+<!-- start: Header -->
+<%- include('partials/header') %>
+<!-- end: Header -->
+
+<div class="container-fluid mimin-wrapper">
+    <!-- start:Left Menu -->
+    <%- include('partials/menu') %>
+    <!-- end: Left Menu -->
+
+    <!-- start: content -->
+    <div id="content">
+        <div class="panel">
+            <div class="panel-body">
+                <div class="col-md-12 col-sm-12">
+                    <div class="input-group">
+                        <input type="text" class="form-control" aria-label="...">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Search<span class="caret"></span></button>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li><a href="#">Action</a></li>
+                                <li><a href="#">Another action</a></li>
+                                <li><a href="#">Something else here</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="#">Separated link</a></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div><!-- /input-group -->
+                </div>
+            </div>
+        </div>
+
+        <div class="loop-cards col-md-12">
+            <% for (var i = 0; i < 10; i++) { %>
+            <%- include('partials/loop-card', {
+            loop: {
+            imageUrl: '/test/591446435f6e5e51d937de85.jpg',
+            title: '日常 TV 26',
+            period: '00:14:00 ~ 00:14:01'
+            }
+            }) %>
+            <% } %>
+        </div>
+    </div>
+    <!-- end: content -->
+
+</div>
+
+<!-- start: Mobile -->
+<%- include('partials/mobile-menu') %>
+<!-- end: Mobile -->
+
+<!-- start: Javascript -->
+<%- include('partials/scripts') %>
+<!-- end: Javascript -->
+</body>
+</html>

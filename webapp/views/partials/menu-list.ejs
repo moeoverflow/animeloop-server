@@ -1,0 +1,60 @@
+<ul class="nav nav-list">
+  <li><div class="left-bg"></div></li>
+  <li class="logo">
+    <img src="/test/moe.png">
+  </li>
+
+  <% if (activeMenu == 'home') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/"><span class="fa-home fa"></span> Home
+    </a>
+  </li>
+  <% if (activeMenu == 'list') { %>
+  <li class="active ripple">
+  <% } else { %>
+  <li class="ripple">
+  <% } %>
+    <a class="tree-toggle nav-header"><span class="fa-list fa"></span> List
+        <span class="fa-angle-right fa right-arrow text-right"></span>
+    </a>
+    <% if (activeMenu == 'list') { %>
+    <ul class="nav nav-list tree" style="display: block;">
+    <% } else { %>
+    <ul class="nav nav-list tree" style="display: none;">
+        <% } %>
+        <li><a href="/list/tags">Tags</a></li>
+        <li><a href="/list/episodes">Episodes</a></li>
+        <li><a href="/list/series">Series</a></li>
+    </ul>
+  </li>
+
+  <% if (activeMenu == 'filter') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/filter"><span class="fa-filter fa"></span> Filter
+    </a>
+  </li>
+
+  <% if (activeMenu == 'api') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/api"><span class="icons icon-magic-wand"></span> API
+    </a>
+  </li>
+
+  <% if (activeMenu == 'about') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/about"><span class="icons icon-info"></span> About
+    </a>
+  </li>
+</ul>

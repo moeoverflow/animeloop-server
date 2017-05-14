@@ -1,0 +1,3 @@
+[submodule "webapp/miminium"]
+	path = webapp/miminium
+	url = https://github.com/akivaron/miminium.git

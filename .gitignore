@@ -1,5 +1,10 @@
 # Custom
 storage
+webapp/public/test
+webapp/content/post/*
+
+# Sass
+.sass-cache
 
 # Logs
 logs

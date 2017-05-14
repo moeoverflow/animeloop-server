@@ -1,15 +1,61 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <meta charset="utf-8">
+  <meta name="description" content="Animeloop webpage.">
+  <meta name="author" content="ShinCurry">
+  <meta name="keyword" content="moeoverflow, animeloop, anime">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Animeloop</title>
-  <meta name="viewport" content="width=device-width, user-scalable=no">
-  <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="apple-touch-icon" href="/favicon.ico">
-  <link rel="stylesheet" type="text/css" href="">
+
+  <%- include('partials/head') %>
 </head>
 
-<body>
-  
+<body id="mimin" class="dashboard">
+
+<!-- start: Header -->
+<%- include('partials/header') %>
+<!-- end: Header -->
+
+<div class="container-fluid mimin-wrapper">
+  <!-- start:Left Menu -->
+  <%- include('partials/menu') %>
+  <!-- end: Left Menu -->
+
+  <!-- start: content -->
+  <div id="content">
+    <div class="panel">
+      <div class="panel-body">
+        <div class="col-md-12 col-sm-12">
+          Animeloop is a project for trying to collect anime loop videos.
+          <br><br><br><br><br><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="loop-cards col-md-12">
+      <% for (var i = 0; i < 10; i++) { %>
+      <%- include('partials/loop-card', {
+        loop: {
+          imageUrl: '/test/591446435f6e5e51d937de85.jpg',
+          title: '日常 TV 26',
+          period: '00:14:00 ~ 00:14:01'
+        }
+      }) %>
+      <% } %>
+    </div>
+  </div>
+  <!-- end: content -->
+
+</div>
+
+<!-- start: Mobile -->
+<%- include('partials/mobile-menu') %>
+<!-- end: Mobile -->
+
+<!-- start: Javascript -->
+<%- include('partials/scripts') %>
+<!-- end: Javascript -->
 </body>
 </html>
