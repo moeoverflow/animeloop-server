@@ -7,8 +7,14 @@
     <meta name="author" content="ShinCurry">
     <meta name="keyword" content="moeoverflow, animeloop, anime">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Animeloop</title>
 
+    <% if (activeMenu == 'list-series') { %>
+    <title>Series | Animeloop</title>
+    <% } else if (activeMenu == 'list-episodes') { %>
+    <title>Episodes | Animeloop</title>
+    <% } else if (activeMenu == 'list-tags') { %>
+    <title>Tags | Animeloop</title>
+    <% } %>
     <%- include('partials/head') %>
 </head>
 
@@ -28,7 +34,21 @@
         <div class="post col-md-12">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <%- data %>
+                    <%
+                    var i, j, temps, chunk = 3;
+                    for (i = 0, j = datas.length; i < j; i += chunk) {
+                        temps = datas.slice(i, i+chunk);
+                    %>
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                        </div>
+                        <% temps.forEach((temp) => { %>
+                        <div class="col-md-3">
+                            <a href="#"><%- temp.name %> <span class="badge badge-default"><%- temp.count %></span></a>
+                        </div>
+                        <% }); %>
+                    </div>
+                    <% } %>
                 </div>
             </div>
         </div>

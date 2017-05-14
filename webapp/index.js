@@ -8,6 +8,9 @@ const filter = require('./routes/filter');
 const api = require('./routes/api');
 const about = require('./routes/about');
 
+const loop = require('./routes/loop');
+
+
 router.use(express.static(path.join(__dirname, 'public')));
 router.use('/asset', express.static(path.join(__dirname, 'miminium/asset')));
 
@@ -17,5 +20,8 @@ router.use('/list', list);
 router.use('/filter', filter);
 router.use('/api', api);
 router.use('/about', about);
+
+router.use('/loop', loop);
+
 
 module.exports = router;

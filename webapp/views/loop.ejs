@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>About | Animeloop</title>
+    <meta charset="utf-8">
+    <meta name="description" content="Animeloop webpage.">
+    <meta name="author" content="ShinCurry">
+    <meta name="keyword" content="moeoverflow, animeloop, anime">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Animeloop</title>
 
     <%- include('partials/head') %>
 </head>
@@ -22,10 +27,22 @@
         <div class="panel">
             <div class="panel-body">
                 <div class="col-md-12 col-sm-12">
-                    <%- post %>
+                    Animeloop is a project for trying to collect anime loop videos.
+                    <br><br><br><br><br><br>
                 </div>
-
             </div>
+        </div>
+
+        <div class="loop-cards col-md-12">
+            <% loops.forEach((loop) => { %>
+            <%- include('partials/loop-card', {
+            loop: {
+            imageUrl: loop.files.gif_360p,
+            title: loop.episode,
+            period: loop.period.begin + '~' + loop.period.end
+            }
+            }) %>
+            <% }); %>
         </div>
     </div>
     <!-- end: content -->

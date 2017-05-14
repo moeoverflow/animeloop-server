@@ -34,16 +34,16 @@
       </div>
     </div>
 
-    <div class="loop-cards col-md-12">
-      <% for (var i = 0; i < 10; i++) { %>
+    <div class="loop-cards">
+      <% loops.forEach((loop) => { %>
       <%- include('partials/loop-card', {
         loop: {
-          imageUrl: '/test/591446435f6e5e51d937de85.jpg',
-          title: '日常 TV 26',
-          period: '00:14:00 ~ 00:14:01'
+          imageUrl: loop.files.gif_360p,
+          title: loop.episode,
+          period: loop.period.begin + '~' + loop.period.end
         }
       }) %>
-      <% } %>
+      <% }); %>
     </div>
   </div>
   <!-- end: content -->

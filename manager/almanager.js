@@ -73,7 +73,30 @@ class ALManager {
       console.error(err);
     }
   }
-}
 
+  getRandomLoops(n, callback) {
+    DatabaseHandler.LoopModel.findRandom({}, {}, {limit: n}, (err, results) => {
+      if (err) {
+        callback(err);
+        return;
+      }
+
+      let loops = results.map((r) => {
+        var loop = r.toObject();
+        loop.files = FileHandler.getFilesUrl(r._id);
+        return loop;
+      });
+      callback(undefined, loops);
+    });
+  }
+
+  getEpisodes(callback) {
+    this.databaseHandler.distinctAndCount(DatabaseHandler.LoopModel, 'episode', callback);
+  }
+
+  getSeries(callback) {
+    this.databaseHandler.distinctAndCount(DatabaseHandler.LoopModel, 'series', callback);
+  }
+}
 
 module.exports = ALManager;

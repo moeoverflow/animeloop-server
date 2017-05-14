@@ -23,6 +23,29 @@ class DatabaseHandler {
       callback();
     });
   }
+
+  distinctAndCount(model, key, callback) {
+    model.aggregate({
+      $match: {
+        key: { $not: {$size: 0} }
+      }
+    }).unwind('$' + key)
+      .group({
+        _id: '$' + key,
+        count: { $sum: 1 }
+      }).exec((err, results) => {
+      if (err) {
+        callback(err);
+        return;
+      }
+
+      callback(undefined, results.map((r) => {
+        r.name = r._id;
+        delete r._id;
+        return r;
+      }));
+    });
+  }
 }
 
 DatabaseHandler.LoopSchema = new Schema({
@@ -42,7 +65,7 @@ DatabaseHandler.LoopSchema = new Schema({
   tags: [String]
 });
 DatabaseHandler.LoopSchema.plugin(random);
-
 DatabaseHandler.LoopModel = mongoose.model('Loop', DatabaseHandler.LoopSchema);
+
 
 module.exports = DatabaseHandler;

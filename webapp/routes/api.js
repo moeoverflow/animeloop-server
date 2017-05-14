@@ -8,13 +8,13 @@ router.get('/', (req, res, next) => {
   fs.readFile(path.join(__dirname, '../content/post/api.md'), 'UTF-8', (err, data) => {
     var post = '';
 
-    if (err) {
-      post = err;
+    if (!err) {
+      post = markdown.toHTML(data);
     }
 
     res.render('api', {
       activeMenu: 'api',
-      post: markdown.toHTML(data)
+      post
     });
   });
 });

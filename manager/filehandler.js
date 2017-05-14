@@ -76,4 +76,14 @@ class FileHandler {
   }
 }
 
+FileHandler.getFilesUrl = (id) => {
+  return {
+    mp4_1080p: config.app.url + '/files/mp4_1080p/' + id + '.mp4',
+    webm_1080p: config.app.url + '/files/webm_1080p/' + id + '.webm',
+    jpg_1080p: config.app.url + '/files/jpg_1080p/' + id + '.jpg',
+    jpg_720p: config.app.url + '/files/jpg_720p/' + id + '.jpg',
+    gif_360p: config.app.url + '/files/gif_360p/' + id + '.gif'
+  };
+}
+
 module.exports = FileHandler;
