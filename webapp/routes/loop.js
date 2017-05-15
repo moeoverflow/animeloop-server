@@ -6,11 +6,14 @@ router.get('/:id', (req, res, next) => {
 
   alManager.getLoopById(id, (err, loop) => {
     if (err) {
-      res.json({error: err});
+      res.status(404);
       return;
     }
 
-    res.json(loop);
+    res.render('loop', {
+      activeMenu: 'none',
+      loop
+    });
   });
 });
 

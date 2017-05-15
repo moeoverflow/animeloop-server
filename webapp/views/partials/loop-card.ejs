@@ -1,13 +1,15 @@
 <div class="loop-card col-xs-6 col-sm-4 col-md-3 col-lg-3">
     <div class="panel panel-default">
-        <div class="panel-body">
-            <img class="gif" src="<%- loop.imageUrl %>">
-        </div>
-        <div class="panel-footer">
-            <ul class="info">
-                <li class="title"><%- loop.title %></li>
-                <li class="period"><%- loop.period %></li>
-            </ul>
-        </div>
+      <div class="panel-body">
+        <a href="/loop/<%- loop._id %>">
+          <img class="gif" src="<%- loop.files.gif_360p %>">
+        </a>
+      </div>
+      <div class="panel-footer">
+        <ul class="info">
+          <li class="title"><%- loop.episode %></li>
+          <li class="period"><%- loop.period.begin.slice(0, 11) %> ~ <%- loop.period.end.slice(0, 11) %></li>
+        </ul>
+      </div>
     </div>
 </div>

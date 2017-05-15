@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="description" content="Animeloop webpage.">
-    <meta name="author" content="ShinCurry">
-    <meta name="keyword" content="moeoverflow, animeloop, anime">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Animeloop</title>
-
-    <%- include('partials/head') %>
+  <title>Loop | Animeloop</title>
+  <%- include('partials/head') %>
 </head>
 
 <body id="mimin" class="dashboard">
@@ -18,34 +12,61 @@
 <!-- end: Header -->
 
 <div class="container-fluid mimin-wrapper">
-    <!-- start:Left Menu -->
-    <%- include('partials/menu') %>
-    <!-- end: Left Menu -->
+  <!-- start:Left Menu -->
+  <%- include('partials/menu') %>
+  <!-- end: Left Menu -->
 
-    <!-- start: content -->
-    <div id="content">
-        <div class="panel">
-            <div class="panel-body">
-                <div class="col-md-12 col-sm-12">
-                    Animeloop is a project for trying to collect anime loop videos.
-                    <br><br><br><br><br><br>
-                </div>
+  <!-- start: content -->
+  <div id="content">
+    <div class="panel">
+      <div class="loop detail panel-body">
+        <div class="col-md-12 col-sm-12">
+          <div class="video col-md-10">
+            <video loop="" autoplay="" muted="" webkit-playsinline="" playsinline="" poster="<%- loop.files.jpg_720p %>" style="background: url('<%- loop.files.jpg_720p %>') center center / cover no-repeat;">
+              <source src="<%- loop.files.mp4_1080p %>" type="video/mp4">
+              <source src="<%- loop.files.webm_1080p %>" type="video/webm">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="info col-md-2">
+            <div class="episode">
+              <h4>Episode: </h4>
+              <span><%- loop.episode %></span>
             </div>
-        </div>
+            <div class="series">
+              <h4>Series: </h4>
+              <span><%- loop.series %></span>
+            </div>
+            <div class="period">
+              <h4>Period: </h4>
+              <span><%- loop.period.begin.slice(0, 11) %> ~ <%- loop.period.end.slice(0, 11) %></span>
+            </div>
+            <div class="duration">
+              <h4>Duration: </h4>
+              <span><%- loop.duration.toFixed(3) %> s</span>
+            </div>
+            <% if (loop.tags.length > 0) { %>
+            <div class="tags">
+              <h4>Tags: </h4>
+              <% loop.tags.forEach((tag) => { %>
+              <span class="badge badge-primary"><%- tag %></span>
+              <% }); %>
+            </div>
+            <% } %>
+            <div class="media">
+              <h4>Media: </h4>
+              <% for (let type in loop.files) { %>
 
-        <div class="loop-cards col-md-12">
-            <% loops.forEach((loop) => { %>
-            <%- include('partials/loop-card', {
-            loop: {
-            imageUrl: loop.files.gif_360p,
-            title: loop.episode,
-            period: loop.period.begin + '~' + loop.period.end
-            }
-            }) %>
-            <% }); %>
+              <a href="<%- loop.files[type] %>"><span class="badge badge-primary"><%- type %></span></a>
+              <% } %>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    <!-- end: content -->
+
+  </div>
+  <!-- end: content -->
 
 </div>
 

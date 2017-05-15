@@ -90,6 +90,19 @@ class ALManager {
     });
   }
 
+  getLoopById(id, callback) {
+    DatabaseHandler.LoopModel.findById(id, (err, result) => {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        let loop = result.toObject();
+        loop.files = FileHandler.getFilesUrl(result._id);
+        callback(undefined, loop);
+    });
+  }
+
   getEpisodes(callback) {
     this.databaseHandler.distinctAndCount(DatabaseHandler.LoopModel, 'episode', callback);
   }

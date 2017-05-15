@@ -84,6 +84,6 @@ FileHandler.getFilesUrl = (id) => {
     jpg_720p: config.app.url + '/files/jpg_720p/' + id + '.jpg',
     gif_360p: config.app.url + '/files/gif_360p/' + id + '.gif'
   };
-}
+};
 
 module.exports = FileHandler;

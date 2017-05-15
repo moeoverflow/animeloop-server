@@ -321,7 +321,7 @@
     date = null;
 
   var update = function () {
-    date = moment(new Date())
+    date = moment(new Date());
     datetime.html(date.format('HH:mm'));
     datetime2.html(date.format('dddd, MMMM Do YYYY'));
   };
