@@ -11,7 +11,6 @@ router.get('/:id', (req, res, next) => {
     }
 
     res.render('loop', {
-      activeMenu: 'none',
       loop
     });
   });

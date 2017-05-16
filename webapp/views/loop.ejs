@@ -18,42 +18,42 @@
 
   <!-- start: content -->
   <div id="content">
-    <div class="panel">
-      <div class="loop detail panel-body">
+    <div class="loop detail panel">
+      <div class="panel-body">
         <div class="col-md-12 col-sm-12">
-          <div class="video col-md-10">
+          <div class="video col-md-9">
             <video loop="" autoplay="" muted="" webkit-playsinline="" playsinline="" poster="<%- loop.files.jpg_720p %>" style="background: url('<%- loop.files.jpg_720p %>') center center / cover no-repeat;">
               <source src="<%- loop.files.mp4_1080p %>" type="video/mp4">
               <source src="<%- loop.files.webm_1080p %>" type="video/webm">
               Your browser does not support the video tag.
             </video>
           </div>
-          <div class="info col-md-2">
-            <div class="episode">
+          <div class="info col-sm-9 col-md-3">
+            <div class="episode col-xs-6 col-sm-6 col-md-12">
               <h4>Episode: </h4>
               <span><%- loop.episode %></span>
             </div>
-            <div class="series">
+            <div class="series col-xs-6 col-sm-6 col-md-12">
               <h4>Series: </h4>
               <span><%- loop.series %></span>
             </div>
-            <div class="period">
+            <div class="period col-xs-6 col-sm-6 col-md-12">
               <h4>Period: </h4>
               <span><%- loop.period.begin.slice(0, 11) %> ~ <%- loop.period.end.slice(0, 11) %></span>
             </div>
-            <div class="duration">
+            <div class="duration col-xs-6 col-sm-6 col-md-12">
               <h4>Duration: </h4>
               <span><%- loop.duration.toFixed(3) %> s</span>
             </div>
             <% if (loop.tags.length > 0) { %>
-            <div class="tags">
+            <div class="tags col-xs-6 col-sm-6 col-md-12">
               <h4>Tags: </h4>
               <% loop.tags.forEach((tag) => { %>
               <span class="badge badge-primary"><%- tag %></span>
               <% }); %>
             </div>
             <% } %>
-            <div class="media">
+            <div class="media col-xs-12 col-sm-12 col-md-12">
               <h4>Media: </h4>
               <% for (let type in loop.files) { %>
 
@@ -61,6 +61,14 @@
               <% } %>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loop comment panel">
+      <div class="panel-body">
+        <div class="col-md-12">
+          <%- include('partials/disqus') %>
         </div>
       </div>
     </div>

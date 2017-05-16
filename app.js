@@ -28,31 +28,11 @@ app.use('/files', express.static(path.join(__dirname, 'storage', 'data')));
 app.use(webRouter);
 app.use(apiRouter);
 
+// 404 handler
+app.use((req, res, next) => {
+  res.status(404).render('404');
+});
 
-// development error handler
-// will print stacktrace
-// if (app.get('env') === 'development') {
-//   app.use(function(err, req, res, next) {
-//     res.status(err.status || 500);
-//     res.render('error', {
-//       message: err.message,
-//       error: err
-//     });
-//   });
-// }
-
-// production error handler
-// no stacktraces leaked to user
-// app.use(function(err, req, res, next) {
-//   res.status(err.status || 500);
-//   res.render('error', {
-//     message: err.message,
-//     error: {}
-//   });
-// });
-
-
-// ALManager
 alManager = new ALManager();
 
 app.listen(config.app.port, config.app.host, () => {
