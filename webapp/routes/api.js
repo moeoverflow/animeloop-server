@@ -13,7 +13,7 @@ router.get('/', (req, res, next) => {
     }
 
     res.render('api', {
-      activeMenu: 'api',
+      pageType: 'api',
       post
     });
   });

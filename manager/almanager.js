@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
+const async = require('async');
 
 const config = require('../config');
 const DatabaseHandler = require('./databasehandler');
 const FileHandler = require('./filehandler');
-
 
 class ALManager {
   constructor() {
@@ -40,32 +40,41 @@ class ALManager {
     let dir = path.dirname(jsonPath);
     try {
       let data = JSON.parse(fs.readFileSync(jsonPath));
-      data.loops.forEach((loop) => {
-        let entity = DatabaseHandler.LoopModel({
-          duration: loop.duration,
-          period: {
-            begin: loop.time.start,
-            end: loop.time.end
-          },
-          frame: {
-            begin: loop.frame.start,
-            end: loop.frame.end
-          },
-          md5: loop.md5,
-          series: data.series,
-          episode: data.title
-        });
-        let files = {
-          mp4_1080p: path.join(dir, loop.video_filename),
-          jpg_1080p: path.join(dir, loop.cover_filename)
-        };
+      async.waterfall(data.loops.map((loop) => {
+        return (callback) => {
+          let entity = {
+            series: {
+              title: data.series
+            },
+            episode: {
+              title: data.title
+            },
+            loop: {
+              duration: loop.duration,
+              period: {
+                begin: loop.time.start,
+                end: loop.time.end
+              },
+              frame: {
+                begin: loop.frame.start,
+                end: loop.frame.end
+              },
+            }
+          };
 
-        this.databaseHandler
-            .addLoop(entity)
-            .then(() => {
-              this.fileHandler.saveFile(entity, files, () => {});
+          let files = {
+            mp4_1080p: path.join(dir, loop.video_filename),
+            jpg_1080p: path.join(dir, loop.cover_filename)
+          };
+
+          this.databaseHandler.addLoop(entity)
+          .then(() => {
+            this.fileHandler.saveFile(entity, files, () => {
+              callback(null);
             });
-      });
+          });
+        };
+      }));
 
       fs.unlinkSync(jsonPath);
 
@@ -75,9 +84,18 @@ class ALManager {
   }
 
   getRandomLoops(n, callback) {
-    DatabaseHandler.LoopModel.findRandom({}, {}, {limit: n}, (err, results) => {
+
+    DatabaseHandler.LoopModel.findRandom({}, {}, {
+      limit: n,
+      populate: ['episode', 'series']
+    }, (err, results) => {
       if (err) {
         callback(err);
+        return;
+      }
+
+      if (results.length == 0) {
+        callback(undefined, []);
         return;
       }
 
@@ -91,24 +109,55 @@ class ALManager {
   }
 
   getLoopById(id, callback) {
-    DatabaseHandler.LoopModel.findById(id, (err, result) => {
+    DatabaseHandler.LoopModel.findById(id).populate('episode series').exec((err, result) => {
         if (err) {
             callback(err);
             return;
         }
 
-        let loop = result.toObject();
-        loop.files = FileHandler.getFilesUrl(result._id);
-        callback(undefined, loop);
+        result.files = FileHandler.getFilesUrl(result._id);
+        callback(undefined, result);
+    });
+  }
+
+  getLoopsByEpisode(id, callback) {
+    DatabaseHandler.LoopModel.find({ episode: id }).populate('episode series').exec((err, results) => {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        let loops = results.map((r) => {
+          r.files = FileHandler.getFilesUrl(r._id);
+          return r;
+        });
+
+        callback(undefined, loops);
+    });
+  }
+
+  getEpisodesBySeries(id, callback) {
+    DatabaseHandler.EpisodeModel.find({ series: id }).sort({ title: 1 }).populate('series').exec((err, results) => {
+      if (err) {
+        callback(err);
+        return;
+      }
+
+      let episodes = results.map((r) => {
+        r.files = FileHandler.getFilesUrl(r._id);
+        return r;
+      });
+
+      callback(undefined, episodes);
     });
   }
 
   getEpisodes(callback) {
-    this.databaseHandler.distinctAndCount(DatabaseHandler.LoopModel, 'episode', callback);
+    DatabaseHandler.EpisodeModel.find({}).sort().exec(callback);
   }
 
   getSeries(callback) {
-    this.databaseHandler.distinctAndCount(DatabaseHandler.LoopModel, 'series', callback);
+    DatabaseHandler.SeriesModel.find({}).sort().exec(callback);
   }
 }
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Loop | Animeloop</title>
+  <%- include('partials/head') %>
+</head>
+
+<body id="mimin" class="dashboard">
+
+<!-- start: Header -->
+<%- include('partials/header') %>
+<!-- end: Header -->
+
+<div class="container-fluid mimin-wrapper">
+  <!-- start:Left Menu -->
+  <%- include('partials/menu') %>
+  <!-- end: Left Menu -->
+
+  <!-- start: content -->
+  <div id="content">
+    <div class="panel">
+      <div class="panel-body">
+        <h3><%- episodes[0].series.title %></h3>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-body">
+        <%
+        var i, j, temps, chunk = 3;
+        for (i = 0, j = episodes.length; i < j; i += chunk) {
+          temps = episodes.slice(i, i+chunk);
+        %>
+        <div class="col-md-12">
+          <div class="col-md-2">
+          </div>
+          <% temps.forEach((temp) => { %>
+          <div class="col-md-3">
+            <a href="/episode/<%- temp._id %>"><%- temp.title %></a>
+          </div>
+          <% }); %>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+  </div>
+  <!-- end: content -->
+
+</div>
+
+<!-- start: Mobile -->
+<%- include('partials/mobile-menu') %>
+<!-- end: Mobile -->
+
+<!-- start: Javascript -->
+<%- include('partials/scripts') %>
+<!-- end: Javascript -->
+</body>
+</html>

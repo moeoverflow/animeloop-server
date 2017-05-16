@@ -16,6 +16,7 @@
     "method-override": "^2.3.8",
     "mkdirp": "^0.5.1",
     "mongoose": "^4.9.7",
+    "mongoose-findorcreate": "^1.0.1",
     "mongoose-simple-random": "^0.4.1"
   },
   "devDependencies": {

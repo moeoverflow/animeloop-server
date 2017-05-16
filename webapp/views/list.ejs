@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <% if (activeMenu == 'list-series') { %>
-    <title>Series | Animeloop</title>
-    <% } else if (activeMenu == 'list-episodes') { %>
-    <title>Episodes | Animeloop</title>
-    <% } else if (activeMenu == 'list-tags') { %>
-    <title>Tags | Animeloop</title>
-    <% } %>
-    <%- include('partials/head') %>
+  <% if (pageType == 'list-series') { %>
+  <title>Series | Animeloop</title>
+  <% } else if (pageType == 'list-episodes') { %>
+  <title>Episodes | Animeloop</title>
+  <% } else if (pageType == 'list-tags') { %>
+  <title>Tags | Animeloop</title>
+  <% } %>
+  <%- include('partials/head') %>
 </head>
 
 <body id="mimin" class="dashboard">
@@ -18,35 +18,39 @@
 <!-- end: Header -->
 
 <div class="container-fluid mimin-wrapper">
-    <!-- start:Left Menu -->
-    <%- include('partials/menu') %>
-    <!-- end: Left Menu -->
+  <!-- start:Left Menu -->
+  <%- include('partials/menu') %>
+  <!-- end: Left Menu -->
 
-    <!-- start: content -->
-    <div id="content">
-        <div class="post col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <%
-                    var i, j, temps, chunk = 3;
-                    for (i = 0, j = datas.length; i < j; i += chunk) {
-                        temps = datas.slice(i, i+chunk);
-                    %>
-                    <div class="col-md-12">
-                        <div class="col-md-2">
-                        </div>
-                        <% temps.forEach((temp) => { %>
-                        <div class="col-md-3">
-                            <a href="#"><%- temp.name %> <span class="badge badge-default"><%- temp.count %></span></a>
-                        </div>
-                        <% }); %>
-                    </div>
-                    <% } %>
-                </div>
+  <!-- start: content -->
+  <div id="content">
+    <div class="post col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <%
+          var i, j, temps, chunk = 3;
+          for (i = 0, j = datas.length; i < j; i += chunk) {
+            temps = datas.slice(i, i+chunk);
+          %>
+          <div class="col-md-12">
+            <div class="col-md-2">
             </div>
+            <% temps.forEach((temp) => { %>
+            <div class="col-md-3">
+              <% if (pageType == 'list-series') { %>
+              <a href="/series/<%- temp._id %>"><%- temp.title %></a>
+              <% } else if (pageType == 'list-episodes') { %>
+              <a href="/episode/<%- temp._id %>"><%- temp.title %></a>
+              <% } %>
+            </div>
+            <% }); %>
+          </div>
+          <% } %>
         </div>
+      </div>
     </div>
-    <!-- end: content -->
+  </div>
+  <!-- end: content -->
 
 </div>
 

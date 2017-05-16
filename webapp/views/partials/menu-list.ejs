@@ -1,6 +1,6 @@
 <%
- if (!locals.activeMenu) {
-   locals.activeMenu = 'none';
+ if (!locals.pageType) {
+   locals.pageType = 'none';
  }
  %>
 
@@ -10,7 +10,7 @@
     <img src="/test/moe.png">
   </li>
 
-  <% if (activeMenu == 'home') { %>
+  <% if (pageType == 'home') { %>
   <li class="active">
   <% } else { %>
   <li>
@@ -18,9 +18,9 @@
     <a href="/"><span class="fa-home fa"></span> Home
     </a>
   </li>
-  <% if ( activeMenu == 'list-series' ||
-          activeMenu == 'list-episodes' ||
-          activeMenu == 'list-tags' ) { %>
+  <% if ( pageType == 'list-series' ||
+          pageType == 'list-episodes' ||
+          pageType == 'list-tags' ) { %>
   <li class="active ripple">
   <% } else { %>
   <li class="ripple">
@@ -28,9 +28,9 @@
     <a class="tree-toggle nav-header"><span class="fa-list fa"></span> List
         <span class="fa-angle-right fa right-arrow text-right"></span>
     </a>
-    <% if ( activeMenu == 'list-series' ||
-            activeMenu == 'list-episodes' ||
-            activeMenu == 'list-tags' ) { %>
+    <% if ( pageType == 'list-series' ||
+            pageType == 'list-episodes' ||
+            pageType == 'list-tags' ) { %>
     <ul class="nav nav-list tree" style="display: block;">
     <% } else { %>
     <ul class="nav nav-list tree" style="display: none;">
@@ -41,7 +41,7 @@
     </ul>
   </li>
 
-  <% if (activeMenu == 'filter') { %>
+  <% if (pageType == 'filter') { %>
   <li class="active">
   <% } else { %>
   <li>
@@ -50,7 +50,7 @@
     </a>
   </li>
 
-  <% if (activeMenu == 'api') { %>
+  <% if (pageType == 'api') { %>
   <li class="active">
   <% } else { %>
   <li>
@@ -59,7 +59,7 @@
     </a>
   </li>
 
-  <% if (activeMenu == 'about') { %>
+  <% if (pageType == 'about') { %>
   <li class="active">
   <% } else { %>
   <li>

@@ -13,7 +13,7 @@ router.get('/', (req, res, next) => {
     }
 
     res.render('about', {
-      activeMenu: 'about',
+      pageType: 'about',
       post
     });
   });

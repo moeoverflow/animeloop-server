@@ -36,14 +36,14 @@ class FileHandler {
   saveFile(entity, files, callback) {
     try {
       if (files.mp4_1080p && fs.existsSync(files.mp4_1080p)) {
-        fs.renameSync(files.mp4_1080p, path.join(this.dirs.mp4_1080p, entity._id + '.mp4'));
+        fs.renameSync(files.mp4_1080p, path.join(this.dirs.mp4_1080p, entity.loop._id + '.mp4'));
       }
     } catch(err) {
       console.error(err);
     }
     try {
       if (files.webm_1080p && fs.existsSync(files.webm_1080p)) {
-        fs.renameSync(files.webm_1080p, path.join(this.dirs.webm_1080p, entity._id + '.webm'));
+        fs.renameSync(files.webm_1080p, path.join(this.dirs.webm_1080p, entity.loop._id + '.webm'));
 
       }
     } catch(err) {
@@ -52,21 +52,21 @@ class FileHandler {
 
     try {
       if (files.jpg_1080p && fs.existsSync(files.jpg_1080p)) {
-        fs.renameSync(files.jpg_1080p, path.join(this.dirs.jpg_1080p, entity._id + '.jpg'));
+        fs.renameSync(files.jpg_1080p, path.join(this.dirs.jpg_1080p, entity.loop._id + '.jpg'));
       }
     } catch(err) {
       console.error(err);
     }
     try {
       if (files.jpg_1080p_tiny && fs.existsSync(files.jpg_1080p_tiny)) {
-        fs.renameSync(files.jpg_1080p_tiny, path.join(this.dirs.jpg_1080p_tiny, entity._id + '.jpg'));
+        fs.renameSync(files.jpg_1080p_tiny, path.join(this.dirs.jpg_1080p_tiny, entity.loop._id + '.jpg'));
       }
     } catch(err) {
       console.error(err);
     }
     try {
       if (files.gif_360p && fs.existsSync(files.gif_360p)) {
-        fs.renameSync(files.gif_360p, path.join(this.dirs.gif_360p, entity._id + '.gif'));
+        fs.renameSync(files.gif_360p, path.join(this.dirs.gif_360p, entity.loop._id + '.gif'));
       }
     } catch(err) {
       console.error(err);

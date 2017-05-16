@@ -9,7 +9,7 @@ router.get('/', (req, res, next) => {
     }
 
     res.render('index', {
-      activeMenu: 'home',
+      pageType: 'home',
       loops
     });
   })

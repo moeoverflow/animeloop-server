@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get('/tags', (req, res, next) => {
   res.render('list', {
-    activeMenu: 'list-tags',
+    pageType: 'list-tags',
     datas: []
   });
 });
@@ -16,7 +16,7 @@ router.get('/episodes', (req, res, next) => {
     }
 
     res.render('list', {
-      activeMenu: 'list-episodes',
+        pageType: 'list-episodes',
       datas: episodes
     });
   });
@@ -30,7 +30,7 @@ router.get('/series', (req, res, next) => {
     }
 
     res.render('list', {
-      activeMenu: 'list-series',
+        pageType: 'list-series',
       datas: series
     });
   });
