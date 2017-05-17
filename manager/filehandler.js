@@ -9,70 +9,42 @@ class FileHandler {
     this.dirs = {
       mp4_1080p: path.join(dataDir, 'mp4_1080p'),
       webm_1080p: path.join(dataDir, 'webm_1080p'),
-
       jpg_1080p: path.join(dataDir, 'jpg_1080p'),
       jpg_1080p_tiny: path.join(dataDir, 'jpg_1080p_tiny'),
       gif_360p: path.join(dataDir, 'gif_360p')
     };
 
-    if (!fs.existsSync(this.dirs.webm_1080p)) {
-      mkdirp.sync(this.dirs.webm_1080p);
-    }
-    if (!fs.existsSync(this.dirs.mp4_1080p)) {
-      mkdirp.sync(this.dirs.mp4_1080p);
+    for (let key in config.storage.dir) {
+      if (!fs.existsSync(config.storage.dir[key])) {
+        console.log(config.storage.dir[key]);
+        mkdirp.sync(config.storage.dir[key]);
+      }
     }
 
-    if (!fs.existsSync(this.dirs.jpg_1080p)) {
-      mkdirp.sync(this.dirs.jpg_1080p);
-    }
-    if (!fs.existsSync(this.dirs.jpg_1080p_tiny)) {
-      mkdirp.sync(this.dirs.jpg_1080p_tiny);
-    }
-    if (!fs.existsSync(this.dirs.gif_360p)) {
-      mkdirp.sync(this.dirs.gif_360p);
+    for (let key in this.dirs) {
+      if (!fs.existsSync(this.dirs[key])) {
+        mkdirp.sync(this.dirs[key]);
+      }
     }
   }
 
-  saveFile(entity, files, callback) {
-    try {
-      if (files.mp4_1080p && fs.existsSync(files.mp4_1080p)) {
-        fs.renameSync(files.mp4_1080p, path.join(this.dirs.mp4_1080p, entity.loop._id + '.mp4'));
+  saveFile(entity, files) {
+    return new Promise((resolve, reject) => {
+      for (let key in this.dirs) {
+        try {
+          if (files[key] && fs.existsSync(files[key])) {
+            fs.renameSync(files[key], path.join(this.dirs[key], entity.loop._id + '.' + FileHandler.getExt(key)));
+          }
+        } catch (err) {
+          reject({
+            err,
+            entity
+          });
+          return;
+        }
       }
-    } catch(err) {
-      console.error(err);
-    }
-    try {
-      if (files.webm_1080p && fs.existsSync(files.webm_1080p)) {
-        fs.renameSync(files.webm_1080p, path.join(this.dirs.webm_1080p, entity.loop._id + '.webm'));
-
-      }
-    } catch(err) {
-      console.error(err);
-    }
-
-    try {
-      if (files.jpg_1080p && fs.existsSync(files.jpg_1080p)) {
-        fs.renameSync(files.jpg_1080p, path.join(this.dirs.jpg_1080p, entity.loop._id + '.jpg'));
-      }
-    } catch(err) {
-      console.error(err);
-    }
-    try {
-      if (files.jpg_1080p_tiny && fs.existsSync(files.jpg_1080p_tiny)) {
-        fs.renameSync(files.jpg_1080p_tiny, path.join(this.dirs.jpg_1080p_tiny, entity.loop._id + '.jpg'));
-      }
-    } catch(err) {
-      console.error(err);
-    }
-    try {
-      if (files.gif_360p && fs.existsSync(files.gif_360p)) {
-        fs.renameSync(files.gif_360p, path.join(this.dirs.gif_360p, entity.loop._id + '.gif'));
-      }
-    } catch(err) {
-      console.error(err);
-    }
-
-    callback();
+      resolve(true);
+    });
   }
 }
 
@@ -84,6 +56,16 @@ FileHandler.getFilesUrl = (id) => {
     jpg_720p: config.app.url + '/files/jpg_720p/' + id + '.jpg',
     gif_360p: config.app.url + '/files/gif_360p/' + id + '.gif'
   };
+};
+
+FileHandler.getExt = (type) => {
+  switch (type) {
+    case 'mp4_1080p': return 'mp4';
+    case 'webm_1080p': return 'webm';
+    case 'jpg_1080p': return 'jpg';
+    case 'jpg_720p': return 'jpg';
+    case 'gif_360p': return 'gif';
+  }
 };
 
 module.exports = FileHandler;

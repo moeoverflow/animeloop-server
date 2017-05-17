@@ -12,10 +12,6 @@ class ALManager {
     this.fileHandler = new FileHandler();
     this.set = new Set();
 
-    if (!fs.existsSync(config.storage.dir.localUpload)) {
-      fs.mkdirSync(config.storage.dir.localUpload);
-    }
-
     this.watching();
   }
 
@@ -68,19 +64,70 @@ class ALManager {
           };
 
           this.databaseHandler.addLoop(entity)
+          .then((data) => {
+            return this.fileHandler.saveFile(data, files);
+          })
           .then(() => {
-            this.fileHandler.saveFile(entity, files, () => {
+            callback(null);
+          })
+          .catch((data) => {
+            console.error(data.err);
+            this.removeLoop(data.entity.loop).then(() => {
               callback(null);
             });
           });
         };
-      }));
+      }), (err) => {
+        fs.unlinkSync(jsonPath);
+      });
 
-      fs.unlinkSync(jsonPath);
 
     } catch(err) {
       console.error(err);
     }
+  }
+
+  removeLoop(loop) {
+
+    async.waterfall([
+      (callback) => {
+        DatabaseHandler.LoopModel.remove({ _id: loop._id}, (err) => {
+          if (!err) {
+            callback(null, loop.episode);
+          }
+        });
+      },
+      (epi, callback) => {
+        DatabaseHandler.LoopModel.count({ episode: epi }, (err, count) => {
+          if (count == 0) {
+            callback(null, epi);
+          }
+        });
+      },
+      (epi, callback) => {
+        DatabaseHandler.EpisodeModel.findOne({ _id: epi }, (err, episode) => {
+          DatabaseHandler.EpisodeModel.remove({ _id: epi }, (err) => {
+            if (!err) {
+              callback(null, episode.series);
+            }
+          });
+        });
+      },
+      (ser,  callback) => {
+        DatabaseHandler.EpisodeModel.count({ series: ser }, (err, count) => {
+          if (count == 0) {
+            callback(null, ser);
+          }
+        })
+      },
+      (ser, callback) => {
+        DatabaseHandler.SeriesModel.remove({ _id: ser}, (err) => {
+          if (!err) {
+            callback(null);
+          }
+        });
+      }
+    ]);
   }
 
   getRandomLoops(n, callback) {
@@ -94,7 +141,7 @@ class ALManager {
         return;
       }
 
-      if (results.length == 0) {
+      if (results == undefined) {
         callback(undefined, []);
         return;
       }

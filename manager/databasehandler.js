@@ -25,7 +25,11 @@ class DatabaseHandler {
           entity.loop.episode = episode._id;
           DatabaseHandler.LoopModel.findOrCreate(entity.loop, (err, loop, created) => {
             if (err) { reject(err); }
-              resolve(true);
+              resolve({
+                series,
+                episode,
+                loop
+              });
             });
         });
       });
