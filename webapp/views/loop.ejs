@@ -20,6 +20,11 @@
   <div id="content">
     <div class="loop detail panel">
       <div class="panel-body">
+        <ol class="breadcrumb path-navigator">
+          <li><a href="/series/<%- loop.series._id %>"><%- loop.series.title %></a></li>
+          <li><a href="/episode/<%- loop.episode._id %>"><%- loop.episode.title %></a></li>
+          <li class="active">(´・ω・`)</li>
+        </ol>
         <div class="col-md-12 col-sm-12">
           <div class="video col-md-9">
             <video loop="" autoplay="" muted="" webkit-playsinline="" playsinline="" poster="<%- loop.files.jpg_720p %>" style="background: url('<%- loop.files.jpg_720p %>') center center / cover no-repeat;">

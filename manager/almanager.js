@@ -153,11 +153,11 @@ class ALManager {
   }
 
   getEpisodes(callback) {
-    DatabaseHandler.EpisodeModel.find({}).sort().exec(callback);
+    DatabaseHandler.EpisodeModel.find({}).sort({ title: 1 }).exec(callback);
   }
 
   getSeries(callback) {
-    DatabaseHandler.SeriesModel.find({}).sort().exec(callback);
+    DatabaseHandler.SeriesModel.find({}).sort({ title: 1 }).exec(callback);
   }
 }
 

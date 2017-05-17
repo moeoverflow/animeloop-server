@@ -23,7 +23,7 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/files', express.static(path.join(__dirname, 'storage', 'data')));
+app.use('/files', express.static(config.storage.dir.data));
 
 app.use(webRouter);
 app.use(apiRouter);

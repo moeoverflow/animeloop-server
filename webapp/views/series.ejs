@@ -20,7 +20,9 @@
   <div id="content">
     <div class="panel">
       <div class="panel-body">
+        <% if (episodes.length >= 1) { %>
         <h3><%- episodes[0].series.title %></h3>
+        <% } %>
       </div>
     </div>
 

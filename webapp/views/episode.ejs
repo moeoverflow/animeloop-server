@@ -20,8 +20,13 @@
   <div id="content">
     <div class="panel">
       <div class="panel-body">
-        <h3><%- loops[0].series.title %> - <%- loops[0].episode.title %></h3>
-
+        <% if (loops.length >= 1) { %>
+        <ol class="breadcrumb path-navigator">
+          <li><a href="/series/<%- loops[0].series._id %>"><%- loops[0].series.title %></a></li>
+          <li class="active">(´・ω・`)</li>
+        </ol>
+        <h3><%- loops[0].episode.title %></h3>
+        <% } %>
       </div>
     </div>
 
