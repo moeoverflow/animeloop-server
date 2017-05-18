@@ -1,7 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Loop | Animeloop</title>
+  <% if (episodes.length >= 1) { %>
+  <title><%- episodes[0].series.title %> | Series | Animeloop</title>
+  <% } else { %>
+  <title>Series | Animeloop</title>
+  <% } %>
   <%- include('partials/head') %>
 </head>
 

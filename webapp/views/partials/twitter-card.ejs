@@ -1,0 +1,13 @@
+<meta name="twitter:card" content="<%- card %>" />
+<meta name="twitter:site" content="<%- at %>" />
+<meta name="twitter:title" content="<%- title %>" />
+<meta name="twitter:description" content="<%- description %>" />
+<meta name="twitter:image" content="<%- image %>" />
+
+<% if (card == 'player') { %>
+<meta name="twitter:player" content="<%- videoContainer %>" />
+<meta name="twitter:player:width" content="<%- videoWidth %>" />
+<meta name="twitter:player:height" content="<%- videoHeight %>" />
+<meta name="twitter:player:stream" content="<%- videoStream %>" />
+<meta name="twitter:player:stream:content_type" content="<%- videoContentType %>" />
+<% } %>

@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+  <%- include('partials/twitter-card', {
+    card: 'player',
+    at: '@moeoverflow',
+    title: `${loop.episode.title} | ${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`,
+    description: 'View the anime loop on MOEOVERFLOW.',
+    image: loop.files.jpg_1080p,
+    videoContainer: 'htt/loop/' + loop._id + '/twitter',
+    videoWidth: '1920',
+    videoHeight: '1080',
+    videoStream: loop.files.mp4_1080p,
+    videoContentType: 'video/mp4'
+  }); %>
+
+  <%- include('partials/open-graph', {
+    title: `${loop.episode.title} | ${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`,
+    description: 'View the anime loop on MOEOVERFLOW.',
+    image: loop.files.jpg_1080p,
+    videoWidth: '1920',
+    videoHeight: '1080',
+    videoStream: loop.files.mp4_1080p,
+    videoContentType: 'video/mp4'
+  }); %>
+
   <title>Loop | Animeloop</title>
   <%- include('partials/head') %>
 </head>
