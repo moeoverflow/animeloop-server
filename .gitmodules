@@ -1,3 +1,6 @@
 [submodule "webapp/miminium"]
 	path = webapp/miminium
 	url = https://github.com/akivaron/miminium.git
+[submodule "animeloop-cli"]
+	path = animeloop-cli
+	url = https://github.com/moeoverflow/animeloop-cli.git

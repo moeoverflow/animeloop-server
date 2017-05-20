@@ -3,6 +3,7 @@ storage
 webapp/public/test
 webapp/content/post/*
 config.js
+bin
 
 # Sass
 .sass-cache

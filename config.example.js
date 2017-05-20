@@ -7,14 +7,18 @@ const config = {
     port: 7777
   },
   googleAnalytics: '',
+  animeloopCli: {
+    bin: path.join(__dirname, 'bin', 'animeloop-cli')
+  },
+  automator: {
+    delay: 3
+  },
   storage: {
-    uploadDelay: 5,
     dir: {
       data: path.join(__dirname, 'storage', 'data'),
       upload: path.join(__dirname, 'storage', 'upload'),
       raw: path.join(__dirname, 'storage', 'raw'),
       autogen: path.join(__dirname, 'storage', 'autogen')
-
     }
   },
   database: {

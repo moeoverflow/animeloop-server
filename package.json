@@ -18,7 +18,9 @@
     "mongoose": "^4.9.7",
     "mongoose-findorcreate": "^1.0.1",
     "mongoose-simple-random": "^0.4.1",
-    "node-watch": "^0.5.4"
+    "node-watch": "^0.5.4",
+    "shell-escape": "^0.2.0",
+    "shelljs": "^0.7.7"
   },
   "devDependencies": {
     "body-parser": "~1.12.4",

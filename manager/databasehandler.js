@@ -13,7 +13,7 @@ class DatabaseHandler {
     mongoose.connect(config.database.url)
   }
   addLoop(entity) {
-    console.log('Adding entity: ' + entity.loop.episode + ' ' + entity.loop.period.begin + ' ~ ' + entity.loop.period.end);
+    console.log('Adding entity: ' + entity.episode + ' ' + entity.loop.period.begin + ' ~ ' + entity.loop.period.end);
     return new Promise((resolve, reject) => {
       DatabaseHandler.SeriesModel.findOrCreate(entity.series, (err, series, created) => {
         if (err) { reject(err); }
