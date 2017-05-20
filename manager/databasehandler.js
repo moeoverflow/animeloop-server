@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const random = require('mongoose-simple-random');
 const findOrCreate = require('mongoose-findorcreate');
-const async = require('async');
-
 
 mongoose.Promise = global.Promise;
 const Schema = mongoose.Schema;
@@ -15,6 +13,7 @@ class DatabaseHandler {
     mongoose.connect(config.database.url)
   }
   addLoop(entity) {
+    console.log('Adding entity: ' + entity.loop.episode + ' ' + entity.loop.period.begin + ' ~ ' + entity.loop.period.end);
     return new Promise((resolve, reject) => {
       DatabaseHandler.SeriesModel.findOrCreate(entity.series, (err, series, created) => {
         if (err) { reject(err); }
@@ -70,7 +69,10 @@ const LoopSchema = new Schema({
   episode: { type: ObjectId, ref: 'Episode' },
   series: { type: ObjectId, ref: 'Series' },
   r18: { type: Boolean, default: false },
-  tags: [String]
+  tags: [String],
+  sourceFrom: String,
+  uploadDate: { type: Date, require: true },
+  review: { type: Boolean, default: false }
 });
 LoopSchema.plugin(findOrCreate);
 LoopSchema.plugin(random);

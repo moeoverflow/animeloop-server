@@ -1,7 +1,8 @@
-const config = require('../config');
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
+
+const config = require('../config');
 
 class FileHandler {
   constructor() {
@@ -10,6 +11,7 @@ class FileHandler {
       mp4_1080p: path.join(dataDir, 'mp4_1080p'),
       webm_1080p: path.join(dataDir, 'webm_1080p'),
       jpg_1080p: path.join(dataDir, 'jpg_1080p'),
+      jpg_720p: path.join(dataDir, 'jpg_720p'),
       jpg_1080p_tiny: path.join(dataDir, 'jpg_1080p_tiny'),
       gif_360p: path.join(dataDir, 'gif_360p')
     };

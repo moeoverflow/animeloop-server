@@ -17,7 +17,8 @@
     "mkdirp": "^0.5.1",
     "mongoose": "^4.9.7",
     "mongoose-findorcreate": "^1.0.1",
-    "mongoose-simple-random": "^0.4.1"
+    "mongoose-simple-random": "^0.4.1",
+    "node-watch": "^0.5.4"
   },
   "devDependencies": {
     "body-parser": "~1.12.4",

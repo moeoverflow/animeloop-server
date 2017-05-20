@@ -1,5 +1,4 @@
 const fs = require('fs');
-const path = require('path');
 const async = require('async');
 
 const config = require('../config');
@@ -10,81 +9,23 @@ class ALManager {
   constructor() {
     this.databaseHandler = new DatabaseHandler();
     this.fileHandler = new FileHandler();
-    this.set = new Set();
-
-    this.watching();
   }
 
-  watching() {
-    fs.watch(config.storage.dir.localUpload, {recursive: true},  (eventType, filename) => {
-      if (filename && path.extname(filename) === ".json") {
-        const jsonPath = path.join(config.storage.dir.localUpload, filename);
-
-        if (this.set.has(jsonPath)) {
-          return;
-        }
-        this.set.add(jsonPath);
-
-        if (fs.existsSync(config.storage.dir.localUpload)) {
-          setTimeout(this.addLoopsFromLocal.bind(this), config.storage.localUploadDelay * 1000, jsonPath);
-        }
-      }
-    });
-  }
-
-  addLoopsFromLocal(jsonPath) {
-    let dir = path.dirname(jsonPath);
-    try {
-      let data = JSON.parse(fs.readFileSync(jsonPath));
-      async.waterfall(data.loops.map((loop) => {
-        return (callback) => {
-          let entity = {
-            series: {
-              title: data.series
-            },
-            episode: {
-              title: data.title
-            },
-            loop: {
-              duration: loop.duration,
-              period: {
-                begin: loop.time.start,
-                end: loop.time.end
-              },
-              frame: {
-                begin: loop.frame.start,
-                end: loop.frame.end
-              },
-            }
-          };
-
-          let files = {
-            mp4_1080p: path.join(dir, loop.video_filename),
-            jpg_1080p: path.join(dir, loop.cover_filename)
-          };
-
-          this.databaseHandler.addLoop(entity)
-          .then((data) => {
-            return this.fileHandler.saveFile(data, files);
-          })
-          .then(() => {
-            callback(null);
-          })
-          .catch((data) => {
-            console.error(data.err);
-            this.removeLoop(data.entity.loop).then(() => {
-              callback(null);
-            });
-          });
-        };
-      }), (err) => {
-        fs.unlinkSync(jsonPath);
+  addLoop(loop, callback) {
+    this.databaseHandler
+    .addLoop(loop.entity)
+    .then((data) => {
+      return this.fileHandler.saveFile(data, loop.files);
+    })
+    .then(() => {
+      callback(null);
+    })
+    .catch((data) => {
+      console.error(data.err);
+      this.removeLoop(data.entity.loop).then(() => {
+        callback(null);
       });
-
-
-    } catch(err) {
-      console.error(err);
-    }
+    });
   }
 
   removeLoop(loop) {

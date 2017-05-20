@@ -1,6 +1,6 @@
-const shell = require('shelljs');
 const path = require('path');
 const fs = require('fs');
+const shell = require('shelljs');
 const mkdirp = require('mkdirp');
 
 const config = require('../config');
@@ -27,6 +27,18 @@ function convertMP4_1080PtoGIF_360P() {
   }, (a, b) => {
 
     shell.exec(`ffmpeg -i ${a} -vf scale=-1:360 ${b}`);
+  });
+}
+
+function convertJPG_1080P_JPG_720P() {
+  convert({
+    dir: path.join(config.storage.dir.data, 'jpg_1080p'),
+    ext: 'jpg'
+  }, {
+    dir: path.join(config.storage.dir.data, 'jpg_720p'),
+    ext: 'jpg'
+  }, (a, b) => {
+    shell.exec(`convert -resize 720 ${a} ${b}`);
   });
 }
 
@@ -76,7 +88,12 @@ function convert(from, to, dowhat) {
   });
 }
 
-convertMP4_1080PtoGIF_360P();
-convertJPG_1080P_JPG_360P();
-convertMP4_1080PtoWEBM_1080P();
+function doConvert() {
+  convertMP4_1080PtoGIF_360P();
+  convertJPG_1080P_JPG_360P();
+  convertJPG_1080P_JPG_720P();
+  convertMP4_1080PtoWEBM_1080P();
+}
 
+
+module.exports = doConvert;
