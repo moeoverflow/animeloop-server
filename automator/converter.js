@@ -43,6 +43,7 @@ function convertJPG_1080P_JPG_720P() {
 }
 
 function convertJPG_1080P_JPG_360P() {
+
   convert({
     dir: path.join(config.storage.dir.data, 'jpg_1080p'),
     ext: 'jpg'
@@ -61,6 +62,7 @@ function tinyPNG() {
 function convert(from, to, dowhat) {
 
   let tempDir = path.join(to.dir, 'temp');
+  shell.rm('-r', tempDir);
   let dstDir = to.dir;
 
   shell.cd(from.dir);

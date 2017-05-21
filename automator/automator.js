@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const async = require('async');
 const shell = require('shelljs');
-const watch = require('node-watch');
+const chokidar = require('chokidar');
 const mkdirp = require('mkdirp');
 const shellescape = require('shell-escape');
 
@@ -11,54 +11,43 @@ const ALManager = require('../manager/almanager');
 const parsing = require('./parse');
 const convert = require('./converter');
 
-var uploadTimer;
-var animeloopCliTimer;
 var doUploads = new Set();
-var runAnimeloopCli = new Set();
+var runAnimeloopClis = new Set();
 
+var shouldDoConvert = false;
+var doingConvert = false;
+var doingUpload = false;
+var runningAnimeloopCli = false;
 
 class Automator {
   constructor() {
     this.alManager = new ALManager();
     this.databaseHandler = this.alManager.databaseHandler;
 
-    this.watchingUploadDir();
-    this.watchingRawDir();
+    this.watching();
   }
 
 
-  watchingUploadDir() {
-    console.log('start to watch upload dir...');
-
-    var watcher = watch(config.storage.dir.upload, {
-      recursive: true,
-      filter: /\.json$/,
+  watching() {
+    this.watcher = chokidar.watch([config.storage.dir.upload, config.storage.dir.raw], {
+      persistent: true,
+      usePolling: true
     });
-    watcher.on('change', (event, filename) => {
-      if (event == 'update') {
-        if (doUploads.has(filename)) {
-          return;
-        }
-        doUploads.add(filename);
+    console.log('start to watch upload and raw dir...');
+    this.watcher.on('add', (filename) => {
+      const uploadRegex = new RegExp(`.*${config.storage.dir.upload}.*\.(json)$`);
+      const rawRegex = new RegExp(`.*${config.storage.dir.raw}.*\.(mp4|mkv)$`);
 
-        clearTimeout(uploadTimer)
-        uploadTimer = setTimeout(() => {
-          async.waterfall(Array.from(doUploads).map((filename) => {
-            return (callback) => {
-              this.upload(filename, () => {
-                doUploads.delete(filename);
-                callback();
-              });
-            };
-          }), (err) => {
-            if (err != null && err != undefined) {
-              console.error(err);
-              return;
-            }
-
-            convert();
-          });
-        }, config.automator.delay * 1000);
+      if (uploadRegex.test(filename)) {
+        setTimeout(() => {
+          console.log('UPLOAD: ' + filename);
+          doUploads.add(filename);
+        }, config.automator.uploadDelay * 1000);
+      } else if (rawRegex.test(filename)) {
+        setTimeout(() => {
+          console.log('RAW: ' + filename);
+          runAnimeloopClis.add(filename);
+        }, config.automator.animeloopCliDelay * 1000);
       }
     });
   }
@@ -90,36 +79,7 @@ class Automator {
     });
   }
 
-  watchingRawDir() {
-    console.log('start to watch raw dir...');
-    var watcher = watch(config.storage.dir.raw, {
-      recursive: true,
-      filter: /\.(mp4|mkv)$/,
-    });
-    watcher.on('change', (event, filename) => {
-      if (event == 'update') {
-        if (runAnimeloopCli.has(filename)) {
-          return;
-        }
-        runAnimeloopCli.add(filename);
-
-        clearTimeout(animeloopCliTimer)
-        animeloopCliTimer = setTimeout(() => {
-          async.series(Array.from(runAnimeloopCli).map((filename) => {
-            return (callback) => {
-              this.runAnimeloopCli(filename, () => {
-                runAnimeloopCli.delete(filename);
-                shell.rm(filename);
-                callback();
-              });
-            };
-          }));
-        }, config.automator.delay * 1000);
-      }
-    });
-  }
-
-  runAnimeloopCli(filename, callback) {
+  animeloopCli(filename, callback) {
     let args = [config.animeloopCli.bin, '-i', filename, '--cover', '-o', config.storage.dir.autogen];
     let shellString = shellescape(args);
 
@@ -127,9 +87,9 @@ class Automator {
     shell.exec(shellString, () => {
       let basename = path.basename(filename, path.extname(filename));
       let dir = path.join(config.storage.dir.autogen, 'loops', basename);
-      this.upload(path.join(dir, basename + '.json'), () => {
-        convert();
-      });
+
+      shell.mv(dir, config.storage.dir.upload);
+      shell.rm(filename);
 
       if (callback) {
         callback();
@@ -139,3 +99,38 @@ class Automator {
 }
 
 var automator = new Automator();
+
+
+setInterval(() => {
+  if (doingConvert || doingUpload || runningAnimeloopCli) {
+    return;
+  }
+
+  if (shouldDoConvert) {
+    doingConvert = true;
+    convert();
+    doingConvert = false;
+    return;
+  }
+
+  if (doUploads.size != 0) {
+    doingUpload = true;
+    let filename = doUploads.values().next().value;
+    automator.upload(filename, () => {
+      doUploads.delete(filename);
+      doingUpload = false;
+      shouldDoConvert = true;
+    });
+    return;
+  }
+
+  if (runAnimeloopClis.size != 0) {
+    runningAnimeloopCli = true;
+    let filename = runAnimeloopClis.values().next().value;
+    automator.animeloopCli(filename, () => {
+      runAnimeloopClis.delete(filename);
+      runningAnimeloopCli = false;
+    });
+    return;
+  }
+}, config.automator.pollingDuration * 1000);
