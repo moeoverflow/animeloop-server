@@ -5,6 +5,8 @@ const shell = require('shelljs');
 const chokidar = require('chokidar');
 const mkdirp = require('mkdirp');
 const shellescape = require('shell-escape');
+const log4js = require('log4js');
+const logger = log4js.getLogger('automator');
 
 const config = require('../config');
 const ALManager = require('../manager/almanager');
@@ -33,19 +35,19 @@ class Automator {
       persistent: true,
       usePolling: true
     });
-    console.log('start to watch upload and raw dir...');
+    logger.info('Start to watch upload and raw dir...');
     this.watcher.on('add', (filename) => {
       const uploadRegex = new RegExp(`.*${config.storage.dir.upload}.*\.(json)$`);
       const rawRegex = new RegExp(`.*${config.storage.dir.raw}.*\.(mp4|mkv)$`);
 
       if (uploadRegex.test(filename)) {
         setTimeout(() => {
-          console.log('UPLOAD: ' + filename);
+          logger.info(`Upload dir new file: ${path.basename(filename)}`);
           doUploads.add(filename);
         }, config.automator.uploadDelay * 1000);
       } else if (rawRegex.test(filename)) {
         setTimeout(() => {
-          console.log('RAW: ' + filename);
+          logger.info(`Raw dir new file: ${path.basename(filename)}`);
           runAnimeloopClis.add(filename);
         }, config.automator.animeloopCliDelay * 1000);
       }
@@ -54,9 +56,9 @@ class Automator {
 
   upload(jsonfile, callback) {
     let loops = parsing(jsonfile);
-
     if (loops == undefined) {
-      console.error('loops undefined');
+      logger.error('uploading loops undefined');
+      return;
     }
 
     async.series(loops.map((loop) => {
@@ -65,13 +67,11 @@ class Automator {
       };
     }), (err) => {
       if (err != null && err != undefined) {
-        console.error(err);
+        logger.error(err);
         return;
       }
-
-      console.log('Add database end.');
-
       shell.rm('-r', path.dirname(jsonfile));
+      logger.error('Upload loops successfully.');
 
       if (callback) {
         callback();
@@ -82,13 +82,14 @@ class Automator {
   animeloopCli(filename, callback) {
     let args = [config.animeloopCli.bin, '-i', filename, '--cover', '-o', config.storage.dir.autogen];
     let shellString = shellescape(args);
-
-    console.log(shellString);
+    logger.debug(`run command: ${shellString}`);
     shell.exec(shellString, () => {
       let basename = path.basename(filename, path.extname(filename));
       let dir = path.join(config.storage.dir.autogen, 'loops', basename);
 
+      logger.debug(`move dir ${dir} to upload dir`);
       shell.mv(dir, config.storage.dir.upload);
+      logger.debug(`delete file ${path.basename(filename)}.`);
       shell.rm(filename);
 
       if (callback) {
@@ -102,21 +103,26 @@ var automator = new Automator();
 
 
 setInterval(() => {
-  if (doingConvert || doingUpload || runningAnimeloopCli) {
+  if (doingConvert || doingConvert || runningAnimeloopCli) {
     return;
   }
 
   if (shouldDoConvert) {
+    logger.debug('polling: start to do convert.');
     doingConvert = true;
     convert();
+    logger.debug('polling: do convert successfully.');
     doingConvert = false;
+    shouldDoConvert = false;
     return;
   }
 
   if (doUploads.size != 0) {
     doingUpload = true;
     let filename = doUploads.values().next().value;
+    logger.debug(`polling: start to do upload. file: ${path.basename(filename)}`);
     automator.upload(filename, () => {
+      logger.debug(`polling: do upload successfully. file: ${path.basename(filename)}`);
       doUploads.delete(filename);
       doingUpload = false;
       shouldDoConvert = true;
@@ -127,7 +133,9 @@ setInterval(() => {
   if (runAnimeloopClis.size != 0) {
     runningAnimeloopCli = true;
     let filename = runAnimeloopClis.values().next().value;
+    logger.debug(`polling: start to run animeloop-cli. file: ${path.basename(filename)}`);
     automator.animeloopCli(filename, () => {
+      logger.debug(`polling: run animeloop-cli successfully. file: ${path.basename(filename)}`);
       runAnimeloopClis.delete(filename);
       runningAnimeloopCli = false;
     });

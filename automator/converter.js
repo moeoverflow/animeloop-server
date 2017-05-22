@@ -13,7 +13,7 @@ function convertMP4_1080PtoWEBM_1080P() {
     dir: path.join(config.storage.dir.data, 'webm_1080p'),
     ext: 'webm'
   }, (a, b) => {
-    shell.exec(`ffmpeg -i ${a} -c:v libvpx -an -b 512K ${b}`);
+    shell.exec(`ffmpeg -loglevel panic -i ${a} -c:v libvpx -an -b 512K ${b}`);
   });
 }
 
@@ -26,7 +26,7 @@ function convertMP4_1080PtoGIF_360P() {
     ext: 'gif'
   }, (a, b) => {
 
-    shell.exec(`ffmpeg -i ${a} -vf scale=-1:360 ${b}`);
+    shell.exec(`ffmpeg -loglevel panic -i ${a} -vf scale=-1:360 ${b}`);
   });
 }
 
@@ -38,7 +38,7 @@ function convertJPG_1080P_JPG_720P() {
     dir: path.join(config.storage.dir.data, 'jpg_720p'),
     ext: 'jpg'
   }, (a, b) => {
-    shell.exec(`convert -resize 720 ${a} ${b}`);
+    shell.exec(`convert -quiet -resize 720 ${a} ${b}`);
   });
 }
 
@@ -51,7 +51,7 @@ function convertJPG_1080P_JPG_360P() {
     dir: path.join(config.storage.dir.data, 'jpg_360p'),
     ext: 'jpg'
   }, (a, b) => {
-    shell.exec(`convert -resize 360 ${a} ${b}`);
+    shell.exec(`convert -quiet -resize 360 ${a} ${b}`);
   });
 }
 

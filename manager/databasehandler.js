@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const random = require('mongoose-simple-random');
 const findOrCreate = require('mongoose-findorcreate');
+const log4js = require('log4js');
+const logger = log4js.getLogger('database');
 
 mongoose.Promise = global.Promise;
 const Schema = mongoose.Schema;
@@ -13,7 +15,7 @@ class DatabaseHandler {
     mongoose.connect(config.database.url)
   }
   addLoop(entity) {
-    console.log('Adding entity: ' + entity.episode + ' ' + entity.loop.period.begin + ' ~ ' + entity.loop.period.end);
+    logger.debug(`Adding entity: ${entity.episode} ${entity.loop.period.begin} ~ ${entity.loop.period.end}`);
     return new Promise((resolve, reject) => {
       DatabaseHandler.SeriesModel.findOrCreate(entity.series, (err, series, created) => {
         if (err) { reject(err); }
