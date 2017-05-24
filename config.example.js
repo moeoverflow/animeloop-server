@@ -13,7 +13,25 @@ const config = {
   automator: {
     pollingDuration: 10,
     uploadDelay: 3,
-    animeloopCliDelay: 10
+    animeloopCliDelay: 30,
+    app: {
+      url: 'http://127.0.0.1:7778',
+      host: '127.0.0.1',
+      port: 7778,
+      auth: {
+        username: 'admin',
+        password: 'pass'
+      },
+      redis: {
+        host: '127.0.0.1',
+        port: 6379,
+        auth: ''
+      }
+    },
+    whatanime: {
+      url: 'https://whatanime.ga/api/search',
+      token: ''
+    }
   },
   storage: {
     dir: {

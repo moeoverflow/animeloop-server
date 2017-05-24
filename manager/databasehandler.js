@@ -12,7 +12,7 @@ const config = require('../config');
 
 class DatabaseHandler {
   constructor() {
-    mongoose.connect(config.database.url)
+    mongoose.connect(config.mongodb.url)
   }
   addLoop(entity) {
     logger.debug(`Adding entity: ${entity.episode} ${entity.loop.period.begin} ~ ${entity.loop.period.end}`);
@@ -48,7 +48,8 @@ class DatabaseHandler {
 }
 
 const SeriesSchema = new Schema({
-  title: { type: String, unique: true, require: true }
+  title: { type: String, unique: true, require: true },
+  anilist_id: Number
 });
 SeriesSchema.plugin(findOrCreate);
 

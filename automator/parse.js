@@ -4,10 +4,15 @@ const fs = require('fs');
 function parsing(jsonfile) {
   let dir = path.dirname(jsonfile);
   try {
+    if (!fs.existsSync(jsonfile)) {
+      return undefined;
+    }
     let json = JSON.parse(fs.readFileSync(jsonfile));
 
-    if (json.animeloop_ver == undefined) {
-      return undefined;
+    if (json.animeloop_ver == undefined ||
+        json.loops == undefined ||
+        json.loops.length == 0) {
+      return undefined
     }
 
     return json.loops.map((loop) => {

@@ -18,7 +18,6 @@ class FileHandler {
 
     for (let key in config.storage.dir) {
       if (!fs.existsSync(config.storage.dir[key])) {
-        console.log(config.storage.dir[key]);
         mkdirp.sync(config.storage.dir[key]);
       }
     }

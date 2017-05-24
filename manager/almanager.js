@@ -1,5 +1,7 @@
 const fs = require('fs');
 const async = require('async');
+const log4js = require('log4js');
+const logger = log4js.getLogger('manager');
 
 const config = require('../config');
 const DatabaseHandler = require('./databasehandler');
@@ -21,7 +23,7 @@ class ALManager {
       callback(null);
     })
     .catch((data) => {
-      console.error(data.err);
+      logger.error(data.err);
       this.removeLoop(data.entity.loop).then(() => {
         callback(null);
       });
@@ -29,7 +31,6 @@ class ALManager {
   }
 
   removeLoop(loop) {
-
     async.waterfall([
       (callback) => {
         DatabaseHandler.LoopModel.remove({ _id: loop._id}, (err) => {
