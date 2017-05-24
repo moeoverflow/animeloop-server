@@ -120,22 +120,34 @@ function convertAll(done) {
 
   async.series([
     (callback) => {
-      async.forEachSeries(ids, (id, callback) => {
+      async.forEachSeries(ids.filter((id) => {
+        let dst = path.join(data, 'gif_360p', `${id}.gif`);
+        return !fs.existsSync(dst);
+      }), (id, callback) => {
         convertToGIF_360P(id, callback);
       }, callback);
     },
     (callback) => {
-      async.forEachSeries(ids, (id, callback) => {
+      async.forEachSeries(ids.filter((id) => {
+        let dst = path.join(data, 'jpg_360p', `${id}.jpg`);
+        return !fs.existsSync(dst);
+      }), (id, callback) => {
         convertToJPG_360P(id, callback);
       }, callback);
     },
     (callback) => {
-      async.forEachSeries(ids, (id, callback) => {
+      async.forEachSeries(ids.filter((id) => {
+        let dst = path.join(data, 'jpg_720p', `${id}.jpg`);
+        return !fs.existsSync(dst);
+      }), (id, callback) => {
         convertToJPG_720P(id, callback);
       }, callback);
     },
     (callback) => {
-      async.forEachSeries(ids, (id, callback) => {
+      async.forEachSeries(ids.filter((id) => {
+        let dst = path.join(data, 'webm_1080p', `${id}.webm`);
+        return !fs.existsSync(dst);
+      }), (id, callback) => {
         convertToWEBM_1080P(id, callback);
       }, callback);
     }
