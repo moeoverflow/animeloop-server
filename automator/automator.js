@@ -102,12 +102,12 @@ class Automator {
           let job = queue.create('convert', {
             title: 'Do convert.',
           })
-            .priority('high')
-            .save((err) => {
-              if (!err) {
-                logger.info(`Job ID: ${job.id} - Do convert`);
-              }
-            });
+          .priority('high')
+          .save((err) => {
+            if (!err) {
+              logger.info(`Job ID: ${job.id} - Do convert`);
+            }
+          });
         });
         job.on('error', (err) => {
           logger.debug(err);
@@ -174,10 +174,9 @@ class Automator {
             return (prev.similarity < next.similarity);
           })[0];
 
+          logger.info(`whatanime.ga - change series from ${loops[0].entity.series.title} to ${result.series}`);
+          logger.info(`whatanime.ga - change episode from ${loops[0].entity.episode.title} to ${result.episode}`);
           loops = loops.map((loop) => {
-            logger.info(`whatanime.ga - change series from ${loop.entity.series.title} to ${result.series}`);
-            logger.info(`whatanime.ga - change episode from ${loop.entity.episode.title} to ${result.episode}`);
-
             loop.entity.series.title = result.series;
             loop.entity.series.anilist_id = result.anilist_id;
             loop.entity.episode.title = result.episode;
