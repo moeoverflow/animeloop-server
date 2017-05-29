@@ -6,15 +6,7 @@ const config = require('../config');
 
 class FileHandler {
   constructor() {
-    const dataDir = config.storage.dir.data;
-    this.dirs = {
-      mp4_1080p: path.join(dataDir, 'mp4_1080p'),
-      webm_1080p: path.join(dataDir, 'webm_1080p'),
-      jpg_1080p: path.join(dataDir, 'jpg_1080p'),
-      jpg_720p: path.join(dataDir, 'jpg_720p'),
-      jpg_1080p_tiny: path.join(dataDir, 'jpg_1080p_tiny'),
-      gif_360p: path.join(dataDir, 'gif_360p')
-    };
+    this.dirs = FileHandler.getLocalFilesTagDir();
 
     for (let key in config.storage.dir) {
       if (!fs.existsSync(config.storage.dir[key])) {
@@ -34,7 +26,7 @@ class FileHandler {
       for (let key in this.dirs) {
         try {
           if (files[key] && fs.existsSync(files[key])) {
-            fs.renameSync(files[key], path.join(this.dirs[key], entity.loop._id + '.' + FileHandler.getExt(key)));
+            fs.renameSync(files[key], path.join(this.dirs[key], `${entity.loop._id}.${FileHandler.getExt(key)}`));
           }
         } catch (err) {
           reject({
@@ -49,24 +41,37 @@ class FileHandler {
   }
 }
 
-FileHandler.getFilesUrl = (id) => {
-  return {
-    mp4_1080p: config.app.url + '/files/mp4_1080p/' + id + '.mp4',
-    webm_1080p: config.app.url + '/files/webm_1080p/' + id + '.webm',
-    jpg_1080p: config.app.url + '/files/jpg_1080p/' + id + '.jpg',
-    jpg_720p: config.app.url + '/files/jpg_720p/' + id + '.jpg',
-    gif_360p: config.app.url + '/files/gif_360p/' + id + '.gif'
-  };
+
+FileHandler.FilesTags = [
+  // 360p
+  'mp4_360p',
+  'webm_360p',
+  'gif_360p',
+  'jpg_360p',
+  // 720p
+  'jpg_720p',
+  // 1080p
+  'mp4_1080p',
+  'webm_1080p',
+  'jpg_1080p'
+];
+
+FileHandler.getPublicFilesUrl = (id) => {
+  return FileHandler.FilesTags.reduce((urls, tag) => {
+    urls[tag] = `${config.app.url}/files/${tag}/${id}.${FileHandler.getExt(tag)}`;
+    return urls;
+  }, {});
 };
 
-FileHandler.getExt = (type) => {
-  switch (type) {
-    case 'mp4_1080p': return 'mp4';
-    case 'webm_1080p': return 'webm';
-    case 'jpg_1080p': return 'jpg';
-    case 'jpg_720p': return 'jpg';
-    case 'gif_360p': return 'gif';
-  }
+FileHandler.getLocalFilesTagDir = () => {
+  return FileHandler.FilesTags.reduce((urls, tag) => {
+    urls[tag] = path.join(config.storage.dir.data, tag);
+    return urls;
+  }, {});
+};
+
+FileHandler.getExt = (tag) => {
+  return tag.split('_')[0];
 };
 
 module.exports = FileHandler;

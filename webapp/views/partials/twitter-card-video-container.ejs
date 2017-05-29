@@ -10,10 +10,14 @@
   }
 </style>
 
-<video width="100%" loop autoplay muted webkit-playsinline playsinline>
-  <source src="<%- loop.files.mp4_1080p %>" type="video/mp4">
-  Your browser does not support video
-</video>
+<%- include('video-container', {
+  video: {
+    cover: loop.files.jpg_1080p,
+    mp4: loop.files.mp4_1080p,
+    autoplay: true,
+    preload: true
+  }
+}) %>
 
 </body>
 </html>

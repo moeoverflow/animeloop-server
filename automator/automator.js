@@ -42,22 +42,36 @@ class Automator {
       }
     });
 
-    this.queue.process('convert', (job, done) => {
-      convert(done);
+    this.queue.process('convert', 1, (job, done) => {
+      logger.info('Start to do convert');
+      convert([], () => {
+        logger.info('Do convert successfully');
+        done();
+      });
     });
 
-    this.queue.process('upload', (job, done) => {
-      this.upload(job.data.filename, done);
+    this.queue.process('upload', 1, (job, done) => {
+      let filename = job.data.filename;
+      logger.info(`Start to upload ${path.basename(filename)}`);
+      this.upload(filename, () => {
+        logger.info(`Upload ${path.basename(filename)} successfully`);
+        done();
+      });
     });
 
-    this.queue.process('animeloop-cli', (job, done) => {
-      this.animeloopCli(job.data.filename, done);
+    this.queue.process('animeloop-cli', 1, (job, done) => {
+      let filename = job.data.filename;
+      logger.info(`Start to run animeloop-cli with ${path.basename(filename)}`);
+      this.animeloopCli(job.data.filename, () => {
+        logger.info(`Run animeloop-cli with ${path.basename(filename)} successfully`);
+        done();
+      });
     });
 
     kue.app.set('title', 'Automator | Animeloop');
     this.app = express();
     this.app.use(basicAuth(config.automator.app.auth.username, config.automator.app.auth.password));
-    this.app.use(kue.app);
+    this.app.use(config.automator.app.url, kue.app);
     this.app.listen(config.automator.app.port, config.automator.app.host);
   }
 
@@ -125,31 +139,62 @@ class Automator {
       return;
     }
 
-    let loop = loops[0];
-
     async.series([
       (callback) => {
-        whatanime(loop.files.jpg_1080p, (err, result) => {
-          if (!err) {
-            if (result) {
-              loops = loops.map((loop) => {
-                loop.entity.series.title = result.series;
-                loop.entity.series.anilist_id = result.anilist_id;
-                loop.entity.episode.title = result.episode;
-                return loop;
-              });
-            }
+        function selectLoops(array) {
+          if (array.length <= 3) {
+            return array;
           }
-          callback(null);
+
+          let split = Math.round(array.length / 5);
+          var results = array.filter((item, index) => {
+            return (index % split == 0);
+          });
+
+          results.shift();
+          if (results.length % 2 == 0) {
+            results.pop();
+          }
+
+          return results;
+        }
+        logger.info('whatanime.ga - fetching info');
+        async.series(selectLoops(loops).map((loop) => {
+          return (callback) => {
+            whatanime(loop.files.jpg_1080p, (err, result) => {
+              callback(null, result);
+            });
+          }
+        }), (err, results) => {
+          if (err) {
+            callback(err);
+          }
+
+          let result = results.sort((prev, next) => {
+            return (prev.similarity < next.similarity);
+          })[0];
+
+          loops = loops.map((loop) => {
+            logger.info(`whatanime.ga - change series from ${loop.entity.series.title} to ${result.series}`);
+            logger.info(`whatanime.ga - change episode from ${loop.entity.episode.title} to ${result.episode}`);
+
+            loop.entity.series.title = result.series;
+            loop.entity.series.anilist_id = result.anilist_id;
+            loop.entity.episode.title = result.episode;
+            return loop;
+          });
+
+          callback();
         });
       },
       (callback) => {
+        logger.debug(`Start to add loops into database: ${jsonfile}`)
         async.series(loops.map((loop) => {
           return (callback) => {
             this.alManager.addLoop(loop, callback);
           };
         }), (err) => {
-          if (err != null && err != undefined) {
+          if (err != null || err != undefined) {
             done(err);
             return;
           }
@@ -166,20 +211,43 @@ class Automator {
       done();
     })
 
+    function getLoopInfo(loops) {
+      let split = Math.floor(loops.length / 4);
+      loops = loops.filter((loop, index) => {
+        return (index % split);
+      });
 
+      async.series(loops.map((loop) => {
+        return (callback) => {
+          whatanime(loop.files.jpg_1080p, (err, result) => {
+            if (!err) {
+              if (result) {
+                loops = loops.map((loop) => {
+                  loop.entity.series.title = result.series;
+                  loop.entity.series.anilist_id = result.anilist_id;
+                  loop.entity.episode.title = result.episode;
+                  return loop;
+                });
+              }
+            }
+            callback();
+          });
+        }
+      }));
+    }
   }
 
   animeloopCli(filename, done) {
     let args = [config.animeloopCli.bin, '-i', filename, '--cover', '-o', config.storage.dir.autogen];
     let shellString = shellescape(args);
     logger.debug(`run command: ${shellString}`);
-    shell.exec(shellString, (err, stdout, stderr) => {
+    shell.exec(shellString, () => {
       let basename = path.basename(filename, path.extname(filename));
       let dir = path.join(config.storage.dir.autogen, 'loops', basename);
 
       logger.debug(`move dir ${dir} to upload dir`);
       shell.mv(dir, config.storage.dir.upload);
-      logger.debug(`delete file ${path.basename(filename)}.`);
+      logger.debug(`delete file ${path.basename(filename)}`);
       shell.rm(filename);
 
       done();

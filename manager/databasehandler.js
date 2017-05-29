@@ -18,20 +18,29 @@ class DatabaseHandler {
     logger.debug(`Adding entity: ${entity.episode} ${entity.loop.period.begin} ~ ${entity.loop.period.end}`);
     return new Promise((resolve, reject) => {
       DatabaseHandler.SeriesModel.findOrCreate(entity.series, (err, series, created) => {
-        if (err) { reject(err); }
+        if (err) {
+          reject(err);
+          return;
+        }
         entity.episode.series = series._id;
         DatabaseHandler.EpisodeModel.findOrCreate(entity.episode, (err, episode, created) => {
-          if (err) { reject(err); }
+          if (err) {
+            reject(err);
+            return;
+          }
           entity.loop.series = series._id;
           entity.loop.episode = episode._id;
           DatabaseHandler.LoopModel.findOrCreate(entity.loop, (err, loop, created) => {
-            if (err) { reject(err); }
-              resolve({
-                series,
-                episode,
-                loop
-              });
+            if (err) {
+              reject(err, entity.loop);
+              return;
+            }
+            resolve({
+              series,
+              episode,
+              loop
             });
+          });
         });
       });
     });

@@ -15,7 +15,7 @@ const config = {
     uploadDelay: 3,
     animeloopCliDelay: 30,
     app: {
-      url: 'http://127.0.0.1:7778',
+      url: '/automator',
       host: '127.0.0.1',
       port: 7778,
       auth: {

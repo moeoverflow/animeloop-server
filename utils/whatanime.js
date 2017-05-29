@@ -9,7 +9,8 @@ const logger = log4js.getLogger('whatanime');
 const config = require('../config');
 
 
-function whatanime(imagefile, callback) {
+function whatanime(imagefile, done) {
+
   async.waterfall([
     (callback) => {
       get_base64(imagefile, callback);
@@ -25,15 +26,15 @@ function whatanime(imagefile, callback) {
           callback(err);
         }
 
-        let data = JSON.parse(body);
-        if (callback) {
+        try {
+          let data = JSON.parse(body);
           callback(null, parseResult(data));
+        } catch(err) {
+          callback(err);
         }
       });
     }
-  ], callback);
-
-
+  ], done);
 }
 
 function get_base64(file, callback) {
@@ -60,6 +61,7 @@ function parseResult(data) {
     result.episode = `${doc.title_chinese} TV ${pad(doc.episode, 2)}`;
   }
   result.anilist_id = doc.anilist_id;
+  result.similarity = doc.similarity;
 
   return result;
 }
@@ -70,12 +72,4 @@ function pad(n, width, z) {
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
 
-
 module.exports = whatanime;
-// whatanime('/users/shincurry/downloads/test.jpg', (err, result) => {
-//   if (err) {
-//     console.error(err);
-//   }
-//
-//   console.log(result);
-// });

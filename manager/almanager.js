@@ -17,16 +17,21 @@ class ALManager {
     this.databaseHandler
     .addLoop(loop.entity)
     .then((data) => {
-      return this.fileHandler.saveFile(data, loop.files);
-    })
-    .then(() => {
-      callback(null);
-    })
-    .catch((data) => {
-      logger.error(data.err);
-      this.removeLoop(data.entity.loop).then(() => {
-        callback(null);
+      this.fileHandler.saveFile(data, loop.files)
+      .then(() => {
+        callback();
+      })
+      .catch((err) => {
+        callback(err);
       });
+    })
+    .catch((err, data) => {
+      logger.error(err);
+      if (data.entity.loop) {
+        this.removeLoop(data.entity.loop).then(() => {
+          callback(err);
+        });
+      }
     });
   }
 
@@ -90,7 +95,7 @@ class ALManager {
 
       let loops = results.map((r) => {
         var loop = r.toObject();
-        loop.files = FileHandler.getFilesUrl(r._id);
+        loop.files = FileHandler.getPublicFilesUrl(r._id);
         return loop;
       });
       callback(undefined, loops);
@@ -104,7 +109,7 @@ class ALManager {
             return;
         }
 
-        result.files = FileHandler.getFilesUrl(result._id);
+        result.files = FileHandler.getPublicFilesUrl(result._id);
         callback(undefined, result);
     });
   }
@@ -117,7 +122,7 @@ class ALManager {
         }
 
         let loops = results.map((r) => {
-          r.files = FileHandler.getFilesUrl(r._id);
+          r.files = FileHandler.getPublicFilesUrl(r._id);
           return r;
         });
 
@@ -133,7 +138,7 @@ class ALManager {
       }
 
       let episodes = results.map((r) => {
-        r.files = FileHandler.getFilesUrl(r._id);
+        r.files = FileHandler.getPublicFilesUrl(r._id);
         return r;
       });
 

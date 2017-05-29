@@ -1,3 +1,5 @@
+<% let periodString = `${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`; %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +10,7 @@
     title: `${loop.episode.title} | ${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`,
     description: 'View the anime loop on MOEOVERFLOW.',
     image: loop.files.jpg_1080p,
-    videoContainer: 'htt/loop/' + loop._id + '/twitter',
+    videoContainer: 'https://loop.moeoverflow.org/loop/' + loop._id + '/twitter',
     videoWidth: '1920',
     videoHeight: '1080',
     videoStream: loop.files.mp4_1080p,
@@ -25,7 +27,7 @@
     videoContentType: 'video/mp4'
   }); %>
 
-  <title>Loop | Animeloop</title>
+  <title><%- periodString %> | <%- loop.episode.title %> | Animeloop</title>
   <%- include('partials/head') %>
 </head>
 
@@ -50,12 +52,16 @@
           <li class="active">(´・ω・`)</li>
         </ol>
         <div class="col-md-12 col-sm-12">
-          <div class="video col-md-9">
-            <video loop="" autoplay="" muted="" webkit-playsinline="" playsinline="" poster="<%- loop.files.jpg_720p %>" style="background: url('<%- loop.files.jpg_720p %>') center center / cover no-repeat;">
-              <source src="<%- loop.files.mp4_1080p %>" type="video/mp4">
-              <source src="<%- loop.files.webm_1080p %>" type="video/webm">
-              Your browser does not support the video tag.
-            </video>
+          <div class="video col-xs-12 col-md-9">
+            <%- include('partials/video-container', {
+              video: {
+                cover: loop.files.jpg_720p,
+                mp4: loop.files.mp4_1080p,
+                webm: loop.files.webm_1080p,
+                autoplay: true,
+                preload: true
+              }
+            }) %>
           </div>
           <div class="info col-sm-9 col-md-3">
             <div class="episode col-xs-6 col-sm-6 col-md-12">
@@ -68,7 +74,7 @@
             </div>
             <div class="period col-xs-6 col-sm-6 col-md-12">
               <h4>Period: </h4>
-              <span><%- loop.period.begin.slice(0, 11) %> ~ <%- loop.period.end.slice(0, 11) %></span>
+              <span><%- periodString %></span>
             </div>
             <div class="duration col-xs-6 col-sm-6 col-md-12">
               <h4>Duration: </h4>

@@ -7,36 +7,16 @@ const log4js = require('log4js');
 const logger = log4js.getLogger('converter');
 
 const config = require('../config');
+const FileHandler = require('../manager/filehandler');
 
-const data = config.storage.dir.data;
+// const data = config.storage.dir.data;
+const tagsDir = FileHandler.getLocalFilesTagDir();
 
-function convertToGIF_360P(id, callback) {
-  let src = path.join(data, 'mp4_1080p', `${id}.mp4`);
-  let tmp = path.join(data, 'gif_360p', 'temp', `${id}.gif`);
-  let dst = path.join(data, 'gif_360p', `${id}.gif`);
 
-  if (fs.existsSync(dst)) {
-    callback(null);
-    return;
-  }
-
-  let tmpDir = path.dirname(tmp);
-  if (!fs.existsSync(tmpDir)) {
-    mkdirp.sync(path.dirname(tmp));
-  }
-
-  shell.exec(`ffmpeg -loglevel panic -i ${src} -vf scale=-1:360 ${tmp}`, (code, stdout, stderr) => {
-    shell.mv(tmp, dst);
-    logger.debug(`Convert mp4 1080p to gif 360p, ID: ${id}`);
-    callback(null);
-  });
-
-}
-
-function convertToWEBM_1080P(id, callback) {
-  let src = path.join(data, 'mp4_1080p', `${id}.mp4`);
-  let tmp = path.join(data, 'webm_1080p', 'temp', `${id}.webm`);
-  let dst = path.join(data, 'webm_1080p', `${id}.webm`);
+function converting(from, to, id, callback) {
+  let src = path.join(tagsDir[from], `${id}.${FileHandler.getExt(from)}`);
+  let tmp = path.join(tagsDir[to], 'temp', `${id}.${FileHandler.getExt(to)}`);
+  let dst = path.join(tagsDir[to], `${id}.${FileHandler.getExt(to)}`);
 
   if (fs.existsSync(dst)) {
     callback(null);
@@ -45,113 +25,74 @@ function convertToWEBM_1080P(id, callback) {
 
   let tmpDir = path.dirname(tmp);
   if (!fs.existsSync(tmpDir)) {
-    mkdirp.sync(path.dirname(tmp));
+    mkdirp.sync(tmpDir);
   }
 
-  shell.exec(`ffmpeg -loglevel panic -i ${src} -c:v libvpx -an -b 512K ${tmp}`, (code, stdout, stderr) => {
+  ((done) => {
+    if (from === 'mp4_1080p' && (to === 'gif_360p' || to === 'mp4_360p')) {
+      shell.exec(`ffmpeg -loglevel panic -i ${src} -vf scale=-1:360 ${tmp}`, done);
+    } else if (from === 'mp4_1080p' && to === 'webm_1080p') {
+      shell.exec(`ffmpeg -loglevel panic -i ${src} -c:v libvpx -an -b 512K ${tmp}`, done);
+    } else if (from === 'mp4_1080p' && to === 'webm_360p') {
+      shell.exec(`ffmpeg -loglevel panic -i ${src} -vf scale=-1:360 -c:v libvpx -an -b 512K ${tmp}`, done);
+    } else if (from === 'jpg_1080p' && to === 'jpg_720p') {
+      shell.exec(`convert -quiet -resize 720 ${src} ${tmp}`, done);
+    } else if (from === 'jpg_1080p' && to === 'jpg_360p') {
+      shell.exec(`convert -quiet -resize 360 ${src} ${tmp}`, done);
+    }
+  })(() => {
     shell.mv(tmp, dst);
-    logger.debug(`Convert mp4 1080p to webm 1080p, ID: ${id}`);
-    callback(null);
+    logger.debug(`Converted ${from} to ${to}, ID: ${id}`);
+    callback();
   });
-
 }
 
-function convertToJPG_720P(id, callback) {
-  let src = path.join(data, 'jpg_1080p', `${id}.jpg`);
-  let tmp = path.join(data, 'jpg_720p', 'temp', `${id}.jpg`);
-  let dst = path.join(data, 'jpg_720p', `${id}.jpg`);
-
-  if (fs.existsSync(dst)) {
-    callback(null);
-    return;
-  }
-
-  let tmpDir = path.dirname(tmp);
-  if (!fs.existsSync(tmpDir)) {
-    mkdirp.sync(path.dirname(tmp));
-  }
-
-  shell.exec(`convert -quiet -resize 720 ${src} ${tmp}`, (code, stdout, stderr) => {
-    shell.mv(tmp, dst);
-    logger.debug(`Convert jpg 1080p to jpg 720p, ID: ${id}`);
-    callback(null);
-  });
-
-}
-
-function convertToJPG_360P(id, callback) {
-  let src = path.join(data, 'jpg_1080p', `${id}.jpg`);
-  let tmp = path.join(data, 'jpg_360p', 'temp', `${id}.jpg`);
-  let dst = path.join(data, 'jpg_360p', `${id}.jpg`);
-
-  if (fs.existsSync(dst)) {
-    callback(null);
-    return;
-  }
-
-  let tmpDir = path.dirname(tmp);
-  if (!fs.existsSync(tmpDir)) {
-    mkdirp.sync(path.dirname(tmp));
-  }
-
-  shell.exec(`convert -quiet -resize 360 ${src} ${tmp}`, (code, stdout, stderr) => {
-    shell.mv(tmp, dst);
-    logger.debug(`Convert jpg 1080p to jpg 360p, ID: ${id}`);
-    callback(null);
-  });
-
+function getTasks(from, to, ids) {
+  return (callback) => {
+    async.forEachSeries(ids.filter((id) => {
+      let dst = path.join(tagsDir[to], `${id}.${FileHandler.getExt(to)}`);
+      return !fs.existsSync(dst);
+    }), (id, callback) => {
+      converting(from, to, id, callback);
+    }, callback);
+  };
 }
 
 
-function convertAll(done) {
-  logger.info('Doing convert.');
-  shell.rm('-r', path.join(data, 'webm_1080p', 'temp'));
-  shell.rm('-r', path.join(data, 'gif_360p', 'temp'));
-  shell.rm('-r', path.join(data, 'jpg_1080p', 'temp'));
-  shell.rm('-r', path.join(data, 'jpg_720p', 'temp'));
+function convertAll(tags, done) {
+  logger.info('Doing all files convert.');
 
+  for (let key in tagsDir) {
+    let tempDir = path.join(tagsDir[key], 'temp');
+    if (fs.existsSync(tempDir)) {
+      shell.rm('-r', tempDir);
+    }
+  }
 
-  let dir = path.join(data, 'mp4_1080p');
-  shell.cd(dir);
-
-  let ids = shell.ls(dir).map((file) => {
+  let ids = shell.ls(tagsDir['mp4_1080p']).map((file) => {
     return path.basename(file, '.mp4');
   });
 
-  async.series([
-    (callback) => {
-      async.forEachSeries(ids.filter((id) => {
-        let dst = path.join(data, 'gif_360p', `${id}.gif`);
-        return !fs.existsSync(dst);
-      }), (id, callback) => {
-        convertToGIF_360P(id, callback);
-      }, callback);
-    },
-    (callback) => {
-      async.forEachSeries(ids.filter((id) => {
-        let dst = path.join(data, 'jpg_360p', `${id}.jpg`);
-        return !fs.existsSync(dst);
-      }), (id, callback) => {
-        convertToJPG_360P(id, callback);
-      }, callback);
-    },
-    (callback) => {
-      async.forEachSeries(ids.filter((id) => {
-        let dst = path.join(data, 'jpg_720p', `${id}.jpg`);
-        return !fs.existsSync(dst);
-      }), (id, callback) => {
-        convertToJPG_720P(id, callback);
-      }, callback);
-    },
-    (callback) => {
-      async.forEachSeries(ids.filter((id) => {
-        let dst = path.join(data, 'webm_1080p', `${id}.webm`);
-        return !fs.existsSync(dst);
-      }), (id, callback) => {
-        convertToWEBM_1080P(id, callback);
-      }, callback);
+  var tags = tags;
+  if (tags.length == 0) {
+    tags = FileHandler.FilesTags;
+  }
+
+  var tasks = tags.map((tag) => {
+    if ( tag === 'mp4_360p'
+      || tag === 'gif_360p'
+      || tag === 'webm_1080p'
+      || tag === 'webm_360p' ) {
+      return getTasks('mp4_1080p', tag, ids);
+    } else if (  tag === 'jpg_720p'
+              || tag === 'jpg_360p' ) {
+      return getTasks('jpg_1080p', tag, ids);
+    } else {
+      return undefined;
     }
-  ], done);
+  }).filter((task) => { return (task != undefined ) });
+
+  async.series(tasks, done);
 }
 
 module.exports = convertAll;
