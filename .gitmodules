@@ -1,6 +1,9 @@
-[submodule "webapp/miminium"]
-	path = webapp/miminium
-	url = https://github.com/akivaron/miminium.git
 [submodule "animeloop-cli"]
 	path = animeloop-cli
 	url = https://github.com/moeoverflow/animeloop-cli.git
+[submodule "webapp/modules/lazy-load-xt"]
+	path = webapp/modules/lazy-load-xt
+	url = https://github.com/ressio/lazy-load-xt.git
+[submodule "webapp/modules/miminium"]
+	path = webapp/modules/miminium
+	url = https://github.com/akivaron/miminium.git

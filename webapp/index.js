@@ -14,7 +14,10 @@ const loop = require('./routes/loop');
 
 
 router.use(express.static(path.join(__dirname, 'public')));
-router.use('/asset', express.static(path.join(__dirname, 'miminium/asset')));
+router.use('/miminium', express.static(path.join(__dirname, 'modules/miminium/asset')));
+router.use('/lazy-load-xt', express.static(path.join(__dirname, 'modules/lazy-load-xt/dist')));
+router.use('/hammerjs', express.static(path.join(__dirname, 'modules/hammerjs')));
+router.use('/modernizr', express.static(path.join(__dirname, 'modules/modernizr')));
 
 
 router.use('/', index);
