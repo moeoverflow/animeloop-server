@@ -53,7 +53,7 @@ class Automator {
     this.queue.process('upload', 1, (job, done) => {
       let filename = job.data.filename;
       logger.info(`Start to upload ${path.basename(filename)}`);
-      this.upload(filename, () => {
+      this.upload(job, filename, () => {
         logger.info(`Upload ${path.basename(filename)} successfully`);
         done();
       });
@@ -62,7 +62,7 @@ class Automator {
     this.queue.process('animeloop-cli', 1, (job, done) => {
       let filename = job.data.filename;
       logger.info(`Start to run animeloop-cli with ${path.basename(filename)}`);
-      this.animeloopCli(job.data.filename, () => {
+      this.animeloopCli(job, filename, () => {
         logger.info(`Run animeloop-cli with ${path.basename(filename)} successfully`);
         done();
       });
@@ -91,6 +91,8 @@ class Automator {
           title: `Upload file: ${path.basename(filename)}`,
           filename
         })
+        .ttl(config.automator.uploadTTL * 1000)
+        .attempts(2)
         .priority('medium')
         .delay(config.automator.uploadDelay * 1000)
         .save((err) => {
@@ -132,7 +134,7 @@ class Automator {
     });
   }
 
-  upload(jsonfile, done) {
+  upload(job, jsonfile, done) {
     let loops = parsing(jsonfile);
     if (loops == undefined) {
       done(new Error(`uploading loops failed - file: ${jsonfile}`));
@@ -141,25 +143,13 @@ class Automator {
 
     async.series([
       (callback) => {
-        function selectLoops(array) {
-          if (array.length <= 3) {
-            return array;
-          }
+        var randomLoops = loops.slice(0).sort(() => {
+          return 0.5 - Math.random();
+        }).slice(0, 3);
 
-          let split = Math.round(array.length / 5);
-          var results = array.filter((item, index) => {
-            return (index % split == 0);
-          });
-
-          results.shift();
-          if (results.length % 2 == 0) {
-            results.pop();
-          }
-
-          return results;
-        }
+        job.log('whatanime.ga - fetching info');
         logger.info('whatanime.ga - fetching info');
-        async.series(selectLoops(loops).map((loop) => {
+        async.series(randomLoops.map((loop) => {
           return (callback) => {
             whatanime(loop.files.jpg_1080p, (err, result) => {
               callback(null, result);
@@ -170,12 +160,32 @@ class Automator {
             callback(err);
           }
 
-          let result = results.sort((prev, next) => {
-            return (prev.similarity < next.similarity);
-          })[0];
+          var counts = {};
+          results.filter((result) => { return (result != undefined) }).forEach((result) => {
+            counts[result.anilist_id] = counts[result.anilist_id] ? counts[result.anilist_id]+1 : 1;
+          });
 
+          var result = undefined;
+          for (let key in counts) {
+            if (counts[key] >= 2) {
+              result = results.filter((result) => {
+                return (result.anilist_id == key);
+              })[0];
+              break;
+            }
+          }
+
+          if (!result) {
+            let result = results.sort((prev, next) => {
+              return (prev.similarity < next.similarity);
+            })[0];
+          }
+
+          job.log(`whatanime.ga - change series from ${loops[0].entity.series.title} to ${result.series}`);
+          job.log(`whatanime.ga - change episode from ${loops[0].entity.episode.title} to ${result.episode}`);
           logger.info(`whatanime.ga - change series from ${loops[0].entity.series.title} to ${result.series}`);
           logger.info(`whatanime.ga - change episode from ${loops[0].entity.episode.title} to ${result.episode}`);
+          job.progress(30, 100);
           loops = loops.map((loop) => {
             loop.entity.series.title = result.series;
             loop.entity.series.anilist_id = result.anilist_id;
@@ -187,6 +197,7 @@ class Automator {
         });
       },
       (callback) => {
+        job.log(`Start to add loops into database: ${jsonfile}`);
         logger.debug(`Start to add loops into database: ${jsonfile}`)
         async.series(loops.map((loop) => {
           return (callback) => {
@@ -236,11 +247,24 @@ class Automator {
     }
   }
 
-  animeloopCli(filename, done) {
+  animeloopCli(job, filename, done) {
     let args = [config.animeloopCli.bin, '-i', filename, '--cover', '-o', config.storage.dir.autogen];
     let shellString = shellescape(args);
     logger.debug(`run command: ${shellString}`);
-    shell.exec(shellString, () => {
+
+    let cli = shell.exec(shellString, { async: true, silent: true });
+    cli.stdout.on('data', (data) => {
+      var match = data.match(/Resizing video\.\.\. (\d?\d?\d)%/);
+      if (match) {
+        let frames = parseInt(match[1]);
+        job.progress(frames * 9, 1000);
+      }
+      job.log(data);
+    });
+
+    cli.on('exit', (code) => {
+      job.progress(1000, 1000);
+      logger.debug('code: ' + code);
       let basename = path.basename(filename, path.extname(filename));
       let dir = path.join(config.storage.dir.autogen, 'loops', basename);
 
@@ -248,11 +272,9 @@ class Automator {
       shell.mv(dir, config.storage.dir.upload);
       logger.debug(`delete file ${path.basename(filename)}`);
       shell.rm(filename);
-
       done();
     });
   }
 }
 
 let automator = new Automator();
-

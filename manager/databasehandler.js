@@ -58,7 +58,7 @@ class DatabaseHandler {
 
 const SeriesSchema = new Schema({
   title: { type: String, unique: true, require: true },
-  anilist_id: Number
+  anilist_id: { type: Number, unique: true }
 });
 SeriesSchema.plugin(findOrCreate);
 

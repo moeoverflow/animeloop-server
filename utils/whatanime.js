@@ -24,6 +24,7 @@ function whatanime(imagefile, done) {
       }, (err, httpResponse, body) => {
         if (err && callback) {
           callback(err);
+          return;
         }
 
         try {
@@ -41,8 +42,11 @@ function get_base64(file, callback) {
   return sharp(file)
   .resize(960)
   .toBuffer()
-  .then( (data) => {
+  .then((data) => {
     callback(null, data.toString('base64'));
+  })
+  .catch((err) => {
+    callback(err);
   });
 }
 

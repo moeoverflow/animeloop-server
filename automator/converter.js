@@ -69,8 +69,11 @@ function convertAll(tags, done) {
     }
   }
 
-  let ids = shell.ls(tagsDir['mp4_1080p']).map((file) => {
+  let videoIds = shell.ls(tagsDir['mp4_1080p']).map((file) => {
     return path.basename(file, '.mp4');
+  });
+  let imageIds = shell.ls(tagsDir['jpg_1080p']).map((file) => {
+    return path.basename(file, '.jpg');
   });
 
   var tags = tags;
@@ -83,10 +86,10 @@ function convertAll(tags, done) {
       || tag === 'gif_360p'
       || tag === 'webm_1080p'
       || tag === 'webm_360p' ) {
-      return getTasks('mp4_1080p', tag, ids);
+      return getTasks('mp4_1080p', tag, videoIds);
     } else if (  tag === 'jpg_720p'
               || tag === 'jpg_360p' ) {
-      return getTasks('jpg_1080p', tag, ids);
+      return getTasks('jpg_1080p', tag, imageIds);
     } else {
       return undefined;
     }

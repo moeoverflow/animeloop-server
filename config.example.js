@@ -11,7 +11,7 @@ const config = {
     bin: path.join(__dirname, 'bin', 'animeloop-cli')
   },
   automator: {
-    pollingDuration: 10,
+    uploadTTL: 5 * 60,
     uploadDelay: 3,
     animeloopCliDelay: 30,
     app: {
