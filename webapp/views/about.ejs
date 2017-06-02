@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>About | Animeloop</title>
-    <%- include('partials/head') %>
+  <title>About | Animeloop</title>
+  <%- include('partials/head') %>
 </head>
 
 <body id="mimin" class="dashboard">
@@ -12,23 +12,32 @@
 <!-- end: Header -->
 
 <div class="container-fluid mimin-wrapper">
-    <!-- start:Left Menu -->
-    <%- include('partials/menu') %>
-    <!-- end: Left Menu -->
+  <!-- start:Left Menu -->
+  <%- include('partials/menu') %>
+  <!-- end: Left Menu -->
 
-    <!-- start: content -->
-    <div id="content">
-        <div class="panel">
-            <div class="panel-body">
-                <div class="col-md-12 col-sm-12">
-                    <%- post %>
-                </div>
-
-            </div>
+  <!-- start: content -->
+  <div id="content">
+    <div class="panel">
+      <div class="panel-body">
+        <div class="col-xs-0 col-sm-1 col-md-2 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
+          <%- post %>
         </div>
+      </div>
     </div>
-    <!-- end: content -->
 
+    <div class="about comment panel">
+      <div class="panel-body">
+        <div class="col-xs-0 col-sm-1 col-md-2 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
+          <%- include('partials/disqus') %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- end: content -->
 </div>
 
 <!-- start: Mobile -->
