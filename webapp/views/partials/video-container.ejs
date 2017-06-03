@@ -2,12 +2,12 @@
   <video loop muted
           <%= video.autoplay ? 'autoplay ' : '' %>
           <%= video.preload ? 'preload ' : '' %>
-         webkit-playsinline playsinline data-poster="<%- video.cover %>" data-bg="<%- video.cover %>">
+         webkit-playsinline playsinline <%= video.lazyload ? 'data-poster' : 'poster' %>="<%- video.cover %>">
     <% if (video.mp4) { %>
-    <source data-src="<%- video.mp4 %>" type="video/mp4">
+    <source <%= video.lazyload ? 'data-src' : 'src' %>="<%- video.mp4 %>" type="video/mp4">
     <% } %>
     <% if (video.webm) { %>
-    <source data-src="<%- video.webm %>" type="video/webm">
+    <source <%= video.lazyload ? 'data-src' : 'src' %>="<%- video.webm %>" type="video/webm">
     <% } %>
     Your browser does not support video
   </video>

@@ -1,0 +1,26 @@
+<% let periodString = `${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`; %>
+
+<div class="social-share"></div>
+
+<style>
+  .social-share a:before {
+    font-weight: normal;
+  }
+</style>
+
+<script>
+  var socialShareTitle = '<%- loop.episode.title %> | <%- periodString %> | Animeloop';
+  socialShare('.social-share', {
+    title               : socialShareTitle,
+    sites               : ['twitter', 'facebook', 'google', 'weibo','qzone', 'wechat', 'douban'],
+    origin              : 'moeoverflow',
+    twitterTitle        : '<%- loop.episode.title %> | <%- periodString %> | #Animeloop ',
+    weiboTitle          : '<%- loop.episode.title %> | <%- periodString %> | #Animeloop# ' + ' @moeoverflow',
+    qzoneTitle          : socialShareTitle,
+    qzoneDescription    : socialShareTitle,
+    qqTitle             : socialShareTitle,
+    wechatQrcodeTitle   : '微信扫一扫：分享', // 微信二维码提示文字
+    wechatQrcodeHelper  : '<p>微信里点“发现”，扫一下</p><p>二维码便可将本文分享至朋友圈。</p>'
+  });
+</script>
+

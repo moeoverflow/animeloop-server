@@ -18,6 +18,7 @@ router.use('/miminium', express.static(path.join(__dirname, 'modules/miminium/as
 router.use('/lazy-load-xt', express.static(path.join(__dirname, 'modules/lazy-load-xt/dist')));
 router.use('/hammerjs', express.static(path.join(__dirname, 'modules/hammerjs')));
 router.use('/modernizr', express.static(path.join(__dirname, 'modules/modernizr')));
+router.use('/share.js', express.static(path.join(__dirname, 'modules/share.js')));
 
 
 router.use('/', index);

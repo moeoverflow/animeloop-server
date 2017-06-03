@@ -7,3 +7,6 @@
 [submodule "webapp/modules/miminium"]
 	path = webapp/modules/miminium
 	url = https://github.com/akivaron/miminium.git
+[submodule "webapp/modules/share.js"]
+	path = webapp/modules/share.js
+	url = https://github.com/overtrue/share.js.git
