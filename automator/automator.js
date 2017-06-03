@@ -151,17 +151,22 @@ class Automator {
         logger.info('whatanime.ga - fetching info');
         async.series(randomLoops.map((loop) => {
           return (callback) => {
-            whatanime(loop.files.jpg_1080p, (err, result) => {
-              callback(null, result);
-            });
+            whatanime(loop.files.jpg_1080p, callback);
           }
         }), (err, results) => {
           if (err) {
             callback(err);
+            return;
+          }
+
+          results = results.filter((result) => { return (result != undefined) });
+          if (results.length == 0) {
+            callback(new Error('whatanime.ga fetch info empty.'));
+            return;
           }
 
           var counts = {};
-          results.filter((result) => { return (result != undefined) }).forEach((result) => {
+          results.forEach((result) => {
             counts[result.anilist_id] = counts[result.anilist_id] ? counts[result.anilist_id]+1 : 1;
           });
 

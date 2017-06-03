@@ -17,17 +17,19 @@ class DatabaseHandler {
   addLoop(entity) {
     logger.debug(`Adding entity: ${entity.episode} ${entity.loop.period.begin} ~ ${entity.loop.period.end}`);
     return new Promise((resolve, reject) => {
-      DatabaseHandler.SeriesModel.findOrCreate(entity.series, (err, series, created) => {
+      DatabaseHandler.SeriesModel.findOrCreate({ title: entity.series.title }, entity.series, (err, series, created) => {
         if (err) {
           reject(err);
           return;
         }
-        entity.episode.series = series._id;
-        DatabaseHandler.EpisodeModel.findOrCreate(entity.episode, (err, episode, created) => {
+
+        entity.episode.update({ series: series._id});
+        DatabaseHandler.EpisodeModel.findOrCreate({ title: entity.episode.title }, entity.episode, (err, episode, created) => {
           if (err) {
             reject(err);
             return;
           }
+
           entity.loop.series = series._id;
           entity.loop.episode = episode._id;
           DatabaseHandler.LoopModel.findOrCreate(entity.loop, (err, loop, created) => {
@@ -58,7 +60,7 @@ class DatabaseHandler {
 
 const SeriesSchema = new Schema({
   title: { type: String, unique: true, require: true },
-  anilist_id: { type: Number, unique: true }
+  anilist_id: Number
 });
 SeriesSchema.plugin(findOrCreate);
 
