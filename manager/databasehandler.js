@@ -23,7 +23,7 @@ class DatabaseHandler {
           return;
         }
 
-        entity.episode.update({ series: series._id});
+        entity.episode.series = series._id;
         DatabaseHandler.EpisodeModel.findOrCreate({ title: entity.episode.title }, entity.episode, (err, episode, created) => {
           if (err) {
             reject(err);

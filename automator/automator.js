@@ -141,7 +141,7 @@ class Automator {
       return;
     }
 
-    async.series([
+    async.waterfall([
       (callback) => {
         var randomLoops = loops.slice(0).sort(() => {
           return 0.5 - Math.random();
@@ -219,12 +219,8 @@ class Automator {
         });
       }
     ], (err) => {
-      if (err != null && err != undefined) {
-        done(err);
-        return;
-      }
-      done();
-    })
+      done(err);
+    });
 
     function getLoopInfo(loops) {
       let split = Math.floor(loops.length / 4);
