@@ -19,6 +19,9 @@ router.use('/lazy-load-xt', express.static(path.join(__dirname, 'modules/lazy-lo
 router.use('/hammerjs', express.static(path.join(__dirname, 'modules/hammerjs')));
 router.use('/modernizr', express.static(path.join(__dirname, 'modules/modernizr')));
 router.use('/share.js', express.static(path.join(__dirname, 'modules/share.js')));
+router.use('/pressure', express.static(path.join(__dirname, 'modules/pressure/dist')));
+router.use('/animate.css', express.static(path.join(__dirname, 'modules/animate.css')));
+
 
 
 router.use('/', index);

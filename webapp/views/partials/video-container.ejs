@@ -1,8 +1,8 @@
-<div class="video-container <%= video.autoplay ? '' : 'manual-play ' %>" >
+<div class="video-container <%= video.autoplay ? '' : 'manual-play ' %>" style="background-image: url('<%= video.cover %>')">
   <video loop muted
           <%= video.autoplay ? 'autoplay ' : '' %>
           <%= video.preload ? 'preload ' : '' %>
-         webkit-playsinline playsinline <%= video.lazyload ? 'data-poster' : 'poster' %>="<%- video.cover %>">
+         webkit-playsinline playsinline <%= video.lazyload ? 'data-poster' : 'poster' %>="<%= video.cover %>">
     <% if (video.mp4) { %>
     <source <%= video.lazyload ? 'data-src' : 'src' %>="<%- video.mp4 %>" type="video/mp4">
     <% } %>

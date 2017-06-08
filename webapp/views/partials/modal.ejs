@@ -1,0 +1,16 @@
+<!-- Loop card modal -->
+<div class="modal fade" id="modal-loop-<%- loop._id %>" tabindex="-1" role="dialog" aria-labelledby="loop-<%- loop._id %>" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <%- include('video-container', {
+        video: {
+          cover: loop.files.jpg_360p,
+          mp4: loop.files.mp4_360p,
+          webm: loop.files.webm_360p,
+          preload: true,
+          autoplay: true
+        }
+      }) %>
+    </div>
+  </div>
+</div>

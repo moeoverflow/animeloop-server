@@ -10,3 +10,9 @@
 [submodule "webapp/modules/share.js"]
 	path = webapp/modules/share.js
 	url = https://github.com/overtrue/share.js.git
+[submodule "webapp/modules/pressure"]
+	path = webapp/modules/pressure
+	url = https://github.com/stuyam/pressure.git
+[submodule "webapp/modules/animate.css"]
+	path = webapp/modules/animate.css
+	url = https://github.com/daneden/animate.css.git
