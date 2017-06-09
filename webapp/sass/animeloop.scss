@@ -24,6 +24,10 @@
     background-color: transparent;
   }
 
+  .video-container {
+    display: grid;
+  }
+
   .loop-card {
     .panel-body {
       padding: 0;
@@ -41,17 +45,41 @@
         }
 
         .title {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
     }
 
-    .video-container {
-      display: grid;
-    }
-
     .modal {
       width: 80%;
-      margin: 0 auto;
+      margin: 56px auto 0 auto;
+
+      .modal-dialog {
+        video {
+          -webkit-border-radius: 0.5em !important;
+          -moz-border-radius: 0.5em !important;
+          border-radius: 0.5em !important;
+        }
+
+        button {
+          width: 100%;
+          font-size: large;
+          height: 2.8em;
+          margin: 0.2em 0;
+        }
+
+        button .hide {
+          display: none;
+        }
+
+         .video-container, button {
+          -webkit-border-radius: 0.5em !important;
+          -moz-border-radius: 0.5em !important;
+          border-radius: 0.5em !important;
+        }
+      }
     }
     .modal.stay {
       width: 100%;

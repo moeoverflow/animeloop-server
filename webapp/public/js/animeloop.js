@@ -28,55 +28,46 @@ if (Modernizr.touchevents) {
 
 var stay = false;
 var pressure = 'off';
+
 // 3D Touch event
 Pressure.set('.video-golink', {
-  start: function(event) {
-    // $('#test').innerHTML = event.
-    // alert('start');
-    // this is called on force start
-
-  },
-  end: function() {
-    // alert('end');
-    // this is called on force end
-  },
-  startDeepPress: function(event) {
-    stay = true;
-    $('#modal-' + this.id).addClass('stay');
-    $('#modal-' + this.id + ' .modal-dialog').addClass('bounceIn animated');
-
-    $('#modal-' + this.id).on('hidden.bs.modal', function (e) {
-      stay = false;
-      $('#modal-' + this.id + ' .modal-dialog').removeClass('bounceIn animated');
-      $('#modal-' + this.id).removeClass('stay');
-    });
-    // alert('startDeepPress');
-    // this is called on "force click" / "deep press", aka once the force is greater than 0.5
-  },
-  endDeepPress: function() {
-    // alert('endDeepPress');
-    // this is called when the "force click" / "deep press" end
-  },
-  change: function(force, event) {
-    if (force < 0.1) {
-      if (!stay && status != 'hidemodal') {
-        status = 'hidemodal';
+  change: function(force) {
+    if (force < 0.2) {
+      if (!stay && pressure != 'off') {
+        pressure = 'off';
         $('#modal-' + this.id).modal('hide');
       }
-
-    } else if (force >= 0.1 && force <= 0.98) {
-      if (!stay && status != 'showmodal') {
-        status = 'showmodal';
+    } else if (force >= 0.2 && force < 0.6) {
+      if (!stay && pressure != 'lightpress') {
+        pressure = 'lightpress';
         $('#modal-' + this.id).modal({
           focus: false,
           show: true
         });
       }
+    } else if (force >= 0.6 && force <= 0.98) {
+      if (!stay && pressure != 'deeppress') {
+        pressure = 'deeppress';
+        stay = true;
+
+        $('#' + this.id + ' video')[0].play();
+        $('#modal-' + this.id + ' button').removeClass('hide');
+        $('#modal-' + this.id).addClass('stay');
+        $('#modal-' + this.id + ' .modal-dialog').addClass('bounceIn animated');
+
+        $('#modal-' + this.id).on('hidden.bs.modal', function (e) {
+          stay = false;
+          $('#' + this.id + ' video')[0].pause();
+          $('#modal-' + this.id + ' .modal-dialog').removeClass('bounceIn animated');
+          $('#modal-' + this.id).removeClass('stay');
+          $('#modal-' + this.id + ' button').addClass('hide');
+        });
+      }
     } else {
-      var golink = this;
-      window.location = golink.href;
+      window.location = this.href;
     }
-  },
-  unsupported: function() {
   }
+}, {
+  only: 'touch',
+  preventSelect: false
 });
