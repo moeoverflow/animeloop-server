@@ -201,7 +201,12 @@ class Automator {
           callback();
         });
       },
-      (callback) => {
+      (err, callback) => {
+        if (err) {
+          done(err);
+          return;
+        }
+
         job.log(`Start to add loops into database: ${jsonfile}`);
         logger.debug(`Start to add loops into database: ${jsonfile}`)
         async.series(loops.map((loop) => {
@@ -241,7 +246,7 @@ class Automator {
                 });
               }
             }
-            callback();
+            callback(err);
           });
         }
       }));

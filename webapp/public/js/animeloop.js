@@ -50,17 +50,18 @@ Pressure.set('.video-golink', {
         pressure = 'deeppress';
         stay = true;
 
-        $('#' + this.id + ' video')[0].play();
-        $('#modal-' + this.id + ' button').removeClass('hide');
-        $('#modal-' + this.id).addClass('stay');
-        $('#modal-' + this.id + ' .modal-dialog').addClass('bounceIn animated');
+        var id = this.id;
+        $('#modal-' + id + ' video')[0].play();
+        $('#modal-' + id + ' button').removeClass('hide');
+        $('#modal-' + id).addClass('stay');
+        $('#modal-' + id + ' .modal-dialog').addClass('bounceIn animated');
 
-        $('#modal-' + this.id).on('hidden.bs.modal', function (e) {
+        $('#modal-' + id).on('hidden.bs.modal', function (e) {
           stay = false;
-          $('#' + this.id + ' video')[0].pause();
-          $('#modal-' + this.id + ' .modal-dialog').removeClass('bounceIn animated');
-          $('#modal-' + this.id).removeClass('stay');
-          $('#modal-' + this.id + ' button').addClass('hide');
+          $('#modal-' + id + ' video')[0].pause();
+          $('#modal-' + id + ' .modal-dialog').removeClass('bounceIn animated');
+          $('#modal-' + id).removeClass('stay');
+          $('#modal-' + id + ' button').addClass('hide');
         });
       }
     } else {
