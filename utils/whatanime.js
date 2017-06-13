@@ -27,11 +27,17 @@ function whatanime(imagefile, done) {
           return;
         }
 
+        var data = undefined;
         try {
-          let data = JSON.parse(body);
-          callback(null, parseResult(data));
+          data = JSON.parse(body);
         } catch(err) {
+          logger.error('Parse whatanime response body failed.');
           callback(err);
+          return;
+        }
+
+        if (data) {
+          callback(null, parseResult(data));
         }
       });
     }

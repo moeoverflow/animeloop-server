@@ -151,16 +151,23 @@ class Automator {
         logger.info('whatanime.ga - fetching info');
         async.series(randomLoops.map((loop) => {
           return (callback) => {
-            whatanime(loop.files.jpg_1080p, callback);
+            setTimeout(() => {
+              whatanime(loop.files.jpg_1080p, callback);
+            }, 5 * 1000);
           }
         }), (err, results) => {
           if (err) {
+            job.log('fetching info error.');
+            logger.error('fetching info error.');
             callback(err);
             return;
           }
+          job.progress(30, 100);
+
 
           results = results.filter((result) => { return (result != undefined) });
           if (results.length == 0) {
+            logger.error('whatanime.ga fetch info empty.');
             callback(new Error('whatanime.ga fetch info empty.'));
             return;
           }
@@ -180,17 +187,21 @@ class Automator {
             }
           }
 
-          if (!result) {
-            let result = results.sort((prev, next) => {
-              return (prev.similarity < next.similarity);
-            })[0];
+          if (result == undefined) {
+            job.log('whatanime.ga has no matched info.');
+            logger.info('whatanime.ga has no matched info.');
+            loops = loops.map((loop) => {
+              loop.entity.series.title = 'DEFAULT SERIES';
+              return loop;
+            });
+            callback();
+            return;
           }
 
           job.log(`whatanime.ga - change series from ${loops[0].entity.series.title} to ${result.series}`);
           job.log(`whatanime.ga - change episode from ${loops[0].entity.episode.title} to ${result.episode}`);
           logger.info(`whatanime.ga - change series from ${loops[0].entity.series.title} to ${result.series}`);
           logger.info(`whatanime.ga - change episode from ${loops[0].entity.episode.title} to ${result.episode}`);
-          job.progress(30, 100);
           loops = loops.map((loop) => {
             loop.entity.series.title = result.series;
             loop.entity.series.anilist_id = result.anilist_id;
@@ -201,12 +212,7 @@ class Automator {
           callback();
         });
       },
-      (err, callback) => {
-        if (err) {
-          done(err);
-          return;
-        }
-
+      (callback) => {
         job.log(`Start to add loops into database: ${jsonfile}`);
         logger.debug(`Start to add loops into database: ${jsonfile}`)
         async.series(loops.map((loop) => {
@@ -215,7 +221,8 @@ class Automator {
           };
         }), (err) => {
           if (err != null || err != undefined) {
-            done(err);
+            logger.error('database error');
+            callback(err);
             return;
           }
           shell.rm('-r', path.dirname(jsonfile));
@@ -224,33 +231,9 @@ class Automator {
         });
       }
     ], (err) => {
+
       done(err);
     });
-
-    function getLoopInfo(loops) {
-      let split = Math.floor(loops.length / 4);
-      loops = loops.filter((loop, index) => {
-        return (index % split);
-      });
-
-      async.series(loops.map((loop) => {
-        return (callback) => {
-          whatanime(loop.files.jpg_1080p, (err, result) => {
-            if (!err) {
-              if (result) {
-                loops = loops.map((loop) => {
-                  loop.entity.series.title = result.series;
-                  loop.entity.series.anilist_id = result.anilist_id;
-                  loop.entity.episode.title = result.episode;
-                  return loop;
-                });
-              }
-            }
-            callback(err);
-          });
-        }
-      }));
-    }
   }
 
   animeloopCli(job, filename, done) {
