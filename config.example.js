@@ -31,6 +31,10 @@ const config = {
     whatanime: {
       url: 'https://whatanime.ga/api/search',
       token: ''
+    },
+    anilist: {
+      id: 'animeloop-123456',
+      secret: 'animeloop-654321'
     }
   },
   storage: {

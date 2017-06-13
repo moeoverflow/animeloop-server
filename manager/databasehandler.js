@@ -60,6 +60,21 @@ class DatabaseHandler {
 
 const SeriesSchema = new Schema({
   title: { type: String, unique: true, require: true },
+  title_t_chinese: String,
+  title_romaji: String,
+  title_english: String,
+  title_japanese: String,
+  start_date_fuzzy: Number,
+  description: String,
+  genres: [String],
+  total_episodes: Number,
+  adult: Boolean,
+  end_date_fuzzy: Number,
+  hashtag: String,
+  image_url_large: String,
+  image_url_banner: String,
+  anilist_updated_at: Date,
+  updated_at: Date,
   anilist_id: Number
 });
 SeriesSchema.plugin(findOrCreate);

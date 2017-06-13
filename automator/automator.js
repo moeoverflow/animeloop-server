@@ -10,12 +10,14 @@ const shellescape = require('shell-escape');
 const log4js = require('log4js');
 const logger = log4js.getLogger('automator');
 const kue = require('kue');
+const schedule = require('node-schedule');
 
 const config = require('../config');
 const ALManager = require('../manager/almanager');
 const parsing = require('./parse');
 const convert = require('./converter');
 const whatanime = require('../utils/whatanime');
+const Anilist = require('../utils/anilist');
 
 
 
@@ -23,6 +25,7 @@ class Automator {
   constructor() {
     this.alManager = new ALManager();
     this.databaseHandler = this.alManager.databaseHandler;
+    this.anilist = new Anilist(config.automator.anilist);
 
     this.initQueue();
     this.watching();
@@ -68,11 +71,58 @@ class Automator {
       });
     });
 
+    this.queue.process('anilist', 1, (job, done) => {
+      let series_id = job.data.series_id;
+      let anilist_id = job.data.anilist_id;
+
+      this.anilist.getInfo(anilist_id, (err, data) => {
+        if (err) {
+          done(err);
+          return;
+        }
+
+        this.alManager.updateSeries(series_id, data, done);
+      })
+
+    });
+
     kue.app.set('title', 'Automator | Animeloop');
     this.app = express();
     this.app.use(basicAuth(config.automator.app.auth.username, config.automator.app.auth.password));
     this.app.use(config.automator.app.url, kue.app);
     this.app.listen(config.automator.app.port, config.automator.app.host);
+
+
+    let queue = this.queue;
+    schedule.scheduleJob('30 1 1 * * 1', () => {
+      this.alManager.getSeries((err, docs) => {
+        if (err) {
+          logger.error('Anilist info update - get series error');
+          return;
+        }
+
+        docs.filter((doc) => {
+          return (doc.anilist_id != undefined);
+        }).filter((doc) => {
+          if (doc.updated_at == undefined) {
+            return true;
+          }
+          return ((Date().getDay() - doc.updated_at.getDay()) > 7);
+        }).forEach((doc) => {
+          let job = queue.create('anilist', {
+            title: `Get info from anilist: ${doc.title}`,
+            series_id: doc._id,
+            anilist_id: doc.anilist_id
+          })
+          .priority('low')
+          .save((err) => {
+            if (!err) {
+              logger.info(`Job ID: ${job.id} - Get Info from anilist: ${doc.title}`);
+            }
+          });
+        });
+      });
+    });
   }
 
   watching() {
@@ -105,6 +155,7 @@ class Automator {
             title: 'Do convert.',
           })
           .priority('high')
+          .removeOnComplete(true)
           .save((err) => {
             if (!err) {
               logger.info(`Job ID: ${job.id} - Do convert`);
@@ -219,7 +270,7 @@ class Automator {
           return (callback) => {
             this.alManager.addLoop(loop, callback);
           };
-        }), (err) => {
+        }), (err, data) => {
           if (err != null || err != undefined) {
             logger.error('database error');
             callback(err);
@@ -227,7 +278,20 @@ class Automator {
           }
           shell.rm('-r', path.dirname(jsonfile));
           logger.info('Upload loops successfully.');
-          callback(null);
+          callback(null, data);
+        });
+      },
+      (data, callback) => {
+        let series_id = data[0].series._id;
+        let anilist_id = data[0].series.anilist_id;
+
+        this.anilist.getInfo(anilist_id, (err, data) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          this.alManager.updateSeries(series_id, data, callback);
         });
       }
     ], (err) => {

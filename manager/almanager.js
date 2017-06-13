@@ -19,7 +19,7 @@ class ALManager {
     .then((data) => {
       this.fileHandler.saveFile(data, loop.files)
       .then(() => {
-        callback();
+        callback(null, data);
       })
       .catch((err) => {
         callback(err);
@@ -75,6 +75,10 @@ class ALManager {
         });
       }
     ]);
+  }
+
+  updateSeries(id, update, callback) {
+    DatabaseHandler.SeriesModel.update({ _id: id }, { $set: update}, callback);
   }
 
   getRandomLoops(n, callback) {

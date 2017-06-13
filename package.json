@@ -22,8 +22,10 @@
     "mongoose": "^4.9.7",
     "mongoose-findorcreate": "^1.0.1",
     "mongoose-simple-random": "^0.4.1",
+    "nani": "^1.2.0",
+    "node-schedule": "^1.2.3",
     "request": "^2.81.0",
-    "sharp": "^0.17.3",
+    "sharp": "^0.18.1",
     "shell-escape": "^0.2.0",
     "shelljs": "^0.7.7"
   },
@@ -33,9 +35,9 @@
     "ejs": "^2.5.6",
     "morgan": "~1.5.3",
     "serve-favicon": "~2.2.1",
-    "watch": "^1.0.2",
     "should": "^7.1.0",
-    "supertest": "^1.0.0"
+    "supertest": "^1.0.0",
+    "watch": "^1.0.2"
   },
   "scripts": {
     "start": "node app.js"
