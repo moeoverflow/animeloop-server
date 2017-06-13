@@ -4,6 +4,8 @@ const path = require('path');
 
 const index = require('./routes/index');
 const list = require('./routes/list');
+const listSeries = require('./routes/list-series');
+
 const filter = require('./routes/filter');
 const api = require('./routes/api');
 const about = require('./routes/about');
@@ -26,6 +28,7 @@ router.use('/animate.css', express.static(path.join(__dirname, 'modules/animate.
 
 router.use('/', index);
 router.use('/list', list);
+router.use('/list', listSeries);
 router.use('/filter', filter);
 router.use('/api', api);
 router.use('/about', about);

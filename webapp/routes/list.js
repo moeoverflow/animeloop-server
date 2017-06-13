@@ -22,18 +22,18 @@ router.get('/episodes', (req, res, next) => {
   });
 });
 
-router.get('/series', (req, res, next) => {
-  alManager.getSeries((err, results) => {
-    var series = [];
-    if (!err) {
-      series = results;
-    }
-
-    res.render('list', {
-        pageType: 'list-series',
-      datas: series
-    });
-  });
-});
+// router.get('/series', (req, res, next) => {
+//   alManager.getSeries((err, results) => {
+//     var series = [];
+//     if (!err) {
+//       series = results;
+//     }
+//
+//     res.render('list', {
+//         pageType: 'list-series',
+//       datas: series
+//     });
+//   });
+// });
 
 module.exports = router;
