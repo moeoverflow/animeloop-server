@@ -18,15 +18,15 @@
 
   <!-- start: content -->
   <div id="content">
-    <div class="panel">
+    <div class="panel list-series">
       <% grouped.forEach((group) => { %>
-        <div class="series season card col-md-4 col-sm-6 col-xs-12" style="background-color: <%- group.series[0].color %>;">
+        <div class="season card col-md-4 col-sm-6 col-xs-12" style="background-color: <%- group.series[0].color %>;">
           <div class="topcover"></div>
           <div class="title"><%- group.season %></div>
         </div>
         <% group.series.forEach((ser) => { %>
         <a href="/series/<%- ser._id %>">
-          <div class="series item card col-md-4 col-sm-6 col-xs-12" style='background-image: url("<%- ser.image_url_banner %>"); background-color: <%- ser.color %>;'>
+          <div class="item card col-md-4 col-sm-6 col-xs-12" style='background-image: url("<%- ser.image_url_banner %>"); background-color: <%- ser.color %>;'>
             <div class="topcover"></div>
             <div class="title"><%- ser.title %></div>
           </div>

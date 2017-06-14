@@ -135,19 +135,33 @@ class ALManager {
   }
 
   getEpisodesBySeries(id, callback) {
-    DatabaseHandler.EpisodeModel.find({ series: id }).sort({ title: 1 }).populate('series').exec((err, results) => {
-      if (err) {
-        callback(err);
-        return;
+    async.series({
+      series: (callback) => {
+        DatabaseHandler.SeriesModel.findOne({ _id: id }, (err, doc) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          callback(null, doc);
+        })
+      },
+      episodes: (callback) => {
+        DatabaseHandler.EpisodeModel.find({ series: id }).sort({ title: 1 }).populate('series').exec((err, results) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+
+          let episodes = results.map((r) => {
+            r.files = FileHandler.getPublicFilesUrl(r._id);
+            return r;
+          });
+
+          callback(undefined, episodes);
+        });
       }
-
-      let episodes = results.map((r) => {
-        r.files = FileHandler.getPublicFilesUrl(r._id);
-        return r;
-      });
-
-      callback(undefined, episodes);
-    });
+    }, callback);
   }
 
   getEpisodes(callback) {

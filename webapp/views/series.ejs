@@ -1,11 +1,11 @@
+<%
+let episodes = data.episodes;
+let series = data.series;
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <% if (episodes.length >= 1) { %>
-  <title><%- episodes[0].series.title %> | Series | Animeloop</title>
-  <% } else { %>
-  <title>Series | Animeloop</title>
-  <% } %>
+  <title><%- data.series.title %> | Series | Animeloop</title>
   <%- include('partials/head') %>
 </head>
 
@@ -22,11 +22,30 @@
 
   <!-- start: content -->
   <div id="content">
-    <div class="panel">
+    <div class="panel series">
       <div class="panel-body">
-        <% if (episodes.length >= 1) { %>
-        <h3><%- episodes[0].series.title %></h3>
-        <% } %>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <img class="cover" src="<%- series.image_url_large %>">
+        </div>
+        <div class="col-md-8">
+          <h3 class="title"><%- series.title %>
+          <% if (series.title_japanese) { %>
+          <small>（<%- series.title_japanese %> ）</small>
+          <% } %>
+          <% if (series.title_japanese) { %>
+          <br>
+          <small><%- series.title_english %></small>
+          <% } %>
+          </h3>
+
+          <ul class="genres">
+            <% series.genres.forEach((gen) => { %>
+            <li><%- gen %></li>
+            <% }); %>
+          </ul>
+
+          <div class="description"><%- series.description %></div>
+        </div>
       </div>
     </div>
 
@@ -38,7 +57,7 @@
           temps = episodes.slice(i, i+chunk);
         %>
         <div class="col-md-12">
-          <div class="col-md-2">
+          <div class="col-md-1">
           </div>
           <% temps.forEach((temp) => { %>
           <div class="col-md-3">
