@@ -47,57 +47,57 @@
   <!-- start: content -->
   <div id="content">
     <div class="loop detail panel">
-      <div class="panel-body">
+      <div class="panel-body navigator">
         <ol class="breadcrumb path-navigator">
           <li><a href="/series/<%- loop.series._id %>"><%- loop.series.title %></a></li>
           <li><a href="/episode/<%- loop.episode._id %>"><%- loop.episode.title %></a></li>
           <li class="active">(´・ω・`)</li>
         </ol>
-        <div class="col-md-12 col-sm-12">
-          <div class="video col-xs-12 col-md-9">
-            <%- include('partials/video-container', {
-              video: {
-                cover: loop.files.jpg_720p,
-                mp4: loop.files.mp4_1080p,
-                webm: loop.files.webm_1080p,
-                autoplay: true,
-                preload: true,
-                lazyload: true
-              }
-            }) %>
-          </div>
-          <div class="info col-sm-9 col-md-3">
-            <div class="episode col-xs-6 col-sm-6 col-md-12">
-              <h4>Episode: </h4>
-              <span><%- loop.episode.title %></span>
-            </div>
-            <div class="series col-xs-6 col-sm-6 col-md-12">
-              <h4>Series: </h4>
-              <span><%- loop.series.title %></span>
-            </div>
-            <div class="period col-xs-6 col-sm-6 col-md-12">
-              <h4>Period: </h4>
-              <span><%- loop.period.begin.slice(0, 11) + ' ~ ' + loop.period.end.slice(0, 11) %></span>
-            </div>
-            <div class="duration col-xs-6 col-sm-6 col-md-12">
-              <h4>Duration: </h4>
-              <span><%- loop.duration.toFixed(3) %> s</span>
-            </div>
-            <% if (loop.tags.length > 0) { %>
-            <div class="tags col-xs-6 col-sm-6 col-md-12">
-              <h4>Tags: </h4>
-              <% loop.tags.forEach((tag) => { %>
-              <span class="badge badge-primary"><%- tag %></span>
-              <% }); %>
-            </div>
-            <% } %>
-            <div class="media col-xs-12 col-sm-12 col-md-12">
-              <h4>Media: </h4>
-              <% for (let type in loop.files) { %>
+      </div>
+      <div class="panel-body content">
 
-              <a href="<%- loop.files[type] %>"><span class="badge badge-primary"><%- type %></span></a>
-              <% } %>
-            </div>
+        <div class="video col-xs-12 col-sm-12 col-md-9">
+          <%- include('partials/video-container', {
+          video: {
+          cover: loop.files.jpg_720p,
+          mp4: loop.files.mp4_1080p,
+          webm: loop.files.webm_1080p,
+          autoplay: true,
+          preload: true,
+          lazyload: true
+          }
+          }) %>
+        </div>
+        <div class="info col-sm-9 col-md-3">
+          <div class="episode col-xs-6 col-sm-6 col-md-12">
+            <h4>Episode: </h4>
+            <span><%- loop.episode.title %></span>
+          </div>
+          <div class="series col-xs-6 col-sm-6 col-md-12">
+            <h4>Series: </h4>
+            <span><%- loop.series.title %></span>
+          </div>
+          <div class="period col-xs-6 col-sm-6 col-md-12">
+            <h4>Period: </h4>
+            <span><%- loop.period.begin.slice(0, 11) + ' ~ ' + loop.period.end.slice(0, 11) %></span>
+          </div>
+          <div class="duration col-xs-6 col-sm-6 col-md-12">
+            <h4>Duration: </h4>
+            <span><%- loop.duration.toFixed(3) %> s</span>
+          </div>
+          <% if (loop.tags.length > 0) { %>
+          <div class="tags col-xs-6 col-sm-6 col-md-12">
+            <h4>Tags: </h4>
+            <% loop.tags.forEach((tag) => { %>
+            <span class="badge badge-primary"><%- tag %></span>
+            <% }); %>
+          </div>
+          <% } %>
+          <div class="media col-xs-12 col-sm-12 col-md-12">
+            <h4>Media: </h4>
+            <% for (let type in loop.files) { %>
+            <a href="<%- loop.files[type] %>"><span class="badge badge-primary"><%- type %></span></a>
+            <% } %>
           </div>
         </div>
       </div>
