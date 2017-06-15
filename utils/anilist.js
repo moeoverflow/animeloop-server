@@ -23,6 +23,7 @@ class Anilist {
         anilist_updated_at: Date(data.updated_at),
         image_url_large: data.image_url_lge,
         image_url_banner: data.image_url_banner,
+        type: data.type,
         updated_at: Date()
       });
     })

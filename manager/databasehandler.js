@@ -75,6 +75,7 @@ const SeriesSchema = new Schema({
   image_url_banner: String,
   anilist_updated_at: Date,
   updated_at: Date,
+  type: String,
   anilist_id: Number
 });
 SeriesSchema.plugin(findOrCreate);

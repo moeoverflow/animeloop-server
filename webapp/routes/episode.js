@@ -6,7 +6,7 @@ router.get('/:id', (req, res, next) => {
 
     alManager.getLoopsByEpisode(id, (err, data) => {
         if (err) {
-            res.status(404);
+            res.status(404).render('404');
             return;
         }
 

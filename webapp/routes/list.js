@@ -8,19 +8,19 @@ router.get('/tags', (req, res, next) => {
   });
 });
 
-router.get('/episodes', (req, res, next) => {
-  alManager.getEpisodes((err, results) => {
-    var episodes = [];
-    if (!err) {
-      episodes = results;
-    }
-
-    res.render('list', {
-        pageType: 'list-episodes',
-      datas: episodes
-    });
-  });
-});
+// router.get('/episodes', (req, res, next) => {
+//   alManager.getEpisodes((err, results) => {
+//     var episodes = [];
+//     if (!err) {
+//       episodes = results;
+//     }
+//
+//     res.render('list', {
+//         pageType: 'list-episodes',
+//       datas: episodes
+//     });
+//   });
+// });
 
 // router.get('/series', (req, res, next) => {
 //   alManager.getSeries((err, results) => {

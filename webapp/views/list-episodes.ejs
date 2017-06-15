@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Episodes | Animeloop</title>
+  <%- include('partials/head') %>
+</head>
+
+<body id="mimin" class="dashboard">
+
+<!-- start: Header -->
+<%- include('partials/header') %>
+<!-- end: Header -->
+
+<div class="container-fluid mimin-wrapper">
+  <!-- start:Left Menu -->
+  <%- include('partials/menu') %>
+  <!-- end: Left Menu -->
+
+  <!-- start: content -->
+  <div id="content">
+    <!--<div class="panel">-->
+      <!--1-->
+    <!--</div>-->
+    <div class="list-episodes col-md-12">
+      <% datas.forEach((data) => {
+          let series = data.series;
+          let episodes = data.episodes;
+      %>
+      <div class="panel">
+        <div class="panel-body item">
+          <div class="col-xs-5 col-sm-3 col-md-2 cover">
+            <a href="/series/<%- series._id %>"><img data-src="<%- series.image_url_large %>"></a>
+          </div>
+          <div class="col-xs-7 col-sm-5 col-md-5 content">
+            <div class="title">
+              <h4><%- series.title %>
+              <% if (series.title_japanese ) { %>
+              <small>（<%- series.title_japanese %>）</small></h4>
+              <% } %>
+              <p><small><%- series.title_english %></small></p>
+            </div>
+            <ul class="genres">
+              <% series.genres.forEach((gen) => { %>
+              <li><%- gen %></li>
+              <% }); %>
+            </ul>
+          </div>
+          <div class="col-xs-12 col-sm-4 col-md-5 entry">
+            <% episodes.filter((epi) => {
+              return (epi.no != undefined);
+            }).forEach((epi) => { %>
+            <div class="col-xs-2 col-sm-3 col-md-2">
+              <a href="/episode/<%- epi._id %>"><%- epi.no %></a>
+            </div>
+            <% });%>
+
+            <% episodes.filter((epi) => {
+              return (epi.no == undefined);
+            }).forEach((epi) => { %>
+            <div class="col-xs-12 col-sm-12 col-md-12">
+              <a href="/episode/<%- epi._id %>"><%- epi.title %></a>
+            </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+
+  </div>
+  <!-- end: content -->
+
+</div>
+
+<!-- start: Mobile -->
+<%- include('partials/mobile-menu') %>
+<!-- end: Mobile -->
+
+<!-- start: Javascript -->
+<%- include('partials/scripts') %>
+<!-- end: Javascript -->
+</body>
+</html>

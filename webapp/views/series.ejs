@@ -51,21 +51,18 @@ let series = data.series;
 
     <div class="panel">
       <div class="panel-body">
-        <%
-        var i, j, temps, chunk = 3;
-        for (i = 0, j = episodes.length; i < j; i += chunk) {
-          temps = episodes.slice(i, i+chunk);
-        %>
-        <div class="col-md-12">
-          <div class="col-md-1">
-          </div>
-          <% temps.forEach((temp) => { %>
+        <div class="col-md-1"></div>
+        <div class="col-md-11">
+          <% episodes.forEach((epi) => { %>
           <div class="col-md-3">
-            <a href="/episode/<%- temp._id %>"><%- `${temp.series.title} ${temp.no}` %></a>
+            <% if (epi.no) { %>
+            <a href="/episode/<%- epi._id %>"><%- `${epi.series.title} ${epi.no}` %></a>
+            <% } else { %>
+            <a href="/episode/<%- epi._id %>"><%- `${epi.title}` %></a>
+            <% } %>
           </div>
           <% }); %>
         </div>
-        <% } %>
       </div>
     </div>
   </div>

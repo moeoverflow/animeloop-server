@@ -116,10 +116,53 @@
     }
   }
 
+  .list-episodes {
+    .item {
+      min-height: 222px;
+
+      .cover {
+        height: 100%;
+
+        img {
+          max-height: 100%;
+          max-width: 100%;
+        }
+      }
+
+      .genres {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+
+        li {
+          float: left;
+          padding: 8px 16px 8px 0;
+          margin: 0;
+        }
+      }
+
+      .entry {
+        div {
+          padding: 8px;
+        }
+      }
+      @media (max-width: 768px) {
+        .entry {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
   .series {
     .cover {
       margin: 0 auto;
       display: grid;
+    }
+
+    .title {
+      margin-top: 0;
     }
 
     .genres {
@@ -154,6 +197,5 @@
         }
       }
     }
-
   }
 }

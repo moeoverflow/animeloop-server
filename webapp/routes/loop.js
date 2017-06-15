@@ -6,7 +6,7 @@ router.get('/:id', (req, res, next) => {
 
   alManager.getLoopById(id, (err, loop) => {
     if (err) {
-      res.status(404);
+      res.status(404).render('404');
       return;
     }
 
