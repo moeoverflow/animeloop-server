@@ -257,6 +257,7 @@ class Automator {
             loop.entity.series.title = result.series;
             loop.entity.series.anilist_id = result.anilist_id;
             loop.entity.episode.title = result.episode;
+            loop.entity.episode.no = result.no;
             return loop;
           });
 

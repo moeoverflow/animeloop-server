@@ -10,6 +10,11 @@ router.get('/:id', (req, res, next) => {
       return;
     }
 
+    if (data.series == undefined) {
+      res.status(404).render('404');
+      return;
+    }
+
     res.render('series', {
       data
     });
