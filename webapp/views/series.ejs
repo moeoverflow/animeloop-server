@@ -61,7 +61,7 @@ let series = data.series;
           </div>
           <% temps.forEach((temp) => { %>
           <div class="col-md-3">
-            <a href="/episode/<%- temp._id %>"><%- temp.title %></a>
+            <a href="/episode/<%- temp._id %>"><%- `${temp.series.title} ${temp.no}` %></a>
           </div>
           <% }); %>
         </div>

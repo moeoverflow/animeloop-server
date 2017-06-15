@@ -61,14 +61,18 @@ function parseResult(data) {
     return undefined;
   }
 
-  let doc = data.docs[0];
+  let doc = data.docs.sort((prev, next) => {
+    return (next.similarity - prev.similarity);
+  })[0];
 
   var result = {};
   result.series = doc.anime;
-  if (doc.episode == '') {
+  if (doc.episode == '' || doc.episode == 'OVA/OAD') {
     result.episode = doc.title_chinese;
+    result.no = 'OVA';
   } else {
-    result.episode = `${doc.title_chinese} TV ${pad(doc.episode, 2)}`;
+    result.episode = `${doc.title_chinese} ${pad(doc.episode, 2)}`;
+    result.no = `${pad(doc.episode, 2)}`;
   }
   result.anilist_id = doc.anilist_id;
   result.similarity = doc.similarity;

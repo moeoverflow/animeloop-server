@@ -81,6 +81,10 @@ class ALManager {
     DatabaseHandler.SeriesModel.update({ _id: id }, { $set: update}, callback);
   }
 
+  updateEpisode(id, update, callback) {
+    DatabaseHandler.EpisodeModel.update({ _id: id }, { $set: update}, callback);
+  }
+
   getRandomLoops(n, callback) {
 
     DatabaseHandler.LoopModel.findRandom({}, {}, {
@@ -119,32 +123,32 @@ class ALManager {
   }
 
   getLoopsByEpisode(id, callback) {
-    DatabaseHandler.LoopModel.find({ episode: id }).populate('episode series').exec((err, results) => {
-        if (err) {
-            callback(err);
-            return;
-        }
-
-        let loops = results.map((r) => {
-          r.files = FileHandler.getPublicFilesUrl(r._id);
-          return r;
-        });
-
-        callback(undefined, loops);
-    });
-  }
-
-  getEpisodesBySeries(id, callback) {
     async.series({
-      series: (callback) => {
-        DatabaseHandler.SeriesModel.findOne({ _id: id }, (err, doc) => {
+      episode: (callback) => {
+        this.getOneEpisode(id, callback);
+      },
+      loops: (callback) => {
+        DatabaseHandler.LoopModel.find({ episode: id }).populate('episode series').exec((err, results) => {
           if (err) {
             callback(err);
             return;
           }
 
-          callback(null, doc);
-        })
+          let loops = results.map((r) => {
+            r.files = FileHandler.getPublicFilesUrl(r._id);
+            return r;
+          });
+
+          callback(undefined, loops);
+        });
+      }
+    }, callback);
+  }
+
+  getEpisodesBySeries(id, callback) {
+    async.series({
+      series: (callback) => {
+        this.getOneSeries(id, callback);
       },
       episodes: (callback) => {
         DatabaseHandler.EpisodeModel.find({ series: id }).sort({ title: 1 }).populate('series').exec((err, results) => {
@@ -164,8 +168,16 @@ class ALManager {
     }, callback);
   }
 
+  getOneEpisode(id, callback) {
+    DatabaseHandler.EpisodeModel.findOne({ _id: id}).populate('series').exec(callback);
+  }
+
+  getOneSeries(id, callback) {
+    DatabaseHandler.SeriesModel.findOne({ _id: id}).exec(callback);
+  }
+
   getEpisodes(callback) {
-    DatabaseHandler.EpisodeModel.find({}).sort({ title: 1 }).exec(callback);
+    DatabaseHandler.EpisodeModel.find({}).sort({ title: 1 }).populate('series').exec(callback);
   }
 
   getSeries(callback) {

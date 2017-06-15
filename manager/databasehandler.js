@@ -82,6 +82,7 @@ SeriesSchema.plugin(findOrCreate);
 const EpisodeSchema = new Schema({
   title: { type: String, unique: true, require: true },
   series: { type: ObjectId, ref: 'Series' },
+  no: String
 });
 EpisodeSchema.plugin(findOrCreate);
 
