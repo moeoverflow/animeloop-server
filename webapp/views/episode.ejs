@@ -2,7 +2,7 @@
  let episode = data.episode;
  let loops = data.loops;
 
- let episodeTitle = episode.series.title;
+ let episodeTitle = episode.series[__('title-key-1')];
  if (episode.no) {
    episodeTitle += ` ${episode.no}`;
  }
@@ -11,7 +11,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title><%- episodeTitle %> | Episode | Animeloop</title>
+  <title><%- episodeTitle %> | <%= __('episode') %> | Animeloop</title>
   <%- include('partials/head') %>
 </head>
 
@@ -32,8 +32,8 @@
       <div class="panel-body">
         <% if (loops.length >= 1) { %>
         <ol class="breadcrumb path-navigator">
-          <li><a href="/series/<%- loops[0].series._id %>"><%- loops[0].series.title %></a></li>
-          <li class="active"><%- episodeTitle %></li>
+          <li><a href="/series/<%- loops[0].series._id %>"><%- loops[0].series[__('title-key-1')] %></a></li>
+          <li class="active"><%- loops[0].episode.no %></li>
         </ol>
         <h3><%- episodeTitle %></h3>
         <% } %>

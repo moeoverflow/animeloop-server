@@ -2,12 +2,14 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 
+const i18n = require('./i18n');
+
 const index = require('./routes/index');
 const list = require('./routes/list');
 const listSeries = require('./routes/list-series');
 const listEpisodes = require('./routes/list-episodes');
 
-const filter = require('./routes/filter');
+const search = require('./routes/search');
 const api = require('./routes/api');
 const about = require('./routes/about');
 
@@ -25,6 +27,15 @@ router.use('/share.js', express.static(path.join(__dirname, 'modules/share.js'))
 router.use('/pressure', express.static(path.join(__dirname, 'modules/pressure/dist')));
 router.use('/animate.css', express.static(path.join(__dirname, 'modules/animate.css')));
 
+router.use(i18n.init);
+
+router.use((req, res, next) => {
+  if (req.query.lang) {
+    i18n.setLocale(req.query.lang);
+  }
+  res.cookie('locale', i18n.getLocale());
+  return next();
+});
 
 
 router.use('/', index);
@@ -32,7 +43,7 @@ router.use('/list', list);
 router.use('/list', listSeries);
 router.use('/list', listEpisodes);
 
-router.use('/filter', filter);
+router.use('/search', search);
 router.use('/api', api);
 router.use('/about', about);
 

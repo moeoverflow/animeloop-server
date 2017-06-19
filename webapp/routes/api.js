@@ -5,7 +5,13 @@ const fs = require('fs');
 const path = require('path');
 
 router.get('/', (req, res, next) => {
-  fs.readFile(path.join(__dirname, '../content/post/api.md'), 'UTF-8', (err, data) => {
+  var filename = path.join(__dirname, `../content/post/${res.__('api-md-file')}`);
+
+  if (!fs.existsSync(filename)) {
+    filename = path.join(__dirname, `../content/post/api_en.md`);
+  }
+
+  fs.readFile(filename, 'UTF-8', (err, data) => {
     var post = '';
 
     if (!err) {

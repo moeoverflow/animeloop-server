@@ -1,28 +1,22 @@
 <nav class="navbar navbar-default header navbar-fixed-top">
-    <div class="col-md-12 nav-wrapper">
-        <div class="navbar-header" style="width:100%;">
-            <a href="/" class="navbar-brand">
-                <b>Animeloop</b>
-            </a>
+  <div class="col-md-12 nav-wrapper">
+    <div class="navbar-header" style="width:100%;">
+      <a href="/" class="navbar-brand">
+        <b>Animeloop</b>
+      </a>
 
-            <ul class="nav navbar-nav navbar-right user-nav">
-                <li class="user-name"><span>Akko Kagari</span></li>
-                <li class="dropdown avatar-dropdown">
-                    <img src="/test/akko.jpg" class="img-circle avatar" alt="user name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"/>
-                    <ul class="dropdown-menu user-dropdown">
-                        <li><a><span class="fa fa-user"></span> My Profile</a></li>
-                        <li><a><span class="fa fa-calendar"></span> My Calendar</a></li>
-                        <li role="separator" class="divider"></li>
-                        <li class="more">
-                            <ul>
-                                <li><a><span class="fa fa-cogs"></span></a></li>
-                                <li><a><span class="fa fa-lock"></span></a></li>
-                                <li><a><span class="fa fa-power-off "></span></a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+      <ul class="nav navbar-nav navbar-right user-nav">
+        <li class="dropdown languages">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <%- __('language') %> <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <% __h('language').forEach((lang) => {
+              let key = Object.keys(lang)[0]
+            %>
+            <li><a href="?lang=<%- key %>"><%- lang[key] %></a></li>
+            <% }); %>
+          </ul>
+        </li>
+      </ul>
     </div>
+  </div>
 </nav>

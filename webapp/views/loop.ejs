@@ -25,7 +25,7 @@
     videoContentType: 'video/mp4'
   }); %>
 
-  <title><%- loop.period.begin.slice(0, 11) %> | <%- loop.episode.title %> | Animeloop</title>
+  <title><%- loop.period.begin.slice(0, 11) %> | <%- loop.episode.no %> | <%- loop.series[__('title-key-1')] %> | Animeloop</title>
   <%- include('partials/head') %>
 
   <!--  share.js -->
@@ -49,8 +49,8 @@
     <div class="loop detail panel">
       <div class="panel-body navigator">
         <ol class="breadcrumb path-navigator">
-          <li><a href="/series/<%- loop.series._id %>"><%- loop.series.title %></a></li>
-          <li><a href="/episode/<%- loop.episode._id %>"><%- loop.episode.title %></a></li>
+          <li><a href="/series/<%- loop.series._id %>"><%- loop.series[__('title-key-1')] %></a></li>
+          <li><a href="/episode/<%- loop.episode._id %>"><%- loop.episode.no %></a></li>
           <li class="active">(´・ω・`)</li>
         </ol>
       </div>
@@ -69,32 +69,24 @@
           }) %>
         </div>
         <div class="info col-sm-9 col-md-3">
-          <div class="episode col-xs-6 col-sm-6 col-md-12">
-            <h4>Episode: </h4>
-            <span><%- loop.episode.title %></span>
-          </div>
-          <div class="series col-xs-6 col-sm-6 col-md-12">
-            <h4>Series: </h4>
-            <span><%- loop.series.title %></span>
-          </div>
           <div class="period col-xs-6 col-sm-6 col-md-12">
-            <h4>Period: </h4>
+            <h4><%= __('period') %> </h4>
             <span><%- loop.period.begin.slice(0, 11) + ' ~ ' + loop.period.end.slice(0, 11) %></span>
           </div>
           <div class="duration col-xs-6 col-sm-6 col-md-12">
-            <h4>Duration: </h4>
+            <h4><%= __('duration') %> </h4>
             <span><%- loop.duration.toFixed(3) %> s</span>
           </div>
           <% if (loop.tags.length > 0) { %>
           <div class="tags col-xs-6 col-sm-6 col-md-12">
-            <h4>Tags: </h4>
+            <h4><%= __('tags') %>: </h4>
             <% loop.tags.forEach((tag) => { %>
             <span class="badge badge-primary"><%- tag %></span>
             <% }); %>
           </div>
           <% } %>
-          <div class="media col-xs-12 col-sm-12 col-md-12">
-            <h4>Media: </h4>
+          <div class="files col-xs-12 col-sm-12 col-md-12">
+            <h4><%= __('files') %>: </h4>
             <% for (let type in loop.files) { %>
             <a href="<%- loop.files[type] %>"><span class="badge badge-primary"><%- type %></span></a>
             <% } %>

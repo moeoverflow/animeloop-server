@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Episodes | Animeloop</title>
+  <title><%= __('episodes') %> | Animeloop</title>
   <%- include('partials/head') %>
 </head>
 
@@ -33,11 +33,10 @@
           </div>
           <div class="col-xs-7 col-sm-5 col-md-5 content">
             <div class="title">
-              <h4><%- series.title %>
-              <% if (series.title_japanese ) { %>
-              <small>（<%- series.title_japanese %>）</small></h4>
-              <% } %>
-              <p><small><%- series.title_english %></small></p>
+              <h4><%- series[__('title-key-1')] %>
+                <small>（<%- series[__('title-key-2')] %>）</small>
+              </h4>
+              <p><small><%- series[__('title-key-3')] %></small></p>
             </div>
             <ul class="genres">
               <% series.genres.forEach((gen) => { %>

@@ -5,7 +5,13 @@ const fs = require('fs');
 const path = require('path');
 
 router.get('/', (req, res, next) => {
-  fs.readFile(path.join(__dirname, '../content/post/about.md'), 'UTF-8', (err, data) => {
+  var filename = path.join(__dirname, `../content/post/${res.__('about-md-file')}`);
+
+  if (!fs.existsSync(filename)) {
+    filename = path.join(__dirname, `../content/post/about_en.md`);
+  }
+
+  fs.readFile(filename, 'UTF-8', (err, data) => {
     var post = '';
 
     if (!err) {

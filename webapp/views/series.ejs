@@ -5,7 +5,7 @@ let series = data.series;
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title><%- data.series.title %> | Series | Animeloop</title>
+  <title><%- data.series[__('title-key-1')] %> | <%= __('series') %> | Animeloop</title>
   <%- include('partials/head') %>
 </head>
 
@@ -28,16 +28,15 @@ let series = data.series;
           <img class="cover" src="<%- series.image_url_large %>">
         </div>
         <div class="col-md-8">
-          <h3 class="title"><%- series.title %>
-          <% if (series.title_japanese) { %>
-          <small>（<%- series.title_japanese %> ）</small>
-          <% } %>
-          <% if (series.title_japanese) { %>
-          <br>
-          <small><%- series.title_english %></small>
-          <% } %>
-          </h3>
-
+          <div class="title">
+            <h3>
+              <%- series[__('title-key-1')] %>
+              <% if (series[__('title-key-2')]) { %>
+              <small>（<%- series[__('title-key-2')] %>）</small></h4>
+              <% } %>
+            </h3>
+            <p><small><%- series[__('title-key-3')] %></small></p>
+          </div>
           <ul class="genres">
             <% series.genres.forEach((gen) => { %>
             <li><%- gen %></li>
@@ -56,9 +55,9 @@ let series = data.series;
           <% episodes.forEach((epi) => { %>
           <div class="col-md-3">
             <% if (epi.no) { %>
-            <a href="/episode/<%- epi._id %>"><%- `${epi.series.title} ${epi.no}` %></a>
+            <a href="/episode/<%- epi._id %>"><%- `${epi.series[__('title-key-1')]} ${epi.no}` %></a>
             <% } else { %>
-            <a href="/episode/<%- epi._id %>"><%- `${epi.title}` %></a>
+            <a href="/episode/<%- epi._id %>"><%- epi.series[__('title-key-1')] %></a>
             <% } %>
           </div>
           <% }); %>

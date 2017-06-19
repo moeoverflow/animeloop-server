@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Series | Animeloop</title>
+  <title><%= __('series') %> | Animeloop</title>
   <%- include('partials/head') %>
 </head>
 
@@ -28,7 +28,7 @@
         <a href="/series/<%- ser._id %>">
           <div class="item card col-md-4 col-sm-6 col-xs-12" style='background-image: url("<%- ser.image_url_banner ? ser.image_url_banner : ser.image_url_large %>"); background-color: <%- ser.color %>;'>
             <div class="topcover"></div>
-            <div class="title"><%- ser.title %></div>
+            <div class="title"><%- ser[__('title-key-1')] %></div>
           </div>
         </a>
         <% }); %>

@@ -15,7 +15,7 @@
   <% } else { %>
   <li>
   <% } %>
-    <a href="/"><span class="fa-home fa"></span> Home
+    <a href="/"><span class="fa-home fa"></span> <%= __('home') %>
     </a>
   </li>
   <% if ( pageType == 'list-series' ||
@@ -25,7 +25,7 @@
   <% } else { %>
   <li class="ripple">
   <% } %>
-    <a class="tree-toggle nav-header"><span class="fa-list fa"></span> List
+    <a class="tree-toggle nav-header"><span class="fa-list fa"></span> <%= __('list') %>
         <span class="fa-angle-right fa right-arrow text-right"></span>
     </a>
     <% if ( pageType == 'list-series' ||
@@ -35,9 +35,9 @@
     <% } else { %>
     <ul class="nav nav-list tree" style="display: none;">
         <% } %>
-        <li><a href="/list/series">Series</a></li>
-        <li><a href="/list/episodes">Episodes</a></li>
-        <li><a href="/list/tags">Tags</a></li>
+        <li><a href="/list/series"><%= __('series') %></a></li>
+        <li><a href="/list/episodes"><%= __('episodes') %></a></li>
+        <li><a href="/list/tags"><%= __('tags') %></a></li>
     </ul>
   </li>
 
@@ -46,7 +46,7 @@
   <% } else { %>
   <li>
   <% } %>
-    <a href="/filter"><span class="fa-filter fa"></span> Filter
+    <a href="/search"><span class="fa-search fa"></span> <%= __('search') %>
     </a>
   </li>
 
@@ -55,7 +55,7 @@
   <% } else { %>
   <li>
   <% } %>
-    <a href="/api"><span class="icons icon-magic-wand"></span> API
+    <a href="/api"><span class="icons icon-magic-wand"></span> <%= __('api') %>
     </a>
   </li>
 
@@ -64,7 +64,7 @@
   <% } else { %>
   <li>
   <% } %>
-    <a href="/about"><span class="icons icon-info"></span> About
+    <a href="/about"><span class="icons icon-info"></span> <%= __('about') %>
     </a>
   </li>
 </ul>

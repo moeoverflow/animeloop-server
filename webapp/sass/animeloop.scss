@@ -11,6 +11,21 @@
   }
 }
 
+@media (max-width: 767px) {
+  .nav-wrapper {
+    padding: 0;
+  }
+
+  .navbar-nav .open .dropdown-menu {
+    position: absolute;
+    background-color: white;
+
+    li {
+      float: none;
+    }
+  }
+}
+
 #mimin-mobile {
   ul.nav.nav-list {
     .logo {
@@ -96,6 +111,8 @@
       background-position: center center;
 
       .title {
+        text-align: center;
+        width: 75%;
         position: absolute;
         bottom: 50%;
         left: 50%;
