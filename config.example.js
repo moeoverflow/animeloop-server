@@ -45,8 +45,17 @@ const config = {
       autogen: path.join(__dirname, 'storage', 'autogen')
     }
   },
-  database: {
+  mongodb: {
     url: 'mongodb://localhost/animeloop'
+  },
+  bot: {
+    twitter: {
+      consumer_key:         '...',
+      consumer_secret:      '...',
+      access_token:         '...',
+      access_token_secret:  '...',
+      timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
+    }
   }
 };
 
