@@ -39,6 +39,8 @@ Pressure.set('.video-golink', {
       }
     } else if (force >= 0.2 && force < 0.6) {
       if (!stay && pressure != 'lightpress') {
+        ga('send', 'event', 'LoopCard', '3D Touch', 'Light Press');
+
         pressure = 'lightpress';
         $('#modal-' + this.id).modal({
           focus: false,
@@ -47,6 +49,8 @@ Pressure.set('.video-golink', {
       }
     } else if (force >= 0.6 && force <= 0.98) {
       if (!stay && pressure != 'deeppress') {
+        ga('send', 'event', 'LoopCard', '3D Touch', 'Deep Press');
+
         pressure = 'deeppress';
         stay = true;
 

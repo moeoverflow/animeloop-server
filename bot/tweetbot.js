@@ -37,7 +37,7 @@ module.exports = {
         status += ' #Animeloop';
         status += ` ${config.app.url}/loop/${loop._id}`;
 
-        T.post('statuses/update', { status: status, media_ids: [media.media_id_string] }, function(err, status, response) {
+        T.post('statuses/update', { status: status, media_ids: [media.media_id_string] }, (err, status, response) => {
           if (err) {
             console.error(err);
             return;
