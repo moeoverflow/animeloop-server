@@ -34,7 +34,9 @@
           <div class="col-xs-7 col-sm-5 col-md-5 content">
             <div class="title">
               <h4><%- series[__('title-key-1')] %>
+                <% if (series[__('title-key-2')]) { %>
                 <small>（<%- series[__('title-key-2')] %>）</small>
+                <% } %>
               </h4>
               <p><small><%- series[__('title-key-3')] %></small></p>
             </div>
@@ -47,6 +49,8 @@
           <div class="col-xs-12 col-sm-4 col-md-5 entry">
             <% episodes.filter((epi) => {
               return (epi.no != undefined);
+            }).sort((prev, next) => {
+              return (prev.no > next.no);
             }).forEach((epi) => { %>
             <div class="col-xs-2 col-sm-3 col-md-2">
               <a href="/episode/<%- epi._id %>"><%- epi.no %></a>

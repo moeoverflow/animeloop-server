@@ -9,11 +9,14 @@ router.get('/episodes', (req, res, next) => {
       series = results;
     }
 
-    series.map((ser) => {
-      if (ser.anilist_updated_at == undefined) {
-        return ser.start_date_fuzzy = 0;
+    series = series.map((ser) => {
+      if (ser.title == 'DEFAULT SERIES') {
+        ser.start_date_fuzzy = 0;
       }
-    }).sort((prev, next) => {
+      return ser;
+    });
+
+    series.sort((prev, next) => {
       return (next.start_date_fuzzy - prev.start_date_fuzzy);
     });
 

@@ -29,13 +29,11 @@ module.exports = {
 
         logger.info('tweetbot - uploaded media.');
 
-        var status = loop.series.title_japanese;
-        if (loop.episode.no) {
-          status += ` ${loop.episode.no}`;
+        if (loop.episode.no == undefined) {
+          loop.episode.no = '';
         }
-        status += ` ${loop.period.begin.slice(0, 11)}`;
-        status += ' #Animeloop';
-        status += ` ${config.app.url}/loop/${loop._id}`;
+
+        var status = `${loop.series.title_japanese} ${loop.episode.no} ${loop.period.begin.slice(0, 11)} #Animeloop ${config.app.url}/loop/${loop._id}`;
 
         T.post('statuses/update', { status: status, media_ids: [media.media_id_string] }, (err, status, response) => {
           if (err) {
