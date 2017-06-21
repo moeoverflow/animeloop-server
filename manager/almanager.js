@@ -173,7 +173,9 @@ class ALManager {
   }
 
   getOneSeries(id, callback) {
-    DatabaseHandler.SeriesModel.findOne({ _id: id}).exec(callback);
+    DatabaseHandler.SeriesModel.findOne({ _id: id}).exec((err, doc) => {
+      callback(err, getAnilistProxyUrl(doc));
+    });
   }
 
   getEpisodes(callback) {
@@ -181,8 +183,22 @@ class ALManager {
   }
 
   getSeries(callback) {
-    DatabaseHandler.SeriesModel.find({}).sort({ title: 1 }).exec(callback);
+    DatabaseHandler.SeriesModel.find({}).sort({ title: 1 }).exec((err, docs) => {
+      callback(err, docs.map((doc) => {
+        return getAnilistProxyUrl(doc);
+      }));
+    });
   }
+}
+
+function getAnilistProxyUrl(doc) {
+  if (doc.image_url_large) {
+    doc.image_url_large = doc.image_url_large.replace('https://cdn.anilist.co', `${config.app.url}/anilist`);
+  }
+  if (doc.image_url_banner) {
+    doc.image_url_banner = doc.image_url_banner.replace('https://cdn.anilist.co', `${config.app.url}/anilist`);
+  }
+  return doc;
 }
 
 module.exports = ALManager;

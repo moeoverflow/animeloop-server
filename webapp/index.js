@@ -17,6 +17,8 @@ const episode = require('./routes/episode');
 const series = require('./routes/series');
 const loop = require('./routes/loop');
 
+const anilistProxy = require('./routes/anilist_proxy');
+
 
 router.use(express.static(path.join(__dirname, 'public')));
 router.use('/miminium', express.static(path.join(__dirname, 'modules/miminium/asset')));
@@ -50,5 +52,7 @@ router.use('/about', about);
 router.use('/episode', episode);
 router.use('/series', series);
 router.use('/loop', loop);
+
+router.use('/anilist', anilistProxy);
 
 module.exports = router;
