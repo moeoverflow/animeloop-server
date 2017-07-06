@@ -5,4 +5,4 @@ new FileHandler();
 
 convert([], () => {
   console.log('Work done.');
-})
+});

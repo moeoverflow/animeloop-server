@@ -16,6 +16,7 @@ const tagsDir = FileHandler.getLocalFilesTagDir();
 function converting(from, to, id, callback) {
   let src = path.join(tagsDir[from], `${id}.${FileHandler.getExt(from)}`);
   let tmp = path.join(tagsDir[to], 'temp', `${id}.${FileHandler.getExt(to)}`);
+  let pat = path.join(tagsDir[to], 'temp', 'palette.png');
   let dst = path.join(tagsDir[to], `${id}.${FileHandler.getExt(to)}`);
 
   if (fs.existsSync(dst)) {
@@ -29,8 +30,14 @@ function converting(from, to, id, callback) {
   }
 
   ((done) => {
-    if (from === 'mp4_1080p' && (to === 'gif_360p' || to === 'mp4_360p')) {
+    if (from === 'mp4_1080p' && to === 'mp4_360p') {
       shell.exec(`ffmpeg -loglevel panic -i ${src} -vf scale=-1:360 ${tmp}`, done);
+    } else if (from === 'mp4_1080p' && to === 'gif_360p') {
+      shell.exec(
+        `ffmpeg -loglevel panic -y -i ${src} -vf "fps=10,scale='if(gte(iw,ih),320,-1)':'if(gt(ih,iw),320,-1)':flags=lanczos,palettegen" ${pat};
+        ffmpeg -loglevel panic -i ${src} -i ${pat} -filter_complex "fps=10,scale='if(gte(iw,ih),320,-1)':'if(gt(ih,iw),320,-1)':flags=lanczos[x];[x][1:v]paletteuse" ${tmp}
+        rm ${pat}
+        `, done);
     } else if (from === 'mp4_1080p' && to === 'webm_1080p') {
       shell.exec(`ffmpeg -loglevel panic -i ${src} -c:v libvpx -an -b 512K ${tmp}`, done);
     } else if (from === 'mp4_1080p' && to === 'webm_360p') {
