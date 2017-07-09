@@ -13,26 +13,26 @@ class ALManager {
     this.fileHandler = new FileHandler();
   }
 
-  addLoop(loop, callback) {
-    this.databaseHandler
-    .addLoop(loop.entity)
-    .then((data) => {
-      this.fileHandler.saveFile(data, loop.files)
-      .then(() => {
-        callback(null, data);
-      })
-      .catch((err) => {
-        callback(err);
-      });
-    })
-    .catch((err, data) => {
-      logger.error(err);
-      if (data.entity.loop) {
-        this.removeLoop(data.entity.loop).then(() => {
-          callback(err);
+  addLoop(loop, done) {
+    async.waterfall([
+      (callback) => {
+        this.databaseHandler.addLoop(loop.entity, (err, entity) => {
+          if (err) {
+            logger.error(err);
+            if (entity.loop) {
+              this.removeLoop(entity.loop).then(() => {
+                callback(err);
+              });
+            }
+          }
+
+          callback(null, entity);
         });
+      },
+      (entity, callback) => {
+        this.fileHandler.saveFile(entity, loop.files, callback);
       }
-    });
+    ], done);
   }
 
   removeLoop(loop) {

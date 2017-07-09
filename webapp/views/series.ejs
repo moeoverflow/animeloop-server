@@ -5,6 +5,12 @@ let series = data.series;
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <%- include('partials/open-graph', {
+    title: series[__('title-key-1')],
+    description: series.description,
+    image: series.image_url_large,
+    video: false
+  }); %>
   <title><%- data.series[__('title-key-1')] %> | <%= __('series') %> | Animeloop</title>
   <%- include('partials/head') %>
 </head>

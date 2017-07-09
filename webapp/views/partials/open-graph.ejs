@@ -1,9 +1,11 @@
 <meta property="og:title" content="<%- title %>" />
 <meta property="og:image" content="<%- image %>" />
-<meta property="og:description" content="<%- description %>" />
+<meta property="og:description" content="<%= description %>" />
 <meta property="og:site_name" content="Animeloop" />
 
+<% if (locals.video == undefined || locals.video) { %>
 <meta property="og:video:secure_url" content="<%- videoStream %>" />
 <meta property="og:video:type" content="<%- videoContentType %>" />
 <meta property="og:video:width" content="<%- videoWidth %>" />
 <meta property="og:video:height" content="<%- videoHeight %>" />
+<% } %>

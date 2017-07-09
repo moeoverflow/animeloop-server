@@ -21,33 +21,28 @@ class FileHandler {
     }
   }
 
-  saveFile(entity, files) {
-    return new Promise((resolve, reject) => {
-      for (let key in this.dirs) {
-        try {
-          if (files[key] && fs.existsSync(files[key])) {
-            fs.renameSync(files[key], path.join(this.dirs[key], `${entity.loop._id}.${FileHandler.getExt(key)}`));
-          }
-        } catch (err) {
-          reject({
-            err,
-            entity
-          });
-          return;
+  saveFile(entity, files, done) {
+    for (let key in this.dirs) {
+      try {
+        if (files[key] && fs.existsSync(files[key])) {
+          fs.renameSync(files[key], path.join(this.dirs[key], `${entity.loop._id}.${FileHandler.getExt(key)}`));
         }
+      } catch (err) {
+        done(err, entity);
+        return;
       }
-      resolve(true);
-    });
+    }
+    done(null, entity);
   }
 }
 
 
 FileHandler.FilesTags = [
   // 360p
+  'jpg_360p',
   'mp4_360p',
   'webm_360p',
   'gif_360p',
-  'jpg_360p',
   // 720p
   'jpg_720p',
   // 1080p

@@ -38,10 +38,7 @@ class Automator {
         port: config.automator.redis.port,
         host: config.automator.redis.host,
         auth: config.automator.redis.auth,
-        db: 3, // if provided select a non-default redis db
-        options: {
-          // see https://github.com/mranney/node_redis#rediscreateclient
-        }
+        db: 3
       }
     });
 
@@ -92,37 +89,6 @@ class Automator {
     this.app.use(config.automator.app.url, kue.app);
     this.app.listen(config.automator.app.port, config.automator.app.host);
 
-
-    let queue = this.queue;
-    schedule.scheduleJob('30 1 1 * * 1', () => {
-      this.alManager.getSeries((err, docs) => {
-        if (err) {
-          logger.error('Anilist info update - get series error');
-          return;
-        }
-
-        docs.filter((doc) => {
-          return (doc.anilist_id != undefined);
-        }).filter((doc) => {
-          if (doc.updated_at == undefined) {
-            return true;
-          }
-          return ((Date().getDay() - doc.updated_at.getDay()) > 7);
-        }).forEach((doc) => {
-          let job = queue.create('anilist', {
-            title: `Get info from anilist: ${doc.title}`,
-            series_id: doc._id,
-            anilist_id: doc.anilist_id
-          })
-          .priority('low')
-          .save((err) => {
-            if (!err) {
-              logger.info(`Job ID: ${job.id} - Get Info from anilist: ${doc.title}`);
-            }
-          });
-        });
-      });
-    });
   }
 
   watching() {
@@ -295,9 +261,8 @@ class Automator {
           this.alManager.updateSeries(series_id, data, callback);
         });
       }
-    ], (err) => {
-
-      done(err);
+    ], (err, entity) => {
+      done(err, entity);
     });
   }
 

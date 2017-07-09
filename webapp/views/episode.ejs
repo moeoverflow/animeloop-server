@@ -11,6 +11,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <%- include('partials/open-graph', {
+    title: episodeTitle,
+    description: episode.series.description,
+    image: episode.series.image_url_large,
+    video: false
+  }); %>
   <title><%- episodeTitle %> | <%= __('episode') %> | Animeloop</title>
   <%- include('partials/head') %>
 </head>
@@ -28,14 +34,13 @@
 
   <!-- start: content -->
   <div id="content">
-    <div class="panel">
+    <div class="panel episode">
       <div class="panel-body">
         <% if (loops.length >= 1) { %>
         <ol class="breadcrumb path-navigator">
           <li><a href="/series/<%- loops[0].series._id %>"><%- loops[0].series[__('title-key-1')] %></a></li>
           <li class="active"><%- loops[0].episode.no %></li>
         </ol>
-        <h3><%- episodeTitle %></h3>
         <% } %>
       </div>
     </div>
