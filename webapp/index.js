@@ -28,17 +28,9 @@ router.use('/modernizr', express.static(path.join(__dirname, 'modules/modernizr'
 router.use('/share.js', express.static(path.join(__dirname, 'modules/share.js')));
 router.use('/pressure', express.static(path.join(__dirname, 'modules/pressure/dist')));
 router.use('/animate.css', express.static(path.join(__dirname, 'modules/animate.css')));
+router.use('/js-cookie', express.static(path.join(__dirname, 'modules/js-cookie/src')));
 
 router.use(i18n.init);
-
-router.use((req, res, next) => {
-  if (req.query.lang) {
-    i18n.setLocale(req.query.lang);
-  }
-  res.cookie('locale', i18n.getLocale());
-  return next();
-});
-
 
 router.use('/', index);
 router.use('/list', list);

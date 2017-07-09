@@ -16,3 +16,6 @@
 [submodule "webapp/modules/animate.css"]
 	path = webapp/modules/animate.css
 	url = https://github.com/daneden/animate.css.git
+[submodule "webapp/modules/js-cookie"]
+	path = webapp/modules/js-cookie
+	url = https://github.com/js-cookie/js-cookie.git

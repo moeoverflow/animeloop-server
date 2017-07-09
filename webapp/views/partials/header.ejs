@@ -12,7 +12,7 @@
             <% __h('language').forEach((lang) => {
               let key = Object.keys(lang)[0]
             %>
-            <li><a href="?lang=<%- key %>"><%- lang[key] %></a></li>
+            <li><a href="" onclick='Cookies.set("locale", "<%- key %>");'><%- lang[key] %></a></li>
             <% }); %>
           </ul>
         </li>
