@@ -41,6 +41,11 @@
               <p><small><%- series[__('title-key-3')] %></small></p>
             </div>
             <ul class="genres">
+              <%
+                var dateFuzzy = series.start_date_fuzzy;
+                var date = new Date(dateFuzzy / 10000, (dateFuzzy % 10000 / 100) - 1, dateFuzzy % 100);
+              %>
+              <li><%- `${date.getUTCFullYear()}-${date.getUTCMonth()+1}` %></li>
               <% series.genres.forEach((gen) => { %>
               <li><%- gen %></li>
               <% }); %>
