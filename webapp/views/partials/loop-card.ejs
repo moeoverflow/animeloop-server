@@ -1,16 +1,9 @@
-<div class="loop-card col-xs-6 col-sm-4 col-md-3 col-lg-3">
+<div class="loop-card">
   <div class="panel panel-default">
     <div class="panel-body">
-      <a id="loop-<%- loop._id %>" class="video-golink" href="/loop/<%- loop._id %>">
-        <%- include('video-container', {
-          video: {
-            cover: loop.files.jpg_360p,
-            mp4: loop.files.mp4_360p,
-            webm: loop.files.webm_360p,
-            preload: true,
-            lazyload: true
-          }
-        }) %>
+      <a id="loop-<%- loop._id %>" class="video-golink" loop-id="<%- loop._id %>" href="/loop/<%- loop._id %>">
+        <img class="video-cover" src="<%- loop.files.jpg_360p %>">
+        <div class="video-container"></div>
       </a>
     </div>
     <div class="panel-footer">

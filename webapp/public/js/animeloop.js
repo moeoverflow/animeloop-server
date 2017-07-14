@@ -1,15 +1,62 @@
 // Hover play video
-$('.video-container.manual-play').hover( hoverVideo, hideVideo );
-function hoverVideo(e) {
-  var video = $('video', this).get(0);
-  var isPlaying = video.currentTime > 0 && !video.paused && !video.ended
-    && video.readyState > 2;
 
-  if (!isPlaying) {
-    video.play();
-  }
+function createVideoElement(id) {
+  var video = document.createElement('video');
+
+  video.autoplay = true;
+  video.preload = true;
+  video.loop = true;
+  video.muted = true;
+  video.controls =false;
+
+  var sourceMP4 = document.createElement("source");
+  sourceMP4.type = "video/mp4";
+  sourceMP4.src = '/files/mp4_360p/' + id + '.mp4';
+
+  var sourceWEBM = document.createElement("source");
+  sourceWEBM.type = "video/webm";
+  sourceWEBM.src = '/files/webm_360p/' + id + '.webm';
+
+  video.appendChild(sourceMP4);
+  video.appendChild(sourceWEBM);
+
+  return video;
 }
-function hideVideo(e) { $('video', this).get(0).pause(); }
+
+
+
+$('.video-golink').hover( hoverVideo, hideVideo );
+function hoverVideo(e) {
+  var id = $(this).attr('loop-id');
+  var videoContainer = $('.video-container', this);
+  var videoCover = $('.video-cover', this);
+
+  videoContainer.append(createVideoElement(id));
+
+  var video = $('video', videoContainer);
+  video.attr('webkit-playsinline', '');
+  video.attr('playsinline', '');
+
+  // videoContainer.css('width', videoCover.width);
+  // videoContainer.css('height', videoCover.height);
+  // video.css('width', videoCover.width);
+  // video.css('height', videoCover.height);
+
+  video.bind("canplaythrough", function() {
+    videoCover.css('display', 'none');
+    videoContainer.css('display', 'inherit');
+  });
+}
+function hideVideo(e) {
+  var id = $(this).attr('loop-id');
+  var videoCover = $('img', this);
+  var videoContainer = $('.video-container', this);
+  var video = $('video', videoContainer);
+
+  videoCover.css('display', 'inherit');
+  videoContainer.css('display', 'none');
+  videoContainer.empty();
+}
 
 // Check mobile touch event
 if (Modernizr.touchevents) {
@@ -32,10 +79,15 @@ var pressure = 'off';
 // 3D Touch event
 Pressure.set('.video-golink', {
   change: function(force) {
+    var videoContainer = $('#modal-' + this.id + ' .video-container');
+    var id = videoContainer.attr('loop-id');
+
     if (force < 0.2) {
       if (!stay && pressure != 'off') {
         pressure = 'off';
         $('#modal-' + this.id).modal('hide');
+
+        videoContainer.empty();
       }
     } else if (force >= 0.2 && force < 0.6) {
       if (!stay && pressure != 'lightpress') {
@@ -46,6 +98,13 @@ Pressure.set('.video-golink', {
           focus: false,
           show: true
         });
+
+
+        videoContainer.append(createVideoElement(id));
+        var video = $('video', videoContainer);
+        video.attr('webkit-playsinline', '');
+        video.attr('playsinline', '');
+
       }
     } else if (force >= 0.6 && force <= 0.98) {
       if (!stay && pressure != 'deeppress') {
@@ -69,7 +128,7 @@ Pressure.set('.video-golink', {
         });
       }
     } else {
-      window.location = this.href;
+      // window.location = this.href;
     }
   }
 }, {

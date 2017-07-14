@@ -53,9 +53,49 @@
     display: grid;
   }
 
+  .loop-cards {
+    display: grid;
+    grid-template: repeat(4, 1fr) / repeat(3, 1fr);
+    grid-gap: 0em 1em;
+
+    @media (min-width: 992px) {
+      grid-template: repeat(3, 1fr) / repeat(4, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      grid-template: repeat(6, 1fr) / repeat(2, 1fr);
+    }
+
+    padding-right: 10px;
+    padding-left: 10px;
+
+    @media (max-width: 768px) {
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -ktml-user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+  }
+
   .loop-card {
+    padding-right: 5px;
+    padding-left: 5px;
+
     .panel-body {
       padding: 0;
+
+      .video-cover {
+        width: 100%;
+      }
+
+      .video-container {
+        display: none;
+
+        video {
+          vertical-align: middle;
+        }
+      }
     }
 
     .panel-footer {
