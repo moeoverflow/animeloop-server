@@ -2,7 +2,7 @@
   <div class="panel panel-default">
     <div class="panel-body">
       <a id="loop-<%- loop._id %>" class="video-golink" loop-id="<%- loop._id %>" href="/loop/<%- loop._id %>">
-        <img class="video-cover" src="<%- loop.files.jpg_360p %>">
+        <img class="video-cover" src="<%- loop.files.jpg_360p %>" alt="<%- loop.series[__('title-key-1')] %> <%- loop.episode.no %>">
         <div class="video-container"></div>
       </a>
     </div>
