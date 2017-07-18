@@ -33,16 +33,19 @@ module.exports = {
           loop.episode.no = '';
         }
 
-        var status = `${loop.series.title_japanese} ${loop.episode.no} ${loop.period.begin.slice(0, 11)} #Animeloop ${config.app.url}/loop/${loop._id}`;
+        let status_message = `${loop.series.title_japanese} ${loop.episode.no}\n` +
+          `${loop.series.title} ${loop.episode.no}\n` +
+          `${loop.series.title_english} ${loop.episode.no}\n` +
+          `${loop.period.begin.slice(0, 11)}\n` +  `
+          #Animeloop\n` +
+          `${config.app.url}/loop/${loop._id}`;
 
-        T.post('statuses/update', { status: status, media_ids: [media.media_id_string] }, (err, status, response) => {
+        T.post('statuses/update', { status: status_message, media_ids: [media.media_id_string] }, (err, status, response) => {
           if (err) {
             console.error(err);
             return;
           }
-          logger.info('tweetbot - tweeted.');
-
-          console.log(status);
+          logger.info(`tweetbot - tweeted - ${status_message}`);
         });
       });
     });
