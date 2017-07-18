@@ -37,12 +37,8 @@ function hoverVideo(e) {
   video.attr('webkit-playsinline', '');
   video.attr('playsinline', '');
 
-  // videoContainer.css('width', videoCover.width);
-  // videoContainer.css('height', videoCover.height);
-  // video.css('width', videoCover.width);
-  // video.css('height', videoCover.height);
-
   video.bind("canplaythrough", function() {
+    video[0].play();
     videoCover.css('display', 'none');
     videoContainer.css('display', 'inherit');
   });

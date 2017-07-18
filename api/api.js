@@ -65,7 +65,6 @@ router.get('/api/rand', (req, res) => {
     }
     res.json(loops[0]);
   });
-
 });
 
 

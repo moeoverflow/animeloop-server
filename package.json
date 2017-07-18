@@ -29,7 +29,7 @@
     "node-schedule": "^1.2.3",
     "randomcolor": "^0.5.3",
     "request": "^2.81.0",
-    "sharp": "^0.18.1",
+    "sharp": "^0.18.2",
     "shell-escape": "^0.2.0",
     "shelljs": "^0.7.7",
     "twit": "^2.2.9"
