@@ -160,9 +160,25 @@ class Automator {
 
     async.waterfall([
       (callback) => {
-        var randomLoops = loops.slice(0).sort(() => {
+        var randomLoops = loops.filter((loop) => {
+          function hmsToSeconds(str) {
+            var p = str.split(':'),
+              s = 0, m = 1;
+            while (p.length > 0) {
+              s += m * parseInt(p.pop(), 10);
+              m *= 60;
+            }
+            return s;
+          }
+
+          // filter OP (first 3 minutes).
+          let period = loop.entity.loop.period;
+          let begin = hmsToSeconds(period.begin);
+
+          return (begin > (3 * 60));
+        }).slice(0).sort(() => {
           return 0.5 - Math.random();
-        }).slice(0, 3);
+        }).slice(0, 5);
 
         job.log('whatanime.ga - fetching info');
         logger.info('whatanime.ga - fetching info');
@@ -181,7 +197,6 @@ class Automator {
           }
           job.progress(30, 100);
 
-
           results = results.filter((result) => { return (result != undefined) });
           if (results.length == 0) {
             logger.error('whatanime.ga fetch info empty.');
@@ -194,9 +209,11 @@ class Automator {
             counts[result.anilist_id] = counts[result.anilist_id] ? counts[result.anilist_id]+1 : 1;
           });
 
+          let len = randomLoops.length;
+          let mid = Math.round(len / 2) + (len % 2 == 0 ? 1 : 0);
           var result = undefined;
           for (let key in counts) {
-            if (counts[key] >= 2) {
+            if (counts[key] >= mid) {
               result = results.filter((result) => {
                 return (result.anilist_id == key);
               })[0];
