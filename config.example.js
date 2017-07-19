@@ -6,6 +6,9 @@ const config = {
     host: '127.0.0.1',
     port: 7777
   },
+  web: {
+    seriesPerPage: 18,
+  },
   googleAnalytics: '',
   animeloopCli: {
     bin: path.join(__dirname, 'bin', 'animeloop-cli')

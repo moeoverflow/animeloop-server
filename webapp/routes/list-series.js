@@ -1,16 +1,44 @@
+const async = require('async');
+
 const express = require('express');
 const router = express.Router();
 
 const groupArray = require('group-array');
 const randomColor = require('randomcolor');
 
-
 router.get('/series', (req, res, next) => {
-  alManager.getSeries((err, results) => {
-    var series = [];
-    if (!err) {
-      series = results;
+  renderSeriesList(1, res);
+});
+
+router.get('/series/:page(\\d+)', (req, res, next) => {
+  let page = parseInt(req.params.page);
+  if (page == 0) {
+    res.status(404).render('404');
+    return;
+  }
+  renderSeriesList(page, res);
+});
+
+function renderSeriesList(page, res) {
+  async.series({
+    totalPage: (callback) => {
+      alManager.getSeriesPageCount(callback);
+    },
+    series: (callback) => {
+      alManager.getSeriesByPage(page, callback);
     }
+  }, (err, results) => {
+    var series = [];
+    if (err) {
+      res.render('list-series', {
+        pageType: 'list-series',
+        totalPage: 0,
+        grouped: []
+      });
+      return;
+    }
+
+    var {totalPage, series} = results;
 
     series = series.map((ser) => {
       ser.color = randomColor({
@@ -48,9 +76,21 @@ router.get('/series', (req, res, next) => {
 
     res.render('list-series', {
       pageType: 'list-series',
+      pagination: {
+        current: page,
+        total: totalPage,
+        prevColor: randomColor({
+          luminosity: 'dark',
+          hue: '#034160'
+        }),
+        nextColor: randomColor({
+          luminosity: 'dark',
+          hue: '#034160'
+        })
+      },
       grouped
     });
   });
-});
+}
 
 module.exports = router;

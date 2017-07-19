@@ -183,12 +183,43 @@ class ALManager {
   }
 
   getSeries(callback) {
-    DatabaseHandler.SeriesModel.find({}).sort({ title: 1 }).exec((err, docs) => {
+    DatabaseHandler.SeriesModel
+      .find({})
+      .sort({ title: 1 })
+      .exec((err, docs) => {
       callback(err, docs.map((doc) => {
         return getAnilistProxyUrl(doc);
       }));
     });
   }
+
+  getSeriesPageCount(done) {
+    let perPage = config.web.seriesPerPage;
+
+    DatabaseHandler.SeriesModel.count({}, (err, count) => {
+      if (err) {
+        done(err, 0);
+      }
+      let totalPage = Math.ceil(count / perPage);
+      done(null, totalPage);
+    });
+  }
+
+  getSeriesByPage(page, done) {
+    let perPage = config.web.seriesPerPage;
+
+    DatabaseHandler.SeriesModel
+      .find({})
+      .sort({start_date_fuzzy: -1})
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .exec((err, docs) => {
+        done(err, docs.map((doc) => {
+          return getAnilistProxyUrl(doc);
+        }));
+      });
+  }
+
 }
 
 function getAnilistProxyUrl(doc) {

@@ -18,7 +18,17 @@
 
   <!-- start: content -->
   <div id="content">
+    <% let {current, total, prevColor, nextColor} = pagination; %>
+
     <div class="panel list-series">
+      <% if (current != 1) { %>
+      <a href="/list/series/<%- current - 1 %>">
+        <div class="pagination-button card col-md-4 col-sm-6 col-xs-12" style='background-color: <%- prevColor %>;'>
+          <div class="topcover"></div>
+          <div class="title">&laquo;</div>
+        </div>
+      </a>
+      <% } %>
       <% grouped.forEach((group) => { %>
         <div class="season card col-md-4 col-sm-6 col-xs-12" style="background-color: <%- group.series[0].color %>;">
           <div class="topcover"></div>
@@ -33,6 +43,14 @@
         </a>
         <% }); %>
       <% }); %>
+      <% if (current != total) { %>
+      <a href="/list/series/<%- current + 1 %>">
+        <div class="pagination-button card col-md-4 col-sm-6 col-xs-12" style='background-color: <%- nextColor %>;'>
+          <div class="topcover"></div>
+          <div class="title">&raquo;</div>
+        </div>
+      </a>
+      <% } %>
     </div>
   </div>
   <!-- end: content -->

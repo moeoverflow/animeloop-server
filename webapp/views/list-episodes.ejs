@@ -18,9 +18,6 @@
 
   <!-- start: content -->
   <div id="content">
-    <!--<div class="panel">-->
-      <!--1-->
-    <!--</div>-->
     <div class="list-episodes col-md-12">
       <% datas.forEach((data) => {
           let series = data.series;
@@ -73,8 +70,30 @@
         </div>
       </div>
       <% }); %>
-    </div>
+      <% let {current, total} = pagination; %>
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li <%- current == 1 ? 'class="disabled"' : '' %>>
+            <a <%- current == 1 ? '' : `href="/list/episodes/${current - 1}"` %> aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <%
+          let begin = (current - 5 < 1) ? 1 : (pagination.current - 5);
+          let end = (current + 5 > total) ? total : (current + 5);
+          %>
+          <% for (var i = begin; i <= end; ++i) { %>
+          <li <%- current == i ? 'class="active"' : '' %>><a href="/list/episodes/<%- i %>"><%- i %></a> </li>
+          <% } %>
 
+          <li <%- current == total ? 'class="disabled"' : '' %>>
+            <a <%- current == total ? '' : `href="/list/episodes/${current + 1}"` %> aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </div>
   <!-- end: content -->
 

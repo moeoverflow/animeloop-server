@@ -181,6 +181,12 @@
         background-color: rgba(0, 0, 0, 0.4);
       }
     }
+
+    .pagination-button {
+      .title {
+        font-size: 4em;
+      }
+    }
   }
 
   .list-episodes {
@@ -218,6 +224,11 @@
         .entry {
           margin-left: 0;
         }
+      }
+    }
+    @media (max-width: 479px) {
+      nav {
+        margin-bottom: 60px;
       }
     }
   }
