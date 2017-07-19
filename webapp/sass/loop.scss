@@ -1,0 +1,21 @@
+#content {
+  .loop {
+    .path-navigator {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding-top: 0;
+        padding-left: 0;
+        padding-right: 0;
+
+
+        .video {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+    }
+  }
+}

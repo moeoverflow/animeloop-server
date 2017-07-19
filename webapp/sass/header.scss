@@ -1,0 +1,55 @@
+.navbar {
+  background-color: rgba(33, 150, 243, 0.85) !important;
+}
+
+.nav.nav-list {
+  li {
+    padding-top: 8px;
+  }
+}
+
+#left-menu {
+  ul.nav.nav-list {
+    .logo {
+      margin: 18px auto;
+      text-align: center;
+
+      img {
+        width: 75%;
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .nav-wrapper {
+    padding: 0;
+  }
+
+  .navbar-nav .open .dropdown-menu {
+    position: absolute;
+    background-color: white;
+
+    li {
+      float: none;
+    }
+  }
+}
+
+#mimin-mobile {
+  ul.nav.nav-list {
+    .logo {
+      display: none;
+    }
+  }
+}
+
+#content {
+  .path-navigator {
+    background-color: transparent;
+  }
+
+  .video-container {
+    display: grid;
+  }
+}
