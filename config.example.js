@@ -59,6 +59,9 @@ const config = {
       access_token_secret:  '...',
       timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
     }
+  },
+  netdata: {
+    url: 'http://127.0.0.1:19999'
   }
 };
 

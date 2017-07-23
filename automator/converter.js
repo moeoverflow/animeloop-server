@@ -9,7 +9,6 @@ const logger = log4js.getLogger('converter');
 const config = require('../config');
 const FileHandler = require('../manager/filehandler');
 
-// const data = config.storage.dir.data;
 const tagsDir = FileHandler.getLocalFilesTagDir();
 
 

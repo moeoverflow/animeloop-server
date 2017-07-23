@@ -12,6 +12,8 @@ const listEpisodes = require('./routes/list-episodes');
 const search = require('./routes/search');
 const api = require('./routes/api');
 const about = require('./routes/about');
+const status = require('./routes/status');
+
 
 const episode = require('./routes/episode');
 const series = require('./routes/series');
@@ -40,6 +42,7 @@ router.use('/list', listEpisodes);
 router.use('/search', search);
 router.use('/api', api);
 router.use('/about', about);
+router.use('/status', status);
 
 router.use('/episode', episode);
 router.use('/series', series);

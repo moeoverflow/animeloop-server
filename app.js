@@ -18,7 +18,6 @@ app.set('views', path.join(__dirname, 'webapp','views'));
 app.set('view engine', 'ejs');
 app.locals.googleAnalytics = config.googleAnalytics;
 
-// app.use(favicon(path.join(__dirname, 'webapp/public/favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(methodOverride());

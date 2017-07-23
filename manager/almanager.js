@@ -220,6 +220,17 @@ class ALManager {
       });
   }
 
+  getSeriesCount(done) {
+    DatabaseHandler.SeriesModel.count({}, done);
+  }
+
+  getEpisodesCount(done) {
+    DatabaseHandler.EpisodeModel.count({}, done);
+  }
+
+  getLoopsCount(done) {
+    DatabaseHandler.LoopModel.count({}, done);
+  }
 }
 
 function getAnilistProxyUrl(doc) {

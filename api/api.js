@@ -8,6 +8,8 @@ const config = require('../config');
 const DatabaseHandler = require('../manager/databasehandler');
 const FileHandler = require('../manager/filehandler');
 
+const status = require('./netdata');
+
 router.use(function (req, res, next) {
 
   // Website you wish to allow to connect
@@ -68,17 +70,7 @@ router.get('/api/rand', (req, res) => {
 });
 
 
-router.post('/api/like', (req, res) => {
-
-});
-
-router.post('/api/unlike', (req, res) => {
-
-});
-
-router.post('/api/fav', (req, res) => {
-
-});
+router.use('/netdata', status);
 
 
 module.exports = router;

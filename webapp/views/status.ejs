@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Status | Animeloop</title>
+  <%- include('partials/head') %>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body id="mimin" class="dashboard">
+
+<!-- start: Header -->
+<%- include('partials/header') %>
+<!-- end: Header -->
+
+<div class="container-fluid mimin-wrapper">
+  <!-- start:Left Menu -->
+  <%- include('partials/menu') %>
+  <!-- end: Left Menu -->
+
+  <!-- start: content -->
+  <div id="content">
+    <div class="panel">
+      <div class="panel-body">
+        <div class="col-xs-0 col-sm-1 col-md-2 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
+          <h1>Status</h1>
+          <div class="database-status">
+            <h3>Database Status</h3>
+            <p>Total count: <%- status.seriesCount %> series, <%- status.episodesCount %> episodes, <%- status.loopsCount %> loops.</p>
+          </div>
+          <div class="automator-status">
+            <h3>Automator Status</h3>
+            <div>
+              <h5>Active Jobs</h5>
+              <ul>
+                <% status.jobs.active.forEach((job) =>{ %>
+                <li><%- job.data.title %></li>
+                <% }) %>
+              </ul>
+            </div>
+            <div>
+              <h5>Completed Jobs</h5>
+              <ul>
+                <% status.jobs.completed.forEach((job) =>{ %>
+                <li><%- job.data.title %></li>
+                <% }) %>
+              </ul>
+            </div>
+          </div>
+          <div class="system-status charts">
+            <h3>System Status</h3>
+            <div id="status_chart_cpu" class="chart full"></div>
+            <div id="status_chart_io" class="chart half"></div>
+            <div id="status_chart_network" class="chart half"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="about comment panel">
+      <div class="panel-body">
+        <div class="col-xs-0 col-sm-1 col-md-2 col-lg-2"></div>
+        <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
+          <%- include('partials/disqus') %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- end: content -->
+</div>
+
+<!-- start: Mobile -->
+<%- include('partials/mobile-menu') %>
+<!-- end: Mobile -->
+
+<!-- start: Javascript -->
+<%- include('partials/scripts') %>
+<!-- end: Javascript -->
+<script src="/js/status.js"></script>
+</body>
+</html>
