@@ -174,6 +174,11 @@ class ALManager {
 
   getOneSeries(id, callback) {
     DatabaseHandler.SeriesModel.findOne({ _id: id}).exec((err, doc) => {
+      if (doc == undefined) {
+        callback('not found');
+        return;
+      }
+
       callback(err, getAnilistProxyUrl(doc));
     });
   }
