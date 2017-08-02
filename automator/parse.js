@@ -9,8 +9,7 @@ function parsing(jsonfile) {
     }
     let json = JSON.parse(fs.readFileSync(jsonfile));
 
-    if (json.animeloop_ver == undefined ||
-        json.loops == undefined ||
+    if (json.loops == undefined ||
         json.loops.length == 0) {
       return undefined
     }
@@ -20,7 +19,9 @@ function parsing(jsonfile) {
         return parseFromVer130(dir, json, loop);
       } else if (json.animeloop_ver == '1.3.1') {
         return parseFromVer131(dir, json, loop);
-      } else {
+      } else if (json.version == '2.0.0') {
+        return parseFromVer200(dir, json, loop);
+      }  else {
         return undefined;
       }
     }).filter((loop) => {
@@ -73,6 +74,34 @@ function parseFromVer131(dir, json, loop) {
     },
     episode: {
       title: json.episode
+    },
+    loop: {
+      duration: loop.duration,
+      period: loop.period,
+      frame: loop.frame,
+      sourceFrom: 'automator',
+      uploadDate: new Date()
+    }
+  };
+
+  let files = {
+    mp4_1080p: path.join(dir, loop.files.mp4_1080p),
+    jpg_1080p: path.join(dir, loop.files.jpg_1080p)
+  };
+
+  return {
+    entity,
+    files
+  }
+}
+
+function parseFromVer200(dir, json, loop) {
+  let entity = {
+    series: {
+      title: json.title
+    },
+    episode: {
+      title: json.title
     },
     loop: {
       duration: loop.duration,
