@@ -41,13 +41,14 @@ FileHandler.FilesTags = [
   // 360p
   'jpg_360p',
   'mp4_360p',
-  'webm_360p',
+  // 'webm_360p',
   'gif_360p',
   // 720p
   'jpg_720p',
+  'mp4_720p',
   // 1080p
   'mp4_1080p',
-  'webm_1080p',
+  // 'webm_1080p',
   'jpg_1080p'
 ];
 

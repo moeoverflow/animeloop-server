@@ -31,6 +31,8 @@ function converting(from, to, id, callback) {
   ((done) => {
     if (from === 'mp4_1080p' && to === 'mp4_360p') {
       shell.exec(`ffmpeg -loglevel panic -i ${src} -vf scale=-1:360 ${tmp}`, done);
+    } else if (from === 'mp4_1080p' && to === 'mp4_720p') {
+      shell.exec(`ffmpeg -loglevel panic -i ${src} -vf scale=-1:720 ${tmp}`, done);
     } else if (from === 'mp4_1080p' && to === 'gif_360p') {
       shell.exec(
         `ffmpeg -loglevel panic -y -i ${src} -vf "fps=10,scale='if(gte(iw,ih),320,-1)':'if(gt(ih,iw),320,-1)':flags=lanczos,palettegen" ${pat};
@@ -89,6 +91,7 @@ function convertAll(tags, done) {
 
   var tasks = tags.map((tag) => {
     if ( tag === 'mp4_360p'
+      || tag === 'mp4_720p'
       || tag === 'gif_360p'
       || tag === 'webm_1080p'
       || tag === 'webm_360p' ) {

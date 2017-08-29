@@ -160,7 +160,12 @@ class Automator {
 
     async.waterfall([
       (callback) => {
+        let flag = loops.length < 10;
         var randomLoops = loops.filter((loop) => {
+          if (flag) {
+            return flag;
+          }
+
           function hmsToSeconds(str) {
             var p = str.split(':'),
               s = 0, m = 1;

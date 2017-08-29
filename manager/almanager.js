@@ -240,10 +240,10 @@ class ALManager {
 
 function getAnilistProxyUrl(doc) {
   if (doc.image_url_large) {
-    doc.image_url_large = doc.image_url_large.replace('https://cdn.anilist.co', `${config.app.url}/anilist`);
+    doc.image_url_large = `${config.app.url}/files/anilist/${doc.anilist_id}/image_large.jpg`;
   }
   if (doc.image_url_banner) {
-    doc.image_url_banner = doc.image_url_banner.replace('https://cdn.anilist.co', `${config.app.url}/anilist`);
+    doc.image_url_banner = `${config.app.url}/files/anilist/${doc.anilist_id}/image_banner.jpg`;
   }
   return doc;
 }
