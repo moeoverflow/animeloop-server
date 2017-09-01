@@ -204,6 +204,7 @@ class ALManager {
     DatabaseHandler.SeriesModel.count({}, (err, count) => {
       if (err) {
         done(err, 0);
+        return;
       }
       let totalPage = Math.ceil(count / perPage);
       done(null, totalPage);
