@@ -15,5 +15,9 @@
   "title-key-3": "title_japanese",
   "about-md-file": "about_fr.md",
   "api-md-file": "api_fr.md",
-  "language": "Français"
+  "language": "Français",
+  "cover-tags-illus2vec": "Cover tags",
+  "cover-tags-illus2vec-from-l": "Dataset generated from",
+  "cover-tags-illus2vec-from-r": " "
+
 }

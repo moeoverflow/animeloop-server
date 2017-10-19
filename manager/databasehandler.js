@@ -76,7 +76,7 @@ class DatabaseHandler {
 }
 
 const SeriesSchema = new Schema({
-  title: { type: String, unique: true, require: true },
+  title: String,
   title_t_chinese: String,
   title_romaji: String,
   title_english: String,
@@ -93,7 +93,7 @@ const SeriesSchema = new Schema({
   anilist_updated_at: Date,
   updated_at: Date,
   type: String,
-  anilist_id: Number
+  anilist_id: { type: Number, unique: true }
 });
 SeriesSchema.plugin(findOrCreate);
 
@@ -124,9 +124,19 @@ const LoopSchema = new Schema({
 });
 LoopSchema.plugin(random);
 
+const TagsSchema = new Schema({
+  loopid: ObjectId,
+  type: String,
+  value: String,
+  confidence: Number,
+  source: String,
+  lang: Number
+});
+
 DatabaseHandler.SeriesModel = mongoose.model('Series', SeriesSchema);
 DatabaseHandler.EpisodeModel = mongoose.model('Episode', EpisodeSchema);
 DatabaseHandler.LoopModel = mongoose.model('Loop', LoopSchema);
+DatabaseHandler.TagsModel = mongoose.model('tags', TagsSchema);
 
 
 module.exports = DatabaseHandler;

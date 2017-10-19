@@ -198,6 +198,13 @@ class ALManager {
     });
   }
 
+  getTagsByLoop(loopid, callback) {
+    DatabaseHandler.TagsModel
+      .find({ loopid })
+      .sort({ confidence: -1 })
+      .exec(callback)
+  }
+
   getSeriesPageCount(done) {
     let perPage = config.web.seriesPerPage;
 

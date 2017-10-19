@@ -46,7 +46,7 @@
 
   <!-- start: content -->
   <div id="content">
-    <div class="loop detail panel">
+    <div class="loop details panel">
       <div class="panel-body navigator">
         <ol class="breadcrumb path-navigator">
           <li><a href="/series/<%- loop.series._id %>"><%- loop.series[__('title-key-1')] %></a></li>
@@ -58,50 +58,79 @@
 
         <div class="video col-xs-12 col-sm-12 col-md-9 col-lg-7">
           <%- include('partials/video-container', {
-          video: {
-          cover: loop.files.jpg_720p,
-          mp4: loop.files.mp4_1080p,
-          webm: loop.files.webm_1080p,
-          autoplay: true,
-          preload: true,
-          lazyload: true
-          }
+            video: {
+              cover: loop.files.jpg_720p,
+              mp4: loop.files.mp4_1080p,
+              webm: loop.files.webm_1080p,
+              autoplay: true,
+              preload: true,
+              lazyload: true
+            }
           }) %>
         </div>
         <div class="info col-sm-9 col-md-3 col-lg-5">
-          <div class="period col-xs-6 col-sm-6 col-md-12 col-lg-6">
-            <h4><%= __('period') %> </h4>
+          <div class="period col-xs-7 col-sm-7 col-md-12 col-lg-7">
+            <h3><%= __('period') %> </h3>
             <span><%- loop.period.begin.slice(0, 11) + ' ~ ' + loop.period.end.slice(0, 11) %></span>
           </div>
-          <div class="duration col-xs-6 col-sm-6 col-md-12 col-lg-6">
-            <h4><%= __('duration') %> </h4>
+          <div class="duration col-xs-5 col-sm-5 col-md-12 col-lg-5">
+            <h3><%= __('duration') %> </h3>
             <span><%- loop.duration.toFixed(3) %> s</span>
           </div>
           <% if (loop.tags.length > 0) { %>
           <div class="tags col-xs-6 col-sm-6 col-md-12 col-lg-6">
-            <h4><%= __('tags') %>: </h4>
+            <h3><%= __('tags') %>: </h3>
             <% loop.tags.forEach((tag) => { %>
             <span class="badge badge-primary"><%- tag %></span>
             <% }); %>
           </div>
           <% } %>
           <div class="files col-xs-12 col-sm-12 col-md-12 col-lg-11">
-            <h4><%= __('files') %>: </h4>
-            <% for (let type in loop.files) { %>
-            <a href="<%- loop.files[type] %>"><span class="badge badge-primary"><%- type %></span></a>
-            <% } %>
+            <h3><%= __('files') %>: </h3>
+            <div class="files-container">
+              <% for (let type in loop.files) { %>
+              <div class="file-item col-md-4">
+                <a href="<%- loop.files[type] %>"><span class="badge badge-primary"><%- type %></span></a>
+              </div>
+              <% } %>
+            </div>
+          </div>
+          <div class="share col-lg-12">
+            <%- include('partials/share') %>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="loop share panel">
+    <% if (tags.length != 0) { %>
+    <div class="loop tags-illus2vec panel">
       <div class="panel-body">
-        <div class="col-md-12">
-          <%- include('partials/share') %>
+        <h3><%= __('cover-tags-illus2vec') %> </h3>
+        <br>
+        <div class="tags-general col-md-6">
+          <%- include('partials/illus2vec-tags-section', {
+            tagType: 'general'
+          }) %>
+        </div>
+        <div class="tags-others col-md-6">
+          <%- include('partials/illus2vec-tags-section', {
+            tagType: 'copyright'
+          }) %>
+
+          <%- include('partials/illus2vec-tags-section', {
+            tagType: 'character'
+          }) %>
+
+          <%- include('partials/illus2vec-tags-section', {
+            tagType: 'safe'
+          }) %>
+        </div>
+        <div class="from col-md-12">
+          <small><%- __('cover-tags-illus2vec-from-l') %> <a href="https://github.com/moeoverflow/illustration2vec">illustration2vec</a> <%- __('cover-tags-illus2vec-from-r') %></small>
         </div>
       </div>
     </div>
+    <% } %>
 
     <div class="loop comment panel">
       <div class="panel-body">

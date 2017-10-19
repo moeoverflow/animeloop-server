@@ -1,7 +1,15 @@
 #content {
-  .loop {
+  .loop.details.panel {
     .path-navigator {
       margin-bottom: 0;
+    }
+
+    .files .files-container .file-item {
+      padding-left: 0;
+    }
+
+    .share {
+      margin-top: 3rem;
     }
 
     @media (max-width: 768px) {
@@ -16,6 +24,16 @@
           padding-right: 0;
         }
       }
+    }
+  }
+
+  .loop.tags-illus2vec.panel {
+    .tag-name, .tag-confidence {
+      padding: 0;
+    }
+
+    .from small {
+      float: right;
     }
   }
 }

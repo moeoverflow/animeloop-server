@@ -16,5 +16,8 @@
   "title-key-3": "title_english",
   "about-md-file": "about_jp.md",
   "api-md-file": "api_jp.md",
-  "language": "日本語"
+  "language": "日本語",
+  "cover-tags-illus2vec": "カバータグ",
+  "cover-tags-illus2vec-from-l": " ",
+  "cover-tags-illus2vec-from-r": "によって生成されたデータセット"
 }

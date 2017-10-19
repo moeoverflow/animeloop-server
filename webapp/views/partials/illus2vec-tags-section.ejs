@@ -1,0 +1,25 @@
+<%
+  let progressBartheme = {
+    'general': '',
+    'copyright': 'progress-bar-success',
+    'character': 'progress-bar-warning',
+    'safe': 'progress-bar-danger'
+  }
+ %>
+
+<% tags = tags.filter((t) => t.type == tagType) %>
+
+<% if (tags.length != 0) { %>
+  <h4><%- tags[0].type %> tags</h4>
+  <br>
+  <% tags.forEach((tag) => { %>
+  <div class="tag-name col-md-3"><%- tag.value %></div>
+  <div class="tag-confidence col-md-9">
+    <div class="progress">
+      <div class="progress-bar <%- progressBartheme[tag.type] %>" role="progressbar" aria-valuenow="<%- tag.confidence %>" aria-valuemin="0" aria-valuemax="100" style="width: <%- tag.confidence %>%;">
+        <%- tag.confidence %>%
+      </div>
+    </div>
+  </div>
+  <% }); %>
+<% } %>
