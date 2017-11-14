@@ -5,8 +5,8 @@ const restify = require('express-restify-mongoose');
 const router = express.Router();
 const config = require('../config');
 
-const DatabaseHandler = require('../manager/databasehandler');
-const FileHandler = require('../manager/filehandler');
+const DatabaseHandler = require('../manager/database');
+const FileHandler = require('../manager/file');
 
 const status = require('./netdata');
 

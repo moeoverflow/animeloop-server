@@ -4,14 +4,14 @@ const config = {
   app: {
     url: 'http://127.0.0.1:7777',
     host: '127.0.0.1',
-    port: 7777
+    port: 7777,
   },
   web: {
     seriesPerPage: 18,
   },
   googleAnalytics: '',
   animeloopCli: {
-    bin: path.join(__dirname, 'bin', 'animeloop-cli')
+    bin: path.join(__dirname, 'bin', 'animeloop-cli'),
   },
   automator: {
     uploadTTL: 5 * 60,
@@ -23,46 +23,46 @@ const config = {
       port: 7778,
       auth: {
         username: 'admin',
-        password: 'pass'
+        password: 'pass',
       },
       redis: {
         host: '127.0.0.1',
         port: 6379,
-        auth: ''
-      }
+        auth: '',
+      },
     },
     whatanime: {
       url: 'https://whatanime.ga/api/search',
-      token: ''
+      token: '',
     },
     anilist: {
       id: 'animeloop-123456',
-      secret: 'animeloop-654321'
-    }
+      secret: 'animeloop-654321',
+    },
   },
   storage: {
     dir: {
       data: path.join(__dirname, 'storage', 'data'),
       upload: path.join(__dirname, 'storage', 'upload'),
       raw: path.join(__dirname, 'storage', 'raw'),
-      autogen: path.join(__dirname, 'storage', 'autogen')
-    }
+      autogen: path.join(__dirname, 'storage', 'autogen'),
+    },
   },
   mongodb: {
-    url: 'mongodb://localhost/animeloop'
+    url: 'mongodb://localhost/animeloop',
   },
   bot: {
     twitter: {
-      consumer_key:         '...',
-      consumer_secret:      '...',
-      access_token:         '...',
-      access_token_secret:  '...',
-      timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
-    }
+      consumer_key: '...',
+      consumer_secret: '...',
+      access_token: '...',
+      access_token_secret: '...',
+      timeout_ms: 60 * 1000, // optional HTTP request timeout to apply to all requests.
+    },
   },
   netdata: {
-    url: 'http://127.0.0.1:19999'
-  }
+    url: 'http://127.0.0.1:19999',
+  },
 };
 
 module.exports = config;

@@ -7,7 +7,7 @@ function createVideoElement(id) {
   video.preload = true;
   video.loop = true;
   video.muted = true;
-  video.controls =false;
+  video.controls = false;
 
   var sourceMP4 = document.createElement("source");
   sourceMP4.type = "video/mp4";

@@ -1,18 +1,21 @@
 const express = require('express');
-const router = express.Router();
-const markdown = require( "markdown" ).markdown;
+const Markdown = require('markdown');
 const fs = require('fs');
 const path = require('path');
 
-router.get('/', (req, res, next) => {
-  var filename = path.join(__dirname, `../content/post/${res.__('about-md-file')}`);
+const router = express.Router();
+const markdown = Markdown.markdown;
+
+router.get('/', (req, res) => {
+  // eslint-disable-next-line no-underscore-dangle
+  let filename = path.join(__dirname, `../content/post/${res.__('about-md-file')}`);
 
   if (!fs.existsSync(filename)) {
-    filename = path.join(__dirname, `../content/post/about_en.md`);
+    filename = path.join(__dirname, '../content/post/about_en.md');
   }
 
   fs.readFile(filename, 'UTF-8', (err, data) => {
-    var post = '';
+    let post = '';
 
     if (!err) {
       post = markdown.toHTML(data);
@@ -20,7 +23,7 @@ router.get('/', (req, res, next) => {
 
     res.render('about', {
       pageType: 'about',
-      post
+      post,
     });
   });
 });

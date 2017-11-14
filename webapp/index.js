@@ -19,7 +19,7 @@ const episode = require('./routes/episode');
 const series = require('./routes/series');
 const loop = require('./routes/loop');
 
-const anilistProxy = require('./routes/anilist_proxy');
+const anilistProxy = require('./routes/anilist-proxy');
 
 
 router.use(express.static(path.join(__dirname, 'public')));

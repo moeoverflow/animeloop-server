@@ -4,26 +4,26 @@ const async = require('async');
 const shell = require('shelljs');
 const mkdirp = require('mkdirp');
 const log4js = require('log4js');
+
 const logger = log4js.getLogger('converter');
 
-const config = require('../config');
-const FileHandler = require('../manager/filehandler');
+const File = require('../manager/file.js');
 
-const tagsDir = FileHandler.getLocalFilesTagDir();
+const tagsDir = File.getLocalFilesTagDir();
 
 
 function converting(from, to, id, callback) {
-  let src = path.join(tagsDir[from], `${id}.${FileHandler.getExt(from)}`);
-  let tmp = path.join(tagsDir[to], 'temp', `${id}.${FileHandler.getExt(to)}`);
-  let pat = path.join(tagsDir[to], 'temp', 'palette.png');
-  let dst = path.join(tagsDir[to], `${id}.${FileHandler.getExt(to)}`);
+  const src = path.join(tagsDir[from], `${id}.${File.getExt(from)}`);
+  const tmp = path.join(tagsDir[to], 'temp', `${id}.${File.getExt(to)}`);
+  const pat = path.join(tagsDir[to], 'temp', 'palette.png');
+  const dst = path.join(tagsDir[to], `${id}.${File.getExt(to)}`);
 
   if (fs.existsSync(dst)) {
     callback(null);
     return;
   }
 
-  let tmpDir = path.dirname(tmp);
+  const tmpDir = path.dirname(tmp);
   if (!fs.existsSync(tmpDir)) {
     mkdirp.sync(tmpDir);
   }
@@ -34,8 +34,7 @@ function converting(from, to, id, callback) {
     } else if (from === 'mp4_1080p' && to === 'mp4_720p') {
       shell.exec(`ffmpeg -loglevel panic -i ${src} -vf scale=-1:720 ${tmp}`, done);
     } else if (from === 'mp4_1080p' && to === 'gif_360p') {
-      shell.exec(
-        `ffmpeg -loglevel panic -y -i ${src} -vf "fps=10,scale='if(gte(iw,ih),320,-1)':'if(gt(ih,iw),320,-1)':flags=lanczos,palettegen" ${pat};
+      shell.exec(`ffmpeg -loglevel panic -y -i ${src} -vf "fps=10,scale='if(gte(iw,ih),320,-1)':'if(gt(ih,iw),320,-1)':flags=lanczos,palettegen" ${pat};
         ffmpeg -loglevel panic -i ${src} -i ${pat} -filter_complex "fps=10,scale='if(gte(iw,ih),320,-1)':'if(gt(ih,iw),320,-1)':flags=lanczos[x];[x][1:v]paletteuse" ${tmp}
         rm ${pat}
         `, done);
@@ -58,7 +57,7 @@ function converting(from, to, id, callback) {
 function getTasks(from, to, ids) {
   return (callback) => {
     async.forEachSeries(ids.filter((id) => {
-      let dst = path.join(tagsDir[to], `${id}.${FileHandler.getExt(to)}`);
+      const dst = path.join(tagsDir[to], `${id}.${File.getExt(to)}`);
       return !fs.existsSync(dst);
     }), (id, callback) => {
       converting(from, to, id, callback);
@@ -70,39 +69,32 @@ function getTasks(from, to, ids) {
 function convertAll(tags, done) {
   logger.info('Doing all files convert.');
 
-  for (let key in tagsDir) {
-    let tempDir = path.join(tagsDir[key], 'temp');
+  tagsDir.keys.forEach((key) => {
+    const tempDir = path.join(tagsDir[key], 'temp');
     if (fs.existsSync(tempDir)) {
       shell.rm('-r', tempDir);
     }
-  }
-
-  let videoIds = shell.ls(tagsDir['mp4_1080p']).map((file) => {
-    return path.basename(file, '.mp4');
-  });
-  let imageIds = shell.ls(tagsDir['jpg_1080p']).map((file) => {
-    return path.basename(file, '.jpg');
   });
 
-  var tags = tags;
-  if (tags.length == 0) {
-    tags = FileHandler.FilesTags;
+  const videoIds = shell.ls(tagsDir.mp4_1080p).map(file => path.basename(file, '.mp4'));
+  const imageIds = shell.ls(tagsDir.jpg_1080p).map(file => path.basename(file, '.jpg'));
+  if (tags.length === 0) {
+    tags = File.FilesTags;
   }
 
-  var tasks = tags.map((tag) => {
-    if ( tag === 'mp4_360p'
+  const tasks = tags.map((tag) => {
+    if (tag === 'mp4_360p'
       || tag === 'mp4_720p'
       || tag === 'gif_360p'
       || tag === 'webm_1080p'
-      || tag === 'webm_360p' ) {
+      || tag === 'webm_360p') {
       return getTasks('mp4_1080p', tag, videoIds);
-    } else if (  tag === 'jpg_720p'
-              || tag === 'jpg_360p' ) {
+    } else if (tag === 'jpg_720p'
+              || tag === 'jpg_360p') {
       return getTasks('jpg_1080p', tag, imageIds);
-    } else {
-      return undefined;
     }
-  }).filter((task) => { return (task != undefined ) });
+    return undefined;
+  }).filter(task => (task !== undefined));
 
   async.series(tasks, done);
 }

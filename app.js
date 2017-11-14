@@ -1,24 +1,25 @@
 const express = require('express');
 const path = require('path');
-const favicon = require('serve-favicon');
-const logger = require('morgan');
+const log4js = require('log4js');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 
-const ALManager = require('./manager/almanager');
+const logger = log4js.getLogger('webapp');
 const config = require('./config');
-
 const webRouter = require('./webapp/index');
 const apiRouter = require('./api/api');
 
 const app = express();
 
-app.set('views', path.join(__dirname, 'webapp','views'));
+app.set('views', path.join(__dirname, 'webapp', 'views'));
 app.set('view engine', 'ejs');
 app.locals.googleAnalytics = config.googleAnalytics;
 
-app.use(logger('dev'));
+app.use(log4js.connectLogger(logger, {
+  level: 'auto',
+  format: ':method :url :status',
+}));
 app.use(bodyParser.json());
 app.use(methodOverride());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -29,12 +30,10 @@ app.use(webRouter);
 app.use(apiRouter);
 
 // 404 handler
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).render('404');
 });
 
-alManager = new ALManager();
-
 app.listen(config.app.port, config.app.host, () => {
-  console.log("app run in " + config.app.host + ":" + config.app.port);
+  logger.info(`app run in ${config.app.host}:${config.app.port}`);
 });

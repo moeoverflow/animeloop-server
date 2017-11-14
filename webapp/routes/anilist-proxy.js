@@ -1,9 +1,10 @@
 const express = require('express');
-const router = express.Router();
 const proxy = require('express-http-proxy');
 
+const router = express.Router();
+
 router.get('/*', proxy('cdn.anilist.co', {
-  https: true
+  https: true,
 }));
 
 module.exports = router;
