@@ -112,13 +112,21 @@ class ALManager {
 
   getLoopById(id, callback) {
     DatabaseHandler.LoopModel.findById(id).populate('episode series').exec((err, result) => {
-        if (err) {
-            callback(err);
-            return;
-        }
+      if (err) {
+        callback(err);
+        return;
+      }
 
-        result.files = FileHandler.getPublicFilesUrl(result._id);
-        callback(undefined, result);
+      if (result == undefined) {
+        callback("error", undefined);
+      }
+
+      if (result._id == null) {
+        logger.DEBUG(result.episode.title + " " + result.episode.no);
+      }
+
+      result.files = FileHandler.getPublicFilesUrl(result._id);
+      callback(undefined, result);
     });
   }
 
@@ -143,6 +151,22 @@ class ALManager {
         });
       }
     }, callback);
+  }
+
+  getLoopsBySeries(id, callback) {
+    DatabaseHandler.LoopModel.find({ series: id }).populate('episode series').exec((err, results) => {
+      if (err) {
+        callback(err);
+        return;
+      }
+
+      let loops = results.map((r) => {
+        r.files = FileHandler.getPublicFilesUrl(r._id);
+        return r;
+      });
+
+      callback(undefined, loops);
+    })
   }
 
   getEpisodesBySeries(id, callback) {
@@ -192,10 +216,10 @@ class ALManager {
       .find({})
       .sort({ title: 1 })
       .exec((err, docs) => {
-      callback(err, docs.map((doc) => {
-        return getAnilistProxyUrl(doc);
-      }));
-    });
+        callback(err, docs.map((doc) => {
+          return getAnilistProxyUrl(doc);
+        }));
+      });
   }
 
   getTagsByLoop(loopid, callback) {
