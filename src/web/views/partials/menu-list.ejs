@@ -1,0 +1,69 @@
+<%
+ if (!locals.pageType) {
+   locals.pageType = 'none';
+ }
+ %>
+
+<ul class="nav nav-list">
+  <li class="logo">
+    <img src="/images/logo.gif">
+  </li>
+
+  <% if (pageType == 'home') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/"><span class="fa-home fa"></span> <%= __('home') %>
+    </a>
+  </li>
+  <% if ( pageType == 'list-series' ||
+          pageType == 'list-episodes' ||
+          pageType == 'list-tags' ) { %>
+  <li class="active ripple">
+  <% } else { %>
+  <li class="ripple">
+  <% } %>
+    <a class="tree-toggle nav-header"><span class="fa-list fa"></span> <%= __('list') %>
+        <span class="fa-angle-right fa right-arrow text-right"></span>
+    </a>
+    <% if ( pageType == 'list-series' ||
+            pageType == 'list-episodes' ||
+            pageType == 'list-tags' ) { %>
+    <ul class="nav nav-list tree" style="display: block;">
+    <% } else { %>
+    <ul class="nav nav-list tree" style="display: none;">
+        <% } %>
+        <li><a href="/list/series"><%= __('series') %></a></li>
+        <li><a href="/list/episodes"><%= __('episodes') %></a></li>
+        <li><a href="/list/tags"><%= __('tags') %></a></li>
+    </ul>
+  </li>
+
+  <% if (pageType == 'filter') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/search"><span class="fa-search fa"></span> <%= __('search') %>
+    </a>
+  </li>
+
+  <% if (pageType == 'api') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/src/api"><span class="icons icon-magic-wand"></span> <%= __('api') %>
+    </a>
+  </li>
+
+  <% if (pageType == 'about') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/about"><span class="icons icon-info"></span> <%= __('about') %>
+    </a>
+  </li>
+</ul>
