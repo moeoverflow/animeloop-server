@@ -1,0 +1,15 @@
+[submodule "src/web/modules/lazy-load-xt"]
+	path = src/web/modules/lazy-load-xt
+	url = https://github.com/ressio/lazy-load-xt.git
+[submodule "src/web/modules/miminium"]
+	path = src/web/modules/miminium
+	url = https://github.com/akivaron/miminium.git
+[submodule "src/web/modules/share.js"]
+	path = src/web/modules/share.js
+	url = https://github.com/overtrue/share.js.git
+[submodule "src/web/modules/js-cookie"]
+	path = src/web/modules/js-cookie
+	url = https://github.com/js-cookie/js-cookie.git
+[submodule "modules/animeloop-cli"]
+	path = modules/animeloop-cli
+	url = https://github.com/moeoverflow/animeloop-cli.git
