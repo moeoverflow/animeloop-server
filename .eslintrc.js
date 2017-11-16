@@ -38,6 +38,8 @@ module.exports = {
         'class-methods-use-this': 'off',
         'no-shadow': 'off',
         'no-param-reassign': 'off',
-        'prefer-destructuring': 'off'
+        'prefer-destructuring': 'off',
+        'no-trailing-spaces': 'off',
+        'no-use-before-define': 'off'
     }
 };

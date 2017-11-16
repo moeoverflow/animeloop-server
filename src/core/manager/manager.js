@@ -9,241 +9,269 @@ const Database = require('./database.js');
 const File = require('./file.js');
 
 class Manager {
-  static addLoop(loop, done) {
-    async.waterfall([
+  /*
+   -------------- Loop --------------
+   */
+
+  static addLoopsAndFiles(loops, files, callback) {
+    async.series([
       (callback) => {
-        this.Database.addLoop(loop.entity, (err, entity) => {
+        Database.insertLoops(loops, (err, docs) => {
           if (err) {
-            logger.error(err);
-            if (entity.loop) {
-              this.removeLoop(entity.loop).then(() => {
-                callback(err);
-              });
-            }
+            logger.log(err, logger.ERROR);
+            Database.deleteLoopsByIds(loops.map(loop => loop._id), callback);
           }
 
-          callback(null, entity);
-        });
-      },
-      (entity, callback) => {
-        this.fileHandler.saveFile(entity, loop.files, callback);
-      },
-    ], done);
-  }
-
-  static removeLoop(loop) {
-    async.waterfall([
-      (callback) => {
-        Database.LoopModel.remove({ _id: loop._id }, (err) => {
-          if (!err) {
-            callback(null, loop.episode);
-          }
-        });
-      },
-      (epi, callback) => {
-        Database.LoopModel.count({ episode: epi }, (err, count) => {
-          if (count === 0) {
-            callback(null, epi);
-          }
-        });
-      },
-      (epi, callback) => {
-        Database.EpisodeModel.findOne({ _id: epi }, (err, episode) => {
-          Database.EpisodeModel.remove({ _id: epi }, (err) => {
-            if (!err) {
-              callback(null, episode.series);
-            }
-          });
-        });
-      },
-      (ser, callback) => {
-        Database.EpisodeModel.count({ series: ser }, (err, count) => {
-          if (count === 0) {
-            callback(null, ser);
-          }
-        });
-      },
-      (ser, callback) => {
-        Database.SeriesModel.remove({ _id: ser }, (err) => {
-          if (!err) {
+          if (docs) {
             callback(null);
+          } else {
+            callback(new Error('Add loops to database failed.'));
           }
         });
       },
-    ]);
+      (callback) => {
+        File.saveFileById(loops, files, callback);
+      },
+    ], callback);
   }
 
-  static updateSeries(id, update, callback) {
-    Database.SeriesModel.update({ _id: id }, { $set: update }, callback);
+  static removeLoopsAndFiles(loops, callback) {
+    const ids = loops.map(loop => loop._id);
+    async.series([
+      (callback) => {
+        Database.deleteLoopById(ids, callback);
+      },
+      (callback) => {
+        File.deleteFilesByIds(ids, callback);
+      },
+    ], callback);
   }
 
-  static updateEpisode(id, update, callback) {
-    Database.EpisodeModel.update({ _id: id }, { $set: update }, callback);
+
+  static getFullLoop(id, callback) {
+    Database.findFullLoop(id, handleLoop(callback));
   }
 
-  static getRandomLoops(n, callback) {
-    Database.LoopModel.findRandom({}, {}, {
-      limit: n,
-      populate: ['episode', 'series'],
-    }, (err, results) => {
-      if (err) {
-        callback(err);
-        return;
-      }
-
-      if (results === undefined) {
-        callback(undefined, []);
-        return;
-      }
-
-      const loops = results.map((r) => {
-        const loop = r.toObject();
-        loop.files = File.getPublicFilesUrl(r._id);
-        return loop;
-      });
-      callback(undefined, loops);
-    });
+  static getLoop(id, callback) {
+    Database.findLoop(id, handleLoop(callback));
   }
 
-  static getLoopById(id, callback) {
-    Database.LoopModel.findById(id).populate('episode series').exec((err, result) => {
-      if (err) {
-        callback(err);
-        return;
-      }
-      result.files = File.getPublicFilesUrl(result._id);
-      callback(undefined, result);
-    });
+  static getFullLoopsByEpisode(id, callback) {
+    Database.findFullLoopsByEpisode(id, handleLoops(callback));
   }
 
   static getLoopsByEpisode(id, callback) {
-    async.series({
-      episode: (callback) => {
-        this.getOneEpisode(id, callback);
-      },
-      loops: (callback) => {
-        Database.LoopModel.find({ episode: id }).populate('episode series').exec((err, results) => {
-          if (err) {
-            callback(err);
-            return;
-          }
+    Database.findLoopsByEpisode(id, handleLoops(callback));
+  }
 
-          const loops = results.map((r) => {
-            r.files = File.getPublicFilesUrl(r._id);
-            return r;
-          });
+  static getFullLoopsBySeries(id, callback) {
+    Database.findFullLoopsBySeries(id, handleLoops(callback));
+  }
 
-          callback(undefined, loops);
-        });
-      },
-    }, callback);
+  static getLoopsBySeries(id, callback) {
+    Database.findLoopsBySeries(id, handleLoops(callback));
+  }
+
+  static getRandomFullLoops(n, callback) {
+    Database.findRandomFullLoops(n, handleLoops(callback));
+  }
+
+  static getRandomLoops(n, callback) {
+    Database.findRandomLoops(n, handleLoops(callback));
+  }
+
+  /*
+   -------------- Episode --------------
+   */
+
+  static getFullEpisode(id, callback) {
+    Database.findFullEpisode(id, handleEpisode(callback));
+  }
+
+  static getEpisode(id, callback) {
+    Database.findEpisode(id, handleEpisode(callback));
   }
 
   static getEpisodesBySeries(id, callback) {
-    async.series({
-      series: (callback) => {
-        this.getOneSeries(id, callback);
-      },
-      episodes: (callback) => {
-        Database.EpisodeModel.find({ series: id }).sort({ title: 1 }).populate('series').exec((err, results) => {
-          if (err) {
-            callback(err);
-            return;
-          }
-
-          const episodes = results.map((r) => {
-            r.files = File.getPublicFilesUrl(r._id);
-            return r;
-          });
-
-          callback(undefined, episodes);
-        });
-      },
-    }, callback);
+    Database.findEpisodesBySeries(id, handleEpisodes(callback));
   }
 
-  static getOneEpisode(id, callback) {
-    Database.EpisodeModel.findOne({ _id: id }).populate('series').exec(callback);
+  static getFullEpisodesBySeries(id, callback) {
+    Database.findFullEpisodesBySeries(id, handleEpisodes(callback));
   }
 
-  static getOneSeries(id, callback) {
-    Database.SeriesModel.findOne({ _id: id }).exec((err, doc) => {
-      if (doc === undefined) {
-        callback('not found');
-        return;
-      }
-
-      callback(err, this.getAnilistProxyUrl(doc));
-    });
+  static getAllEpisodes(callback) {
+    Database.findAllEpisodes(handleEpisodes(callback));
   }
 
-  static getEpisodes(callback) {
-    Database.EpisodeModel.find({}).sort({ title: 1 }).populate('series').exec(callback);
+  static getAllFullEpisodes(callback) {
+    Database.findAllFullEpisodes(handleEpisodes(callback));
   }
 
-  static getSeries(callback) {
-    Database.SeriesModel
-      .find({})
-      .sort({ title: 1 })
-      .exec((err, docs) => {
-        callback(err, docs.map(doc => this.getAnilistProxyUrl(doc)));
-      });
+  /*
+   -------------- Series --------------
+   */
+
+  static getSeries(id, callback) {
+    Database.findSeries(id, handleSeries(callback));
   }
 
-  static getTagsByLoop(loopid, callback) {
-    Database.TagsModel
-      .find({ loopid })
-      .sort({ confidence: -1 })
-      .exec(callback);
+  static getSeriesesbyPage(page, callback) {
+    Database.findSeriesesByPage(page, handleSerieses(callback));
   }
 
-  static getSeriesPageCount(done) {
+  static getSeriesPageCount(callback) {
     const perPage = config.web.seriesPerPage;
 
-    Database.SeriesModel.count({}, (err, count) => {
-      if (err) {
-        done(err, 0);
-        return;
-      }
+    Database.findSeriesesCount((err, count) => {
       const totalPage = Math.ceil(count / perPage);
-      done(null, totalPage);
+      callback(err, totalPage);
     });
   }
+}
 
-  static getSeriesByPage(page, done) {
-    const perPage = config.web.seriesPerPage;
+function loop(doc) {
+  const data = {
+    id: doc._id,
+    duration: doc.duration,
+    period: {
+      begin: doc.period.begin,
+      end: doc.period.end,
+    },
+    frame: {
+      begin: doc.frame.begin,
+      end: doc.frame.end,
+    },
+    sourceFrom: doc.sourceFrom,
+    uploadDate: doc.uploadDate,
+    files: File.getPublicFilesUrl(doc._id),
+  };
 
-    Database.SeriesModel
-      .find({})
-      .sort({ start_date_fuzzy: -1 })
-      .skip((page - 1) * perPage)
-      .limit(perPage)
-      .exec((err, docs) => {
-        done(err, docs.map(doc => this.getAnilistProxyUrl(doc)));
-      });
+  if (doc.episode instanceof Object) {
+    data.episode = doc.episode;
+  } else {
+    data.episodeid = doc.episode;
   }
 
-  static getSeriesCount(done) {
-    Database.SeriesModel.count({}, done);
+  if (doc.series instanceof Object) {
+    data.series = doc.series;
+  } else {
+    data.seriesid = doc.series;
   }
 
-  static getEpisodesCount(done) {
-    Database.EpisodeModel.count({}, done);
-  }
+  return data;
+}
 
-  static getLoopsCount(done) {
-    Database.LoopModel.count({}, done);
-  }
-
-  static getAnilistProxyUrl(doc) {
-    if (doc.image_url_large) {
-      doc.image_url_large = `${config.app.url}/files/anilist/${doc.anilist_id}/image_large.jpg`;
+function handleLoops(callback) {
+  return (err, docs) => {
+    if (err) {
+      callback(err);
+      return;
     }
-    if (doc.image_url_banner) {
-      doc.image_url_banner = `${config.app.url}/files/anilist/${doc.anilist_id}/image_banner.jpg`;
+
+    docs = docs.map(loop);
+    callback(err, docs);
+  };
+}
+
+function handleLoop(callback) {
+  return (err, doc) => {
+    if (err) {
+      callback(err);
+      return;
     }
-    return doc;
+
+    doc = loop(doc);
+    callback(err, doc);
+  };
+}
+
+function episode(doc) {
+  const data = {
+    no: doc.no,
+  };
+
+  if (doc.series instanceof Object) {
+    data.series = doc.series;
+  } else {
+    data.seriesid = doc.series;
   }
+
+  return data;
+}
+
+function handleEpisodes(callback) {
+  return (err, docs) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    docs = docs.map(episode);
+    callback(err, docs);
+  };
+}
+
+function handleEpisode(callback) {
+  return (err, doc) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    doc = episode(doc);
+    callback(err, doc);
+  };
+}
+
+function series(doc) {
+  const data = {
+    title: doc.title,
+    title_romaji: doc.title_romaji,
+    title_english: doc.title_english,
+    title_japanese: doc.title_japanese,
+    description: doc.description,
+    genres: doc.genres,
+    total_episodes: doc.total_episodes,
+    anilist_id: doc.anilist_id,
+  };
+
+  const seasonYear = Math.floor(doc.start_date_fuzzy / 10000);
+  const seasonMonth = Math.floor(doc.start_date_fuzzy / 100) % 100;
+  data.start_date = `${seasonYear}-${seasonMonth}`;
+
+  if (doc.image_url_large) {
+    data.image_url_large = File.getAnilistImageLarge(doc.image_url_large);
+  }
+  if (doc.image_url_banner) {
+    doc.image_url_banner = File.getAnilistImageBanner(doc.image_url_banner);
+  }
+
+  return data;
+}
+
+function handleSeries(callback) {
+  return (err, doc) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    doc = series(doc);
+    callback(err, doc);
+  };
+}
+
+function handleSerieses(callback) {
+  return (err, docs) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+
+    docs = docs.map(series);
+    callback(err, docs);
+  };
 }
 
 module.exports = Manager;

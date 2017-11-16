@@ -1,143 +1,201 @@
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
-const random = require('mongoose-simple-random');
-const findOrCreate = require('mongoose-findorcreate');
 const log4js = require('log4js');
-
-const logger = log4js.getLogger('database');
 const async = require('async');
 
-mongoose.Promise = global.Promise;
-const Schema = mongoose.Schema;
-const ObjectId = Schema.Types.ObjectId;
-
+const logger = log4js.getLogger('database');
+const Schema = require('./schema.js');
 const config = require('../../../config');
 
-mongoose.connect(config.mongodb.url);
+mongoose.Promise = global.Promise;
+mongoose.connect(config.mongodb.url, { useMongoClient: true });
+
 
 class Database {
-  static addLoop(entity, done) {
-    logger.debug(`Adding entity: ${entity.episode} ${entity.loop.period.begin} ~ ${entity.loop.period.end}`);
+  /*
+   -------------- Loop --------------
+   */
 
-    async.waterfall([
-      (callback) => {
-        const uniqueQuery = entity.series.anilist_id ?
-          { anilist_id: entity.series.anilist_id } : { title: entity.series.title };
-        this.SeriesModel.findOrCreate(uniqueQuery, entity.series, (err, series) => {
-          if (err) {
-            callback(err, entity);
-            return;
-          }
+  static insertLoop(entity, callback) {
+    this.LoopModel.insertMany([entity], callback);
+  }
 
-          entity.series = series;
-          entity.episode.series = series._id;
+  static insertLoops(entities, callback) {
+    async.waterfall(entities.map(entity => (callback) => {
+      async.waterfall([
+        checkSeriesExists(entity),
+        checkEpisodeExists(entity),
+      ], callback);
+    }), (err) => {
+      if (err) {
+        callback(err);
+        return;
+      }
 
-          callback(null, entity);
-        });
-      },
-      (entity, callback) => {
-        this.EpisodeModel
-          .findOrCreate({ title: entity.episode.title }, entity.episode, (err, episode) => {
-            if (err) {
-              callback(err, entity);
-              return;
-            }
-
-            entity.episode.episode = episode;
-            entity.loop.series = entity.series._id;
-            entity.loop.episode = episode._id;
-
-            callback(null, entity);
-          });
-      },
-      (entity, callback) => {
-        this.LoopModel.create(entity.loop, (err, loop) => {
-          if (err) {
-            callback(err, entity);
-            return;
-          }
-
-          entity.loop = loop;
-
-          callback(null, entity);
-        });
-      },
-    ], (err, entity) => {
-      done(err, entity);
+      this.LoopModel.insertMany(entities, callback);
     });
   }
 
-  static addLoops(entities, callback) {
-    this.LoopModel.insertMany(entities, (err) => {
-      if (err) {
-        console.error(err);
-      }
-      callback();
-    });
+  static deleteLoopById(id, callback) {
+    Database.LoopModel.remove({ _id: id }, callback);
+  }
+
+  static deleteLoopsByIds(ids, callback) {
+    Database.LoopModel.deleteMany({ _id: { $in: ids } }, callback);
+  }
+
+  static findFullLoop(id, callback) {
+    Database.LoopModel.findById(id).populate('episode series')
+      .exec(handleResult(callback));
+  }
+
+  static findLoop(id, callback) {
+    Database.LoopModel.findById(id)
+      .exec(handleResult(callback));
+  }
+
+  static findFullLoopsBySeries(id, callback) {
+    Database.LoopModel.find({ series: id }).populate('episode series')
+      .exec(handleResult(callback));
+  }
+
+  static findLoopsBySeries(id, callback) {
+    Database.LoopModel.find({ series: id })
+      .exec(handleResult(callback));
+  }
+
+  static findFullLoopsByEpisode(id, callback) {
+    Database.LoopModel.find({ episode: id }).populate('episode series')
+      .exec(handleResult(callback));
+  }
+
+  static findLoopsByEpisode(id, callback) {
+    Database.LoopModel.find({ episode: id })
+      .exec(handleResult(callback));
+  }
+
+  static findRandomFullLoops(n, callback) {
+    Database.LoopModel.findRandom({}, {}, {
+      limit: n,
+      populate: ['episode', 'series'],
+    }, handleResult(callback));
+  }
+
+  static findRandomLoops(n, callback) {
+    Database.LoopModel.findRandom({}, {}, {
+      limit: n,
+    }, handleResult(callback));
+  }
+
+  /*
+   -------------- Episode --------------
+   */
+
+  static findEpisodesBySeries(id, callback) {
+    Database.EpisodeModel.find({ series: id })
+      .exec(handleResult(callback));
+  }
+
+  static findFullEpisodesBySeries(id, callback) {
+    Database.EpisodeModel.find({ series: id }).populate('series')
+      .exec(handleResult(callback));
+  }
+
+  static findEpisode(id, callback) {
+    Database.EpisodeModel.findOne({ _id: id })
+      .exec((err, doc) => handleResult(err, doc, callback));
+  }
+
+  static findFullEpisode(id, callback) {
+    Database.EpisodeModel.findOne({ _id: id }).populate('series')
+      .exec((err, doc) => handleResult(err, doc, callback));
+  }
+
+  static findAllEpisodes(callback) {
+    Database.EpisodeModel.find({})
+      .exec(handleResult(callback));
+  }
+
+  static findAllFullEpisodes(callback) {
+    Database.EpisodeModel.find({}).populate('series')
+      .exec(handleResult(callback));
+  }
+
+  /*
+   -------------- Series --------------
+   */
+
+  static findSeries(id, callback) {
+    Database.SeriesModel.findOne({ _id: id })
+      .exec((err, doc) => handleResult(err, doc, callback));
+  }
+
+  static findSeriesesCount(callback) {
+    Database.SeriesModel.count({}, (err, count) => handleResult(err, count, callback));
+  }
+
+  static findSeriesesByPage(page, callback) {
+    const perPage = config.web.seriesPerPage;
+
+    Database.SeriesModel
+      .find({})
+      .sort({ start_date_fuzzy: -1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .exec(handleResult(callback));
   }
 }
 
-const SeriesSchema = new Schema({
-  title: String,
-  title_t_chinese: String,
-  title_romaji: String,
-  title_english: String,
-  title_japanese: String,
-  start_date_fuzzy: Number,
-  description: String,
-  genres: [String],
-  total_episodes: Number,
-  adult: Boolean,
-  end_date_fuzzy: Number,
-  hashtag: String,
-  image_url_large: String,
-  image_url_banner: String,
-  anilist_updated_at: Date,
-  updated_at: Date,
-  type: String,
-  anilist_id: { type: Number, unique: true },
-});
-SeriesSchema.plugin(findOrCreate);
+function handleResult(callback) {
+  return (err, result) => {
+    if (err) {
+      logger.log(logger.ERROR, err);
+      callback(err);
+      return;
+    }
+    callback(undefined, result);
+  };
+}
 
-const EpisodeSchema = new Schema({
-  title: String,
-  series: { type: ObjectId, ref: 'Series' },
-  no: String,
-});
-EpisodeSchema.plugin(findOrCreate);
+function checkSeriesExists(entity) {
+  return (callback) => {
+    const uniqueQuery = entity.series.anilist_id ?
+      { anilist_id: entity.series.anilist_id } : { title: entity.series.title };
+    this.SeriesModel.findOrCreate(uniqueQuery, entity.series, (err, series) => {
+      if (err) {
+        callback(err, entity);
+        return;
+      }
 
-const LoopSchema = new Schema({
-  duration: Number,
-  period: {
-    begin: String,
-    end: String,
-  },
-  frame: {
-    begin: Number,
-    end: Number,
-  },
-  episode: { type: ObjectId, ref: 'Episode' },
-  series: { type: ObjectId, ref: 'Series' },
-  r18: { type: Boolean, default: false },
-  tags: [String],
-  sourceFrom: String,
-  uploadDate: { type: Date, require: true },
-  review: { type: Boolean, default: false },
-});
-LoopSchema.plugin(random);
+      entity.series = series;
+      entity.episode.series = series._id;
 
-const TagsSchema = new Schema({
-  loopid: ObjectId,
-  type: String,
-  value: String,
-  confidence: Number,
-  source: String,
-  lang: Number,
-});
+      callback(null, entity);
+    });
+  };
+}
 
-Database.SeriesModel = mongoose.model('Series', SeriesSchema);
-Database.EpisodeModel = mongoose.model('Episode', EpisodeSchema);
-Database.LoopModel = mongoose.model('Loop', LoopSchema);
-Database.TagsModel = mongoose.model('tags', TagsSchema);
+function checkEpisodeExists(entity) {
+  return (callback) => {
+    this.EpisodeModel
+      .findOrCreate({ title: entity.episode.title }, entity.episode, (err, episode) => {
+        if (err) {
+          callback(err, entity);
+          return;
+        }
+
+        entity.episode.episode = episode;
+        entity.loop.series = entity.series._id;
+        entity.loop.episode = episode._id;
+
+        callback(null, entity);
+      });
+  };
+}
+
+Database.SeriesModel = mongoose.model('Series', Schema.SeriesSchema);
+Database.EpisodeModel = mongoose.model('Episode', Schema.EpisodeSchema);
+Database.LoopModel = mongoose.model('Loop', Schema.LoopSchema);
+Database.TagsModel = mongoose.model('tags', Schema.TagsSchema);
 
 module.exports = Database;

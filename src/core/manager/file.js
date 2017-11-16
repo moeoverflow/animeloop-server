@@ -6,17 +6,45 @@ const mkdirp = require('mkdirp');
 const config = require('../../../config');
 
 class File {
-  static saveFile(entity, files, done) {
-    this.dirs.keys().forEach((key) => {
-      try {
-        if (files[key] && fs.existsSync(files[key])) {
-          fs.renameSync(files[key], path.join(this.dirs[key], `${entity.loop._id}.${this.getExt(key)}`));
+  static saveFileById(id, files) {
+    return this.dirs.keys().reduce((flag, key) => {
+      if (flag) {
+        try {
+          if (files[key] && fs.existsSync(files[key])) {
+            fs.renameSync(files[key], path.join(this.dirs[key], `${id}.${this.getExt(key)}`));
+          }
+        } catch (err) {
+          return false;
         }
-      } catch (err) {
-        done(err, entity);
       }
-    });
-    done(null, entity);
+      return true;
+    }, true);
+  }
+
+  static deleteFileById(id) {
+    const files = this.getLocalFilesUrl(id);
+
+    return this.dirs.keys().reduce((flag, key) => {
+      if (flag) {
+        try {
+          if (fs.existsSync(files[key])) {
+            fs.fs.unlinkSync(files[key]);
+          }
+        } catch (err) {
+          return false;
+        }
+      }
+      return true;
+    }, true);
+  }
+
+  static deleteFilesByIds(ids) {
+    return ids.reduce((flag, id) => {
+      if (flag) {
+        flag = this.deleteFileById(id);
+      }
+      return flag;
+    }, true);
   }
 
   static getExt(tag) {
@@ -30,11 +58,26 @@ class File {
     }, {});
   }
 
+  static getLocalFilesUrl(id) {
+    return File.FilesTags.reduce((urls, tag) => {
+      urls[tag] = path.join(config.storage.dir.data, tag, `${id}.${this.getExt(tag)}`);
+      return urls;
+    }, {});
+  }
+
   static getLocalFilesTagDir() {
     return this.FilesTags.reduce((urls, tag) => {
       urls[tag] = path.join(config.storage.dir.data, tag);
       return urls;
     }, {});
+  }
+
+  static getAnilistImageLarge(id) {
+    return `${config.app.url}/files/anilist/${id}/image_large.jpg`;
+  }
+
+  static getAnilistImageBanner(id) {
+    return `${config.app.url}/files/anilist/${id}/image_banner.jpg`;
   }
 }
 
@@ -54,7 +97,7 @@ File.FilesTags = [
   'jpg_1080p',
 ];
 
-File.dirs = function () {
+File.dirs = () => {
   config.storage.dir.keys().forEach((key) => {
     if (!fs.existsSync(config.storage.dir[key])) {
       mkdirp.sync(config.storage.dir[key]);
