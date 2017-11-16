@@ -1,6 +1,9 @@
 /* eslint-disable no-underscore-dangle */
 const async = require('async');
 const log4js = require('log4js');
+const mongoose = require('mongoose');
+
+const ObjectId = mongoose.Types.ObjectId;
 
 const logger = log4js.getLogger('manager');
 const config = require('../../../config.js');
@@ -80,6 +83,23 @@ class Manager {
     Database.findRandomLoops(n, handleLoops(callback));
   }
 
+  static getLoopsByGroup(no, callback) {
+    Database.findLoopsByGroup(no, handleLoops(callback));
+  }
+
+  static getLoopsGroupCount(callback) {
+    const perPage = 100;
+
+    Database.findLoopsCount((err, count) => {
+      const totalPage = Math.ceil(count / perPage);
+      callback(err, totalPage);
+    });
+  }
+
+  static getLoopsCount(callback) {
+    Database.findLoopsCount(callback);
+  }
+
   /*
    -------------- Episode --------------
    */
@@ -108,6 +128,27 @@ class Manager {
     Database.findAllFullEpisodes(handleEpisodes(callback));
   }
 
+  static getFullEpisodesByGroup(no, callback) {
+    Database.findFullEpisodesByGroup(no, handleEpisodes(callback));
+  }
+
+  static getEpisodesByGroup(no, callback) {
+    Database.findEpisodesByGroup(no, handleEpisodes(callback));
+  }
+
+  static getEpisodesGroupCount(callback) {
+    const perPage = 30;
+
+    Database.findEpisodesCount((err, count) => {
+      const totalPage = Math.ceil(count / perPage);
+      callback(err, totalPage);
+    });
+  }
+
+  static getEpisodesCount(callback) {
+    Database.findEpisodesCount(callback);
+  }
+
   /*
    -------------- Series --------------
    */
@@ -116,18 +157,24 @@ class Manager {
     Database.findSeries(id, handleSeries(callback));
   }
 
-  static getSeriesesbyPage(page, callback) {
-    Database.findSeriesesByPage(page, handleSerieses(callback));
+  static getSeriesesCount(callback) {
+    Database.findSeriesesCount(callback);
   }
 
-  static getSeriesPageCount(callback) {
-    const perPage = config.web.seriesPerPage;
+  static getSeriesesbyGroup(no, callback) {
+    Database.findSeriesesByGroup(no, handleSerieses(callback));
+  }
+
+  static getSeriesesGroupCount(callback) {
+    const perPage = 30;
 
     Database.findSeriesesCount((err, count) => {
       const totalPage = Math.ceil(count / perPage);
       callback(err, totalPage);
     });
   }
+
+
 }
 
 function loop(doc) {
@@ -147,16 +194,16 @@ function loop(doc) {
     files: File.getPublicFilesUrl(doc._id),
   };
 
-  if (doc.episode instanceof Object) {
-    data.episode = doc.episode;
-  } else {
+  if (doc.episode instanceof ObjectId) {
     data.episodeid = doc.episode;
+  } else {
+    data.episode = episode(doc.episode);
   }
 
-  if (doc.series instanceof Object) {
-    data.series = doc.series;
-  } else {
+  if (doc.series instanceof ObjectId) {
     data.seriesid = doc.series;
+  } else {
+    data.series = series(doc.series);
   }
 
   return data;
@@ -188,13 +235,14 @@ function handleLoop(callback) {
 
 function episode(doc) {
   const data = {
+    id: doc._id,
     no: doc.no,
   };
 
-  if (doc.series instanceof Object) {
-    data.series = doc.series;
-  } else {
+  if (doc.series instanceof ObjectId) {
     data.seriesid = doc.series;
+  } else {
+    data.series = series(doc.series);
   }
 
   return data;
@@ -226,6 +274,7 @@ function handleEpisode(callback) {
 
 function series(doc) {
   const data = {
+    id: doc._id,
     title: doc.title,
     title_romaji: doc.title_romaji,
     title_english: doc.title_english,
@@ -241,10 +290,10 @@ function series(doc) {
   data.start_date = `${seasonYear}-${seasonMonth}`;
 
   if (doc.image_url_large) {
-    data.image_url_large = File.getAnilistImageLarge(doc.image_url_large);
+    data.image_url_large = File.getAnilistImageLarge(doc.anilist_id);
   }
   if (doc.image_url_banner) {
-    doc.image_url_banner = File.getAnilistImageBanner(doc.image_url_banner);
+    doc.image_url_banner = File.getAnilistImageBanner(doc.anilist_id);
   }
 
   return data;

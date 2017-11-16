@@ -87,6 +87,34 @@ class Database {
     }, handleResult(callback));
   }
 
+  static findFullLoopsByGroup(no, callback) {
+    const perPage = 100;
+
+    Database.LoopModel
+      .find({})
+      .sort({ start_date_fuzzy: -1 })
+      .skip((no - 1) * perPage)
+      .limit(perPage)
+      .populate('episode series')
+      .exec(handleResult(callback));
+  }
+
+  static findLoopsByGroup(no, callback) {
+    const perPage = 100;
+
+    Database.LoopModel
+      .find({})
+      .sort({ start_date_fuzzy: -1 })
+      .skip((no - 1) * perPage)
+      .limit(perPage)
+      .exec(handleResult(callback));
+  }
+
+  static findLoopsCount(callback) {
+    Database.LoopModel.count({}, handleResult(callback));
+  }
+
+
   /*
    -------------- Episode --------------
    */
@@ -103,12 +131,12 @@ class Database {
 
   static findEpisode(id, callback) {
     Database.EpisodeModel.findOne({ _id: id })
-      .exec((err, doc) => handleResult(err, doc, callback));
+      .exec(handleResult(callback));
   }
 
   static findFullEpisode(id, callback) {
     Database.EpisodeModel.findOne({ _id: id }).populate('series')
-      .exec((err, doc) => handleResult(err, doc, callback));
+      .exec(handleResult(callback));
   }
 
   static findAllEpisodes(callback) {
@@ -121,26 +149,51 @@ class Database {
       .exec(handleResult(callback));
   }
 
+  static findEpisodesCount(callback) {
+    Database.EpisodeModel.count({}, handleResult(callback));
+  }
+
+  static findFullEpisodesByGroup(no, callback) {
+    const perPage = 30;
+
+    Database.EpisodeModel
+      .find({})
+      .skip((no - 1) * perPage)
+      .limit(perPage)
+      .populate('episode series')
+      .exec(handleResult(callback));
+  }
+
+  static findEpisodesByGroup(no, callback) {
+    const perPage = 30;
+
+    Database.EpisodeModel
+      .find({})
+      .skip((no - 1) * perPage)
+      .limit(perPage)
+      .exec(handleResult(callback));
+  }
+
   /*
    -------------- Series --------------
    */
 
   static findSeries(id, callback) {
     Database.SeriesModel.findOne({ _id: id })
-      .exec((err, doc) => handleResult(err, doc, callback));
+      .exec(handleResult(callback));
   }
 
   static findSeriesesCount(callback) {
-    Database.SeriesModel.count({}, (err, count) => handleResult(err, count, callback));
+    Database.SeriesModel.count({}, handleResult(callback));
   }
 
-  static findSeriesesByPage(page, callback) {
-    const perPage = config.web.seriesPerPage;
+  static findSeriesesByGroup(no, callback) {
+    const perPage = 30;
 
     Database.SeriesModel
       .find({})
       .sort({ start_date_fuzzy: -1 })
-      .skip((page - 1) * perPage)
+      .skip((no - 1) * perPage)
       .limit(perPage)
       .exec(handleResult(callback));
   }
@@ -153,6 +206,12 @@ function handleResult(callback) {
       callback(err);
       return;
     }
+
+    if (result === null || result === undefined) {
+      callback(new Error('Find nothing.'));
+      return;
+    }
+
     callback(undefined, result);
   };
 }
