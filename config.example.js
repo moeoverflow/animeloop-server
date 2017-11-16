@@ -13,6 +13,13 @@ const config = {
   animeloopCli: {
     bin: path.join(__dirname, 'bin', 'animeloop-cli'),
   },
+  api: {
+    version: 'v1',
+    app: {
+      host: '0.0.0.0',
+      port: 7775,
+    }
+  },
   automator: {
     uploadTTL: 5 * 60,
     uploadDelay: 3,
