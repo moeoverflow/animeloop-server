@@ -7,7 +7,7 @@ const i18n = require('./i18n');
 
 const index = require('./routes/index');
 const list = require('./routes/list');
-const listSeries = require('./routes/list-series');
+const listSeries = require('./routes/list-serieses');
 const listEpisodes = require('./routes/list-episodes');
 
 const search = require('./routes/search');
@@ -18,8 +18,6 @@ const status = require('./routes/status');
 const episode = require('./routes/episode');
 const series = require('./routes/series');
 const loop = require('./routes/loop');
-
-const anilistProxy = require('./routes/anilist-proxy');
 
 
 router.use(express.static(path.join(__dirname, 'public')));
@@ -47,7 +45,5 @@ router.use('/status', status);
 router.use('/episode', episode);
 router.use('/series', series);
 router.use('/loop', loop);
-
-router.use('/anilist', anilistProxy);
 
 module.exports = router;

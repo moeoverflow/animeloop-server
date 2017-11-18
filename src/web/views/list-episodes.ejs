@@ -20,13 +20,13 @@
   <div id="content">
     <div class="list-episodes col-md-12">
       <% datas.forEach((data) => {
-          let series = data.series;
-          let episodes = data.episodes;
+        const series = data.series;
+        const episodes = data.episodes;
       %>
       <div class="panel">
         <div class="panel-body item">
           <div class="col-xs-5 col-sm-3 col-md-2 cover">
-            <a href="/series/<%- series._id %>"><img data-src="<%- series.image_url_large %>" alt="<%- series[__('title-key-1')] %>"></a>
+            <a href="/series/<%- series.id %>"><img data-src="<%- series.image_url_large %>" alt="<%- series[__('title-key-1')] %>"></a>
           </div>
           <div class="col-xs-7 col-sm-5 col-md-5 content">
             <div class="title">
@@ -38,11 +38,7 @@
               <p><small><%- series[__('title-key-3')] %></small></p>
             </div>
             <ul class="genres">
-              <%
-                var dateFuzzy = series.start_date_fuzzy;
-                var date = new Date(dateFuzzy / 10000, (dateFuzzy % 10000 / 100) - 1, dateFuzzy % 100);
-              %>
-              <li><%- `${date.getUTCFullYear()}-${date.getUTCMonth()+1}` %></li>
+              <li><%- series.season %></li>
               <% series.genres.forEach((gen) => { %>
               <li><%- gen %></li>
               <% }); %>
@@ -55,7 +51,7 @@
               return (prev.no > next.no);
             }).forEach((epi) => { %>
             <div class="col-xs-2 col-sm-3 col-md-2">
-              <a href="/episode/<%- epi._id %>"><%- epi.no %></a>
+              <a href="/episode/<%- epi.id %>"><%- epi.no %></a>
             </div>
             <% });%>
 

@@ -31,7 +31,7 @@
     .panel-body {
       padding: 0;
 
-      .video-cover {
+      .video-cover, .loop-gif {
         width: 100%;
       }
 
@@ -54,6 +54,12 @@
         li {
           font-size: 10px;
         }
+
+        .title {
+          /*          white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+          */        }
       }
     }
 

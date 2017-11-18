@@ -5,7 +5,7 @@
   <%- include('partials/twitter-card', {
     card: 'player',
     at: '@moeoverflow',
-    title: `${loop.episode.title} | ${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`,
+    title: `${episode.title} | ${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`,
     description: 'View the anime loop on MOEOVERFLOW.',
     image: loop.files.jpg_1080p,
     videoContainer: 'https://animeloop.org/loop/' + loop._id + '/twitter',
@@ -49,8 +49,8 @@
     <div class="loop details panel">
       <div class="panel-body navigator">
         <ol class="breadcrumb path-navigator">
-          <li><a href="/series/<%- loop.series._id %>"><%- loop.series[__('title-key-1')] %></a></li>
-          <li><a href="/episode/<%- loop.episode._id %>"><%- loop.episode.no %></a></li>
+          <li><a href="/series/<%- series.id %>"><%- series[__('title-key-1')] %></a></li>
+          <li><a href="/episode/<%- episode.id %>"><%- episode.no %></a></li>
           <li class="active">(´・ω・`)</li>
         </ol>
       </div>
@@ -77,14 +77,6 @@
             <h3><%= __('duration') %> </h3>
             <span><%- loop.duration.toFixed(3) %> s</span>
           </div>
-          <% if (loop.tags.length > 0) { %>
-          <div class="tags col-xs-6 col-sm-6 col-md-12 col-lg-6">
-            <h3><%= __('tags') %>: </h3>
-            <% loop.tags.forEach((tag) => { %>
-            <span class="badge badge-primary"><%- tag %></span>
-            <% }); %>
-          </div>
-          <% } %>
           <div class="files col-xs-12 col-sm-12 col-md-12 col-lg-11">
             <h3><%= __('files') %>: </h3>
             <div class="files-container">

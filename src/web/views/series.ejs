@@ -1,6 +1,8 @@
 <%
 let episodes = data.episodes;
 let series = data.series;
+console.log(__('title-key-1'))
+
 %>
 <!DOCTYPE html>
 <html>
@@ -66,9 +68,9 @@ let series = data.series;
           <% episodes.forEach((epi) => { %>
           <div class="col-md-3">
             <% if (epi.no) { %>
-            <a href="/episode/<%- epi._id %>"><%- `${epi.series[__('title-key-1')]} ${epi.no}` %></a>
+            <a href="/episode/<%- epi.id %>"><%- `${series[__('title-key-1')]} ${epi.no}` %></a>
             <% } else { %>
-            <a href="/episode/<%- epi._id %>"><%- epi.series[__('title-key-1')] %></a>
+            <a href="/episode/<%- epi.id %>"><%- series[__('title-key-1')] %></a>
             <% } %>
           </div>
           <% }); %>

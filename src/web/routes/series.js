@@ -1,4 +1,5 @@
 const express = require('express');
+const async = require('async');
 
 const router = express.Router();
 const Manager = require('../../core/manager/manager.js');
@@ -6,13 +7,15 @@ const Manager = require('../../core/manager/manager.js');
 router.get('/:id', (req, res) => {
   const id = req.params.id;
 
-  Manager.getEpisodesBySeries(id, (err, data) => {
+  async.series({
+    series: (callback) => {
+      Manager.getSeries(id, callback);
+    },
+    episodes: (callback) => {
+      Manager.getEpisodesBySeries(id, callback);
+    },
+  }, (err, data) => {
     if (err) {
-      res.status(404).render('404');
-      return;
-    }
-
-    if (data.series === undefined) {
       res.status(404).render('404');
       return;
     }

@@ -4,13 +4,13 @@ const express = require('express');
 const router = express.Router();
 const Manager = require('../../core/manager/manager.js');
 
-function renderEpisodesList(page, res) {
+function renderEpisodesList(no, res) {
   async.series({
     totalPage: (callback) => {
-      Manager.getSeriesPageCount(callback);
+      Manager.getSeriesesGroupCount(callback);
     },
-    series: (callback) => {
-      Manager.getSeriesByPage(page, callback);
+    serieses: (callback) => {
+      Manager.getSeriesesbyGroup(no, callback);
     },
   }, (err, results) => {
     if (err) {
@@ -23,22 +23,13 @@ function renderEpisodesList(page, res) {
     }
 
     const totalPage = results.totalPage;
-    let series = results.series;
+    const serieses = results.serieses;
 
-    if (page === totalPage) {
-      series = series.map((ser) => {
-        if (ser.title === 'DEFAULT SERIES') {
-          ser.start_date_fuzzy = 0;
-        }
-        return ser;
-      });
-    }
-
-    series.sort((prev, next) => (next.start_date_fuzzy - prev.start_date_fuzzy));
-
-    async.parallelLimit(series.map(ser => (callback) => {
+    async.parallelLimit(serieses.map(series => (callback) => {
       // eslint-disable-next-line no-underscore-dangle
-      Manager.getEpisodesBySeries(ser._id, callback);
+      Manager.getEpisodesBySeries(series.id, (err, episodes) => {
+        callback(err, { series, episodes });
+      });
     }), 3, (err, datas) => {
       if (err) {
         datas = [];
@@ -47,7 +38,7 @@ function renderEpisodesList(page, res) {
       res.render('list-episodes', {
         pageType: 'list-episodes',
         pagination: {
-          current: page,
+          current: no,
           total: totalPage,
         },
         datas,

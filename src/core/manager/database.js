@@ -197,6 +197,15 @@ class Database {
       .limit(perPage)
       .exec(handleResult(callback));
   }
+
+  /*
+   -------------- Tags --------------
+   */
+
+  static findTagsByLoop(id, callback) {
+    this.TagsModel.find({ loopid: id }).sort({ confidence: -1 })
+      .exec(handleResult(callback));
+  }
 }
 
 function handleResult(callback) {

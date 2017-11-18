@@ -1,30 +1,16 @@
 const express = require('express');
+const async = require('async');
 
 const router = express.Router();
-const async = require('async');
 const Manager = require('../../core/manager/manager.js');
+const telegram = require('../../middlewares/telegram.js');
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', telegram, (req, res) => {
   const id = req.params.id;
-
-  // temp fix - Telegram url quick look
-  const ua = req.get('User-Agent');
-  if (ua.indexOf('TelegramBot') > -1) {
-    const fileName = `/home/shin/animeloop_library/mp4_720p/${id}.mp4`;
-    res.type('video/mp4');
-    res.sendFile(fileName, (err) => {
-      if (err) {
-        next(err);
-      } else {
-        console.log('Sent:', fileName);
-      }
-    });
-    return;
-  }
 
   async.series({
     loop: (callback) => {
-      Manager.getLoopById(id, callback);
+      Manager.getFullLoop(id, callback);
     },
     tags: (callback) => {
       Manager.getTagsByLoop(id, callback);
@@ -41,9 +27,10 @@ router.get('/:id', (req, res, next) => {
     });
 
     res.render('loop', {
+      series: data.loop.series,
+      episode: data.loop.episode,
       loop: data.loop,
       tags: data.tags,
-      tagsType: data.tagsType,
     });
   });
 });

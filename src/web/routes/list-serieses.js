@@ -5,20 +5,21 @@ const randomColor = require('randomcolor');
 
 const router = express.Router();
 const Manager = require('../../core/manager/manager.js');
+const Database = require('../../core/manager/database.js');
 
 function renderSeriesList(page, res) {
   async.series({
     totalPage: (callback) => {
-      Manager.getSeriesPageCount(callback);
+      Manager.getSeriesesCount(callback);
     },
-    series: (callback) => {
-      Manager.getSeriesByPage(page, callback);
+    serieses: (callback) => {
+      Database.findSeriesesByGroup(page, callback);
     },
   }, (err, results) => {
-    let series = [];
+    let serieses = [];
     if (err) {
-      res.render('list-series', {
-        pageType: 'list-series',
+      res.render('list-serieses', {
+        pageType: 'list-serieses',
         totalPage: 0,
         grouped: [],
       });
@@ -26,8 +27,8 @@ function renderSeriesList(page, res) {
     }
 
     const totalPage = results.totalPage;
-    series = results.series;
-    series = series.map((ser) => {
+    serieses = results.serieses;
+    serieses = serieses.map((ser) => {
       ser.color = randomColor({
         luminosity: 'dark',
         hue: '#034160',
@@ -46,22 +47,22 @@ function renderSeriesList(page, res) {
       return ser;
     });
 
-    series = groupArray(series, 'season');
+    serieses = groupArray(serieses, 'season');
 
     const grouped = [];
     // eslint-disable-next-line no-restricted-syntax,guard-for-in
-    for (const key in series) {
+    for (const key in serieses) {
       grouped.push({
         season: key,
-        seasonValue: (series[key][0].season_year * 100) + series[key][0].season_month,
-        series: series[key],
+        seasonValue: (serieses[key][0].season_year * 100) + serieses[key][0].season_month,
+        series: serieses[key],
       });
     }
 
     grouped.sort((prev, next) => (next.seasonValue - prev.seasonValue));
 
-    res.render('list-series', {
-      pageType: 'list-series',
+    res.render('list-serieses', {
+      pageType: 'list-serieses',
       pagination: {
         current: page,
         total: totalPage,

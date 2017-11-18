@@ -1,5 +1,6 @@
 <%
  let episode = data.episode;
+ let series = episode.series;
  let loops = data.loops;
 
  let episodeTitle = episode.series[__('title-key-1')];
@@ -38,8 +39,8 @@
       <div class="panel-body">
         <% if (loops.length >= 1) { %>
         <ol class="breadcrumb path-navigator">
-          <li><a href="/series/<%- loops[0].series._id %>"><%- loops[0].series[__('title-key-1')] %></a></li>
-          <li class="active"><%- loops[0].episode.no %></li>
+          <li><a href="/series/<%- series.id %>"><%- series[__('title-key-1')] %></a></li>
+          <li class="active"><%- episode.no %></li>
         </ol>
         <% } %>
       </div>
@@ -48,7 +49,9 @@
     <div class="loop-cards">
       <% loops.forEach((loop) => { %>
       <%- include('partials/loop-card', {
-      loop
+        series,
+        episode,
+        loop
       }) %>
       <% }); %>
     </div>

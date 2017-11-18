@@ -8,14 +8,14 @@ const Manager = require('../../core/manager/manager.js');
 
 router.get('/', (req, res, next) => {
   async.series({
-    seriesCount: Manager.getSeriesCount,
+    seriesCount: Manager.getSeriesesCount,
     episodesCount: Manager.getEpisodesCount,
     loopsCount: Manager.getLoopsCount,
     jobs: (callback) => {
       const app = config.automator.app;
       request(`http://${app.auth.username}:${app.auth.password}@${app.host}:${app.port}${app.url}/jobs/0..100/desc`, (error, response, body) => {
         if (error) {
-          callback(error, []);
+          callback(null, { active: [], completed: [] });
           return;
         }
         const jobs = JSON.parse(body);

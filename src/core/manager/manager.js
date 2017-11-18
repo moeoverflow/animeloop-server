@@ -174,7 +174,13 @@ class Manager {
     });
   }
 
+  /*
+   -------------- Tags --------------
+   */
 
+  static getTagsByLoop(id, callback) {
+    Database.findTagsByLoop(id, handleTags(callback));
+  }
 }
 
 function loop(doc) {
@@ -287,7 +293,7 @@ function series(doc) {
 
   const seasonYear = Math.floor(doc.start_date_fuzzy / 10000);
   const seasonMonth = Math.floor(doc.start_date_fuzzy / 100) % 100;
-  data.start_date = `${seasonYear}-${seasonMonth}`;
+  data.season = `${seasonYear}-${seasonMonth}`;
 
   if (doc.image_url_large) {
     data.image_url_large = File.getAnilistImageLarge(doc.anilist_id);
@@ -319,6 +325,17 @@ function handleSerieses(callback) {
     }
 
     docs = docs.map(series);
+    callback(err, docs);
+  };
+}
+
+function handleTags(callback) {
+  return (err, docs) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+
     callback(err, docs);
   };
 }

@@ -1,18 +1,17 @@
 <div class="loop-card">
   <div class="panel panel-default">
     <div class="panel-body">
-      <a id="loop-<%- loop._id %>" class="video-golink" loop-id="<%- loop._id %>" href="/loop/<%- loop._id %>">
-        <img class="video-cover" src="<%- loop.files.jpg_360p %>" alt="<%- loop.series[__('title-key-1')] %> <%- loop.episode.no %>">
-        <div class="video-container"></div>
+      <a id="loop-<%- loop.id %>" class="video-golink" loop-id="<%- loop.id %>" href="/loop/<%- loop.id %>">
+        <img class="video-cover" src="/images/akkarin.png" data-src="<%- loop.files.gif_360p %>" alt="<%- series[__('title-key-1')] %> <%- episode.no %>">
       </a>
     </div>
     <div class="panel-footer">
       <ul class="info">
         <li class="title">
-          <% if (loop.episode.no) { %>
-          <%- `${loop.series[__('title-key-1')]} ${ loop.episode.no }` %>
+          <% if (episode.no) { %>
+          <%- `${series[__('title-key-1')]} ${ episode.no }` %>
           <% } else { %>
-          <%- `${loop.series[__('title-key-1')] }` %>
+          <%- `${series[__('title-key-1')] }` %>
           <% } %>
         </li>
         <li class="period"><%- loop.period.begin.slice(0, 11) %> ~ <%- loop.period.end.slice(0, 11) %></li>
