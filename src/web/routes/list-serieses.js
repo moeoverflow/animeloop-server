@@ -5,7 +5,6 @@ const randomColor = require('randomcolor');
 
 const router = express.Router();
 const Manager = require('../../core/manager/manager.js');
-const Database = require('../../core/manager/database.js');
 
 function renderSeriesList(page, res) {
   async.series({
@@ -13,7 +12,7 @@ function renderSeriesList(page, res) {
       Manager.getSeriesesCount(callback);
     },
     serieses: (callback) => {
-      Database.findSeriesesByGroup(page, callback);
+      Manager.getSeriesesbyGroup(page, callback);
     },
   }, (err, results) => {
     let serieses = [];
@@ -28,23 +27,13 @@ function renderSeriesList(page, res) {
 
     const totalPage = results.totalPage;
     serieses = results.serieses;
-    serieses = serieses.map((ser) => {
-      ser.color = randomColor({
+    serieses = serieses.map((series) => {
+      series.color = randomColor({
         luminosity: 'dark',
         hue: '#034160',
       });
 
-      if (ser.anilist_updated_at === undefined) {
-        ser.season_year = 1;
-        ser.season_month = 1;
-        ser.season = '(:3_ヽ)_';
-        return ser;
-      }
-
-      ser.season_year = Math.floor(ser.start_date_fuzzy / 10000);
-      ser.season_month = Math.floor(ser.start_date_fuzzy / 100) % 100;
-      ser.season = `${ser.season_year} - ${ser.season_month}`;
-      return ser;
+      return series;
     });
 
     serieses = groupArray(serieses, 'season');
@@ -54,12 +43,9 @@ function renderSeriesList(page, res) {
     for (const key in serieses) {
       grouped.push({
         season: key,
-        seasonValue: (serieses[key][0].season_year * 100) + serieses[key][0].season_month,
         series: serieses[key],
       });
     }
-
-    grouped.sort((prev, next) => (next.seasonValue - prev.seasonValue));
 
     res.render('list-serieses', {
       pageType: 'list-serieses',
