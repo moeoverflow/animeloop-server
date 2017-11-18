@@ -31,7 +31,7 @@ SeriesSchema.plugin(findOrCreate);
 
 const EpisodeSchema = new Schema({
   title: String,
-  series: { type: ObjectId, ref: 'Series' },
+  series: { type: ObjectId, ref: 'Series', require: true },
   no: String,
 });
 EpisodeSchema.plugin(findOrCreate);
@@ -46,10 +46,9 @@ const LoopSchema = new Schema({
     begin: Number,
     end: Number,
   },
-  episode: { type: ObjectId, ref: 'Episode' },
-  series: { type: ObjectId, ref: 'Series' },
+  episode: { type: ObjectId, ref: 'Episode', require: true },
+  series: { type: ObjectId, ref: 'Series', require: true },
   r18: { type: Boolean, default: false },
-  tags: [String],
   sourceFrom: String,
   uploadDate: { type: Date, require: true },
   review: { type: Boolean, default: false },
