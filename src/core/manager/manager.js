@@ -6,8 +6,6 @@ const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
 const logger = log4js.getLogger('manager');
-const config = require('../../../config.js');
-
 const Database = require('./database.js');
 const File = require('./file.js');
 
@@ -84,7 +82,7 @@ class Manager {
   }
 
   static getLoopsByGroup(no, callback) {
-    Database.findLoopsByGroup(no, handleLoops(callback));
+    Database.findLoopsByGroup(no, callback);
   }
 
   static getLoopsGroupCount(callback) {
