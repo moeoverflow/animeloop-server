@@ -6,6 +6,7 @@ config.js
 webapp/public/favicons
 webapp/public/images
 scripts/*
+docs
 
 # Sass
 .sass-cache

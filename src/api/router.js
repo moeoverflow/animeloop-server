@@ -9,7 +9,6 @@ const loop = require('./routes/loop.js');
 const episode = require('./routes/episode.js');
 const series = require('./routes/series.js');
 
-
 router.use('/netdata', netdata);
 router.use('/rand', rand);
 router.use('/loop', loop);
