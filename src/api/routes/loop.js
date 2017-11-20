@@ -73,6 +73,15 @@ router.get('/:id/full', (req, res) => {
  */
 
 /**
+ * @api {get} /loop?tag=:id Request loops by tag
+ * @apiName GetLoopsByTag
+ * @apiDescription get all loops in specific tag
+ * @apiGroup Loop
+ *
+ * @apiSampleRequest /loop?tag=akiyama+mio
+ */
+
+/**
  * @api {get} /loop?page=:n Request loops in page n
  * @apiName GetLoopsInPage
  * @apiDescription get all loops in page n
@@ -93,6 +102,7 @@ router.get('/', (req, res, next) => {
   const queryLength = Object.keys(req.query).length;
   const episodeId = req.query.episode;
   const seriesId = req.query.series;
+  const tagName = req.query.tag;
   const pageNo = req.query.page;
 
   if (queryLength === 0) {
@@ -101,6 +111,8 @@ router.get('/', (req, res, next) => {
     Manager.getLoopsByEpisode(episodeId, Response.handleResponse(res));
   } else if (queryLength === 1 && seriesId) {
     Manager.getLoopsBySeries(seriesId, Response.handleResponse(res));
+  } else if (queryLength === 1 && tagName) {
+    Manager.getLoopsByTag(tagName, Response.handleResponse(res));
   } else if (queryLength === 1 && pageNo) {
     const no = parseInt(pageNo, 10);
     if (isNaN(no)) {

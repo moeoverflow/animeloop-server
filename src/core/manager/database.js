@@ -206,6 +206,11 @@ class Database {
     this.TagsModel.find({ loopid: id }).sort({ confidence: -1 })
       .exec(handleResult(callback));
   }
+
+  static findTags(tagName, callback) {
+    this.TagsModel.find({ value: tagName }).sort({ confidence: -1 })
+      .exec(handleResult(callback));
+  }
 }
 
 function handleResult(callback) {

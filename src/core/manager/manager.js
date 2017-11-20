@@ -73,6 +73,19 @@ class Manager {
     Database.findLoopsBySeries(id, handleLoops(callback));
   }
 
+  static getLoopsByTag(tagName, callback) {
+    async.waterfall([
+      (callback) => {
+        Database.findTags(tagName, callback);
+      },
+      (tags, callback) => {
+        async.series(tags.map(tag => (callback) => {
+          Database.findLoop(tag.loopid, callback);
+        }), callback);
+      },
+    ], handleLoops(callback));
+  }
+
   static getRandomFullLoops(n, callback) {
     Database.findRandomFullLoops(n, handleLoops(callback));
   }
@@ -327,13 +340,20 @@ function handleSerieses(callback) {
   };
 }
 
+function tag(doc) {
+  const data = Object.assign({}, doc._doc);
+  data.id = doc._id;
+  delete data._id;
+  return data;
+}
+
 function handleTags(callback) {
   return (err, docs) => {
     if (err) {
       callback(err);
       return;
     }
-
+    docs = docs.map(tag);
     callback(err, docs);
   };
 }
