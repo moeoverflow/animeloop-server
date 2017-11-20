@@ -95,7 +95,7 @@ class Manager {
   }
 
   static getLoopsByGroup(no, callback) {
-    Database.findLoopsByGroup(no, callback);
+    Database.findLoopsByGroup(no, handleLoops(callback));
   }
 
   static getLoopsGroupCount(callback) {
