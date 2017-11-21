@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "description": "Animeloop API documentation",
   "title": "Animeloop API",
-  "url": "https://animeloop/api/v1",
-  "sampleUrl": "https://animeloop/api/v1"
+  "url": "https://animeloop.org/api/v1",
+  "sampleUrl": "https://animeloop.org/api/v1"
 }

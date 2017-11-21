@@ -34,7 +34,7 @@ router.get('/page/count', (req, res) => {
  * @apiDescription get a series by id
  * @apiGroup Series
  *
- * @apiSampleRequest /loop/59edf04f6658ad05762276dd
+ * @apiSampleRequest /series/595a4db38a352948d41b9acb
  */
 router.get('/:id', (req, res) => {
   const id = req.params.id;
@@ -47,7 +47,7 @@ router.get('/:id', (req, res) => {
  * @apiDescription get all series in page n
  * @apiGroup Series
  *
- * @apiSampleRequest /loop?page=3
+ * @apiSampleRequest /series?page=3
  */
 
 /**
@@ -56,7 +56,7 @@ router.get('/:id', (req, res) => {
  * @apiDescription get all series in first page
  * @apiGroup Series
  *
- * @apiSampleRequest /loop
+ * @apiSampleRequest /series
  */
 router.get('/', (req, res, next) => {
   const queryLength = Object.keys(req.query).length;

@@ -185,6 +185,24 @@ class Manager {
     });
   }
 
+  static searchSeries(value, callback) {
+    const query = value
+      .split(' ')
+      .map((q) => {
+        q = q.replace(' ', '');
+        return [{ title: { $regex: q } },
+          { title_romaji: { $regex: q } },
+          { title_english: { $regex: q } },
+          { title_japanese: { $regex: q } },
+          { description: { $regex: q } },
+          { season: { $regex: q } },
+          { genres: { $regex: q } },
+          { type: { $regex: q } },
+        ];
+      });
+    Database.findSeriesByQuery(query, handleSerieses(callback));
+  }
+
   /*
    -------------- Tags --------------
    */

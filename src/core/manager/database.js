@@ -178,7 +178,7 @@ class Database {
    -------------- Series --------------
    */
 
-  static findSeries(id, callback) {
+  static findSeriesById(id, callback) {
     Database.SeriesModel.findOne({ _id: id })
       .exec(handleResult(callback));
   }
@@ -196,6 +196,15 @@ class Database {
       .skip((no - 1) * perPage)
       .limit(perPage)
       .exec(handleResult(callback));
+  }
+
+  static findSeriesByQuery(query, callback) {
+    const queries = {
+      $and: query.map(q => ({
+        $or: q,
+      })),
+    };
+    Database.SeriesModel.find(queries, handleResult(callback));
   }
 
   /*
