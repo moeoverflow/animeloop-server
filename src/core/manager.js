@@ -322,6 +322,7 @@ function series(doc) {
     title_japanese: doc.title_japanese,
     description: doc.description,
     genres: doc.genres,
+    type: doc.type,
     total_episodes: doc.total_episodes,
     anilist_id: doc.anilist_id,
   };
