@@ -50,11 +50,11 @@ class Manager {
 
 
   static getFullLoop(id, callback) {
-    Database.findFullLoop(id, handleLoop(callback));
+    Database.findFullLoopById(id, handleLoop(callback));
   }
 
   static getLoop(id, callback) {
-    Database.findLoop(id, handleLoop(callback));
+    Database.findLoopById(id, handleLoop(callback));
   }
 
   static getFullLoopsByEpisode(id, callback) {
@@ -76,22 +76,22 @@ class Manager {
   static getLoopsByTag(tagName, callback) {
     async.waterfall([
       (callback) => {
-        Database.findTags(tagName, callback);
+        Database.findTagsByName(tagName, callback);
       },
       (tags, callback) => {
         async.series(tags.map(tag => (callback) => {
-          Database.findLoop(tag.loopid, callback);
+          Database.findLoopById(tag.loopid, callback);
         }), callback);
       },
     ], handleLoops(callback));
   }
 
   static getRandomFullLoops(n, callback) {
-    Database.findRandomFullLoops(n, handleLoops(callback));
+    Database.findRandomFullLoopsWithCount(n, handleLoops(callback));
   }
 
   static getRandomLoops(n, callback) {
-    Database.findRandomLoops(n, handleLoops(callback));
+    Database.findRandomLoopsWithCount(n, handleLoops(callback));
   }
 
   static getLoopsByGroup(no, callback) {
@@ -116,11 +116,11 @@ class Manager {
    */
 
   static getFullEpisode(id, callback) {
-    Database.findFullEpisode(id, handleEpisode(callback));
+    Database.findFullEpisodeById(id, handleEpisode(callback));
   }
 
   static getEpisode(id, callback) {
-    Database.findEpisode(id, handleEpisode(callback));
+    Database.findEpisodeById(id, handleEpisode(callback));
   }
 
   static getEpisodesBySeries(id, callback) {
@@ -165,7 +165,7 @@ class Manager {
    */
 
   static getSeries(id, callback) {
-    Database.findSeries(id, handleSeries(callback));
+    Database.findSeriesById(id, handleSeries(callback));
   }
 
   static getSeriesesCount(callback) {

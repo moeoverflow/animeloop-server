@@ -44,12 +44,12 @@ class Database {
     Database.LoopModel.deleteMany({ _id: { $in: ids } }, callback);
   }
 
-  static findFullLoop(id, callback) {
+  static findFullLoopById(id, callback) {
     Database.LoopModel.findById(id).populate('episode series')
       .exec(handleResult(callback));
   }
 
-  static findLoop(id, callback) {
+  static findLoopById(id, callback) {
     Database.LoopModel.findById(id)
       .exec(handleResult(callback));
   }
@@ -74,14 +74,14 @@ class Database {
       .exec(handleResult(callback));
   }
 
-  static findRandomFullLoops(n, callback) {
+  static findRandomFullLoopsWithCount(n, callback) {
     Database.LoopModel.findRandom({}, {}, {
       limit: n,
       populate: ['episode', 'series'],
     }, handleResult(callback));
   }
 
-  static findRandomLoops(n, callback) {
+  static findRandomLoopsWithCount(n, callback) {
     Database.LoopModel.findRandom({}, {}, {
       limit: n,
     }, handleResult(callback));
@@ -129,12 +129,12 @@ class Database {
       .exec(handleResult(callback));
   }
 
-  static findEpisode(id, callback) {
+  static findEpisodeById(id, callback) {
     Database.EpisodeModel.findOne({ _id: id })
       .exec(handleResult(callback));
   }
 
-  static findFullEpisode(id, callback) {
+  static findFullEpisodeById(id, callback) {
     Database.EpisodeModel.findOne({ _id: id }).populate('series')
       .exec(handleResult(callback));
   }
@@ -216,7 +216,7 @@ class Database {
       .exec(handleResult(callback));
   }
 
-  static findTags(tagName, callback) {
+  static findTagsByName(tagName, callback) {
     this.TagsModel.find({ value: tagName }).sort({ confidence: -1 })
       .exec(handleResult(callback));
   }
