@@ -4,7 +4,7 @@ const request = require('request');
 
 const router = express.Router();
 const config = require('../../../config.js');
-const Manager = require('../../core/manager/manager.js');
+const Manager = require('../../core/manager.js');
 
 router.get('/', (req, res, next) => {
   async.series({

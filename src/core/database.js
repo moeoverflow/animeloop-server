@@ -5,7 +5,7 @@ const async = require('async');
 
 const logger = log4js.getLogger('database');
 const Schema = require('./schema.js');
-const config = require('../../../config');
+const config = require('../../config');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongodb.url, { useMongoClient: true });

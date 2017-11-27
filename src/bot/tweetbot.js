@@ -5,7 +5,7 @@ const log4js = require('log4js');
 
 const logger = log4js.getLogger('autobot');
 
-const Manager = require('../core/manager/manager.js');
+const Manager = require('../core/manager.js');
 const config = require('../../config');
 
 const T = new Twit(config.bot.twitter);

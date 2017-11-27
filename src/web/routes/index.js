@@ -1,7 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
-const Manager = require('../../core/manager/manager.js');
+const Manager = require('../../core/manager.js');
 
 router.get('/', (req, res) => {
   Manager.getRandomFullLoops(12, (err, results) => {

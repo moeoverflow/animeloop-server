@@ -2,7 +2,7 @@ const express = require('express');
 const async = require('async');
 
 const router = express.Router();
-const Manager = require('../../core/manager/manager.js');
+const Manager = require('../../core/manager.js');
 
 router.get('/:id', (req, res) => {
   const id = req.params.id;

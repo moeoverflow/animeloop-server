@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 
-const config = require('../../../config');
+const config = require('../../config');
 
 class File {
   static saveFileById(id, files) {

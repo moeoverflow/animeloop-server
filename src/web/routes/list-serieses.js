@@ -4,7 +4,7 @@ const groupArray = require('group-array');
 const randomColor = require('randomcolor');
 
 const router = express.Router();
-const Manager = require('../../core/manager/manager.js');
+const Manager = require('../../core/manager.js');
 
 function renderSeriesList(page, res) {
   async.series({

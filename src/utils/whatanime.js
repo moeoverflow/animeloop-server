@@ -5,7 +5,7 @@ const log4js = require('log4js');
 
 const logger = log4js.getLogger('whatanime');
 
-const config = require('../../../config.js');
+const config = require('../../config.js');
 
 function pad(n, width, z) {
   z = z || '0';

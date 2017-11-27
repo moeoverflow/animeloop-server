@@ -7,7 +7,7 @@ const log4js = require('log4js');
 
 const logger = log4js.getLogger('converter');
 
-const File = require('../core/manager/file.js');
+const File = require('../core/file.js');
 
 const tagsDir = File.getLocalFilesTagDir();
 

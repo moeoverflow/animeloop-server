@@ -2,7 +2,7 @@ const async = require('async');
 const express = require('express');
 
 const router = express.Router();
-const Manager = require('../../core/manager/manager.js');
+const Manager = require('../../core/manager.js');
 
 function renderEpisodesList(no, res) {
   async.series({

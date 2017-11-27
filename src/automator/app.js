@@ -12,11 +12,11 @@ const kue = require('kue');
 const logger = log4js.getLogger('automator');
 
 const config = require('../../config.js');
-const Manager = require('../core/manager/manager.js');
+const Manager = require('../core/manager.js');
 const parsing = require('./parse.js');
 const convert = require('./converter.js');
-const whatanime = require('../core/utils/whatanime.js');
-const Anilist = require('../core/utils/anilist.js');
+const whatanime = require('../utils/whatanime.js');
+const Anilist = require('../utils/anilist.js');
 
 
 class Automator {

@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const netdata = require('../core/utils/netdata');
+const netdata = require('../utils/netdata');
 
 const rand = require('./routes/rand.js');
 const loop = require('./routes/loop.js');

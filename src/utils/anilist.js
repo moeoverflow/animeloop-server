@@ -5,7 +5,7 @@ const download = require('image-downloader');
 const mkdirp = require('mkdirp');
 const Nani = require('nani');
 
-const config = require('../../../config');
+const config = require('../../config');
 
 class Anilist {
   constructor({ id, secret }) {
