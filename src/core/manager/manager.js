@@ -190,16 +190,22 @@ class Manager {
       .split(' ')
       .map((q) => {
         q = q.replace(' ', '');
-        return [{ title: { $regex: q } },
-          { title_romaji: { $regex: q } },
-          { title_english: { $regex: q } },
-          { title_japanese: { $regex: q } },
-          { description: { $regex: q } },
-          { season: { $regex: q } },
-          { genres: { $regex: q } },
-          { type: { $regex: q } },
-        ];
+        return [
+          'title',
+          'title_romaji',
+          'title_english',
+          'title_japanese',
+          'description',
+          'season',
+          'genres',
+          'type',
+        ].map((item) => {
+          const obj = {};
+          obj[item] = { $regex: q, $options: 'i' };
+          return obj;
+        });
       });
+
     Database.findSeriesByQuery(query, handleSerieses(callback));
   }
 
