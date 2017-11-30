@@ -5,8 +5,6 @@ const log4js = require('log4js');
 
 const logger = log4js.getLogger('whatanime');
 
-const config = require('../../config.js');
-
 function pad(n, width, z) {
   z = z || '0';
   n += '';
@@ -47,38 +45,42 @@ function parseResult(data) {
   return result;
 }
 
-function whatanime(imagefile, done) {
-  async.waterfall([
-    (callback) => {
-      getBase64(imagefile, callback);
-    },
-    (img, callback) => {
-      request.post({
-        url: `${config.automator.whatanime.url}?token=${config.automator.whatanime.token}`,
-        form: {
-          image: img,
-        },
-      }, (err, httpResponse, body) => {
-        if (err && callback) {
-          callback(err);
-          return;
-        }
+class Whatanime {
+  constructor(config) {
+    this.url = config.url;
+    this.token = config.token;
+  }
 
-        let data;
-        try {
-          data = JSON.parse(body);
-        } catch (err) {
-          logger.warning('Parse whatanime response body failed.');
-          callback(err);
-          return;
-        }
+  find(imagefile, callback) {
+    async.waterfall([
+      (callback) => {
+        getBase64(imagefile, callback);
+      },
+      (img, callback) => {
+        request.post({
+          url: `${this.url}?token=${this.token}`,
+          form: {
+            image: img,
+          },
+        }, (err, httpResponse, body) => {
+          if (err && callback) {
+            callback(err);
+            return;
+          }
 
-        if (data) {
+          let data;
+          try {
+            data = JSON.parse(body);
+          } catch (err) {
+            logger.debug('Parse whatanime response body failed.');
+            callback(err);
+            return;
+          }
           callback(null, parseResult(data));
-        }
-      });
-    },
-  ], done);
+        });
+      },
+    ], callback);
+  }
 }
 
-module.exports = whatanime;
+module.exports = Whatanime;

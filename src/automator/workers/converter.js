@@ -7,7 +7,7 @@ const log4js = require('log4js');
 
 const logger = log4js.getLogger('converter');
 
-const File = require('../core/file.js');
+const File = require('../../core/file.js');
 
 const tagsDir = File.getLocalFilesTagDir();
 
@@ -69,7 +69,7 @@ function getTasks(from, to, ids) {
 function convertAll(tags, done) {
   logger.info('Doing all files convert.');
 
-  tagsDir.keys.forEach((key) => {
+  Object.keys(tagsDir).forEach((key) => {
     const tempDir = path.join(tagsDir[key], 'temp');
     if (fs.existsSync(tempDir)) {
       shell.rm('-r', tempDir);

@@ -67,9 +67,9 @@ class Anilist {
       });
   }
 
-  static imageDownloader(url, path, callback) {
-    if (fs.existsSync(path)) {
-      callback(null);
+  imageDownloader(url, path, callback) {
+    if (url === null || fs.existsSync(path)) {
+      callback();
       return;
     }
 
@@ -80,7 +80,7 @@ class Anilist {
       .then(() => {
         callback(null);
       }).catch((err) => {
-        throw err;
+        callback(err);
       });
   }
 }

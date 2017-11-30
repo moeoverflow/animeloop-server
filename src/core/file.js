@@ -6,8 +6,11 @@ const mkdirp = require('mkdirp');
 const config = require('../../config');
 
 class File {
-  static saveFileById(id, files) {
-    return this.dirs.keys().reduce((flag, key) => {
+  static saveFile(data) {
+    const id = data.entity.loop._id;
+    const files = data.files;
+
+    return Object.keys(this.dirs).reduce((flag, key) => {
       if (flag) {
         try {
           if (files[key] && fs.existsSync(files[key])) {
@@ -18,6 +21,15 @@ class File {
         }
       }
       return true;
+    }, true);
+  }
+
+  static saveFiles(data) {
+    return data.reduce((flag, d) => {
+      if (flag) {
+        flag = this.saveFile(d);
+      }
+      return flag;
     }, true);
   }
 
@@ -97,19 +109,18 @@ File.FilesTags = [
   'jpg_1080p',
 ];
 
-File.dirs = () => {
-  config.storage.dir.keys().forEach((key) => {
-    if (!fs.existsSync(config.storage.dir[key])) {
-      mkdirp.sync(config.storage.dir[key]);
-    }
-  });
+File.dirs = File.getLocalFilesTagDir();
 
-  config.storage.dir.keys().forEach((key) => {
-    if (!fs.existsSync(this.dirs[key])) {
-      mkdirp.sync(this.dirs[key]);
-    }
-  });
-  return File.getLocalFilesTagDir();
-};
+Object.keys(config.storage.dir).forEach((key) => {
+  if (!fs.existsSync(config.storage.dir[key])) {
+    mkdirp.sync(config.storage.dir[key]);
+  }
+});
+
+Object.keys(File.dirs).forEach((key) => {
+  if (!fs.existsSync(File.dirs[key])) {
+    mkdirp.sync(File.dirs[key]);
+  }
+});
 
 module.exports = File;

@@ -17,22 +17,24 @@ class Database {
    */
 
   static insertLoop(entity, callback) {
-    this.LoopModel.insertMany([entity], callback);
+    this.insertLoops([entity], callback);
   }
 
   static insertLoops(entities, callback) {
-    async.waterfall(entities.map(entity => (callback) => {
-      async.waterfall([
+    async.series(entities.map(entity => (callback) => {
+      async.series([
         checkSeriesExists(entity),
         checkEpisodeExists(entity),
       ], callback);
     }), (err) => {
       if (err) {
+        logger.debug(err);
         callback(err);
         return;
       }
 
-      this.LoopModel.insertMany(entities, callback);
+      const loops = entities.map(entity => entity.loop);
+      this.LoopModel.insertMany(loops, callback);
     });
   }
 
@@ -178,6 +180,10 @@ class Database {
    -------------- Series --------------
    */
 
+  static updateSeries(id, entity, callback) {
+    Database.SeriesModel.update({ _id: id }, { $set: entity}, callback);
+  }
+
   static findSeriesById(id, callback) {
     Database.SeriesModel.findOne({ _id: id })
       .exec(handleResult(callback));
@@ -243,7 +249,7 @@ function checkSeriesExists(entity) {
   return (callback) => {
     const uniqueQuery = entity.series.anilist_id ?
       { anilist_id: entity.series.anilist_id } : { title: entity.series.title };
-    this.SeriesModel.findOrCreate(uniqueQuery, entity.series, (err, series) => {
+    Database.SeriesModel.findOrCreate(uniqueQuery, entity.series, (err, series) => {
       if (err) {
         callback(err, entity);
         return;
@@ -259,7 +265,7 @@ function checkSeriesExists(entity) {
 
 function checkEpisodeExists(entity) {
   return (callback) => {
-    this.EpisodeModel
+    Database.EpisodeModel
       .findOrCreate({ title: entity.episode.title }, entity.episode, (err, episode) => {
         if (err) {
           callback(err, entity);

@@ -14,14 +14,22 @@ class Manager {
    -------------- Loop --------------
    */
 
-  static addLoopsAndFiles(loops, files, callback) {
+  static addLoopsAndFiles(data, callback) {
+    const entities = data.map(d => d.entity);
+
     async.series([
       (callback) => {
-        Database.insertLoops(loops, (err, docs) => {
+        Database.insertLoops(entities, (err, docs) => {
           if (err) {
-            logger.log(err, logger.ERROR);
-            Database.deleteLoopsByIds(loops.map(loop => loop._id), callback);
+            logger.debug(err);
+            Database.deleteLoopsByIds(entities.map(entity => entity.loop._id), callback);
+            callback(err);
+            return;
           }
+
+          docs.forEach((doc, index) => {
+            data[index].entity.loop = doc._doc;
+          });
 
           if (docs) {
             callback(null);
@@ -31,7 +39,8 @@ class Manager {
         });
       },
       (callback) => {
-        File.saveFileById(loops, files, callback);
+        const flag = File.saveFiles(data);
+        callback(flag ? null : new Error('save files error.'));
       },
     ], callback);
   }
@@ -163,6 +172,10 @@ class Manager {
   /*
    -------------- Series --------------
    */
+
+  static updateSeries(id, entity, callback) {
+    Database.updateSeries(id, entity, callback);
+  }
 
   static getSeries(id, callback) {
     Database.findSeriesById(id, handleSeries(callback));
