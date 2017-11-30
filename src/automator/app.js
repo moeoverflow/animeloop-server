@@ -5,7 +5,6 @@ const basicAuth = require('basic-auth-connect');
 const chokidar = require('chokidar');
 const log4js = require('log4js');
 
-const router = express.Router();
 const logger = log4js.getLogger('automator-watcher');
 const config = require('../../config.js');
 const Automator = require('./automator.js');
@@ -39,6 +38,10 @@ const arena = Arena({
 }, {
   port: config.automator.app.port,
   basePath: config.automator.app.url,
+  disableListen: true,
 });
-router.use(basicAuth(config.automator.app.auth.username, config.automator.app.auth.password));
-router.use('/', arena);
+
+const app = express();
+app.use(basicAuth(config.automator.app.auth.username, config.automator.app.auth.password));
+app.use('/', arena);
+app.listen(config.automator.app.port, config.automator.app.host);
