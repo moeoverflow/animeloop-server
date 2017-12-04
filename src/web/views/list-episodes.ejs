@@ -47,8 +47,6 @@
           <div class="col-xs-12 col-sm-4 col-md-5 entry">
             <% episodes.filter((epi) => {
               return (epi.no != undefined);
-            }).sort((prev, next) => {
-              return (prev.no > next.no);
             }).forEach((epi) => { %>
             <div class="col-xs-2 col-sm-3 col-md-2">
               <a href="/episode/<%- epi.id %>"><%- epi.no %></a>

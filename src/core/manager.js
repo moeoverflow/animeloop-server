@@ -311,7 +311,9 @@ function handleEpisodes(callback) {
 
     docs = docs
       .map(episode)
-      .sort((prev, next) => prev.no > next.no);
+      // sort() for string should return 1, -1 or 0
+      .sort((prev, next) => (prev.no > next.no ? 1 : -1));
+
 
     callback(err, docs);
   };
