@@ -309,7 +309,10 @@ function handleEpisodes(callback) {
       return;
     }
 
-    docs = docs.map(episode);
+    docs = docs
+      .map(episode)
+      .sort((prev, next) => prev.no > next.no);
+
     callback(err, docs);
   };
 }
