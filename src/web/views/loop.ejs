@@ -4,11 +4,11 @@
 
   <%- include('partials/twitter-card', {
     card: 'player',
-    at: '@moeoverflow',
-    title: `${episode.title} | ${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`,
-    description: 'View the anime loop on MOEOVERFLOW.',
+    at: '@animeloopbot',
+    title: `${ series[__('title-key-1')] } | ${ loop.period.begin.slice(0, 11) } ~ ${ loop.period.end.slice(0, 11) }`,
+    description: 'View the loop on Animeloop.',
     image: loop.files.jpg_1080p,
-    videoContainer: 'https://animeloop.org/loop/' + loop._id + '/twitter',
+    videoContainer: 'https://animeloop.org/loop/' + loop.id + '/twitter',
     videoWidth: '1920',
     videoHeight: '1080',
     videoStream: loop.files.mp4_1080p,
@@ -16,8 +16,8 @@
   }); %>
 
   <%- include('partials/open-graph', {
-    title: `${loop.episode.title} | ${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`,
-    description: 'View the anime loop on MOEOVERFLOW.',
+    title: `${series[__('title-key-1')]} | ${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`,
+    description: 'View the loop on Animeloop.',
     image: loop.files.jpg_1080p,
     videoWidth: '1920',
     videoHeight: '1080',
@@ -25,7 +25,7 @@
     videoContentType: 'video/mp4'
   }); %>
 
-  <title><%- loop.period.begin.slice(0, 11) %> | <%- loop.episode.no %> | <%- loop.series[__('title-key-1')] %> | Animeloop</title>
+  <title><%- loop.period.begin.slice(0, 11) %> | <%- episode.no %> | <%- series[__('title-key-1')] %> | Animeloop</title>
   <%- include('partials/head') %>
 
   <!--  share.js -->

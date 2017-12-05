@@ -38,7 +38,7 @@ router.get('/:id', telegram, (req, res) => {
 router.get('/:id/twitter', (req, res) => {
   const id = req.params.id;
 
-  Manager.getLoopById(id, (err, loop) => {
+  Manager.getLoop(id, (err, loop) => {
     if (err) {
       res.status(404);
       return;

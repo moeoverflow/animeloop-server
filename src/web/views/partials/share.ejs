@@ -1,4 +1,4 @@
-<% let periodString = `${loop.period.begin.slice(0, 11)} ~ ${loop.period.end.slice(0, 11)}`; %>
+<% let periodString = `${ loop.period.begin.slice(0, 11) } ~ ${ loop.period.end.slice(0, 11) }`; %>
 
 <div class="social-share"></div>
 
@@ -9,13 +9,13 @@
 </style>
 
 <script>
-  var socialShareTitle = '<%- loop.episode.title %> | <%- periodString %> | Animeloop';
+  var socialShareTitle = '<%- series[__('title-key-1')] %> | <%- periodString %> | Animeloop';
   socialShare('.social-share', {
     title               : socialShareTitle,
     sites               : ['twitter', 'facebook', 'google', 'weibo','qzone', 'wechat', 'douban'],
-    origin              : 'moeoverflow',
-    twitterTitle        : '<%- loop.episode.title %> | <%- periodString %> | #Animeloop ',
-    weiboTitle          : '<%- loop.episode.title %> | <%- periodString %> | #Animeloop# ' + ' @moeoverflow',
+    origin              : 'animeloopbot',
+    twitterTitle        : '<%- series[__('title-key-1')] %> | <%- periodString %> | #Animeloop ',
+    weiboTitle          : '<%- series[__('title-key-1')] %> | <%- periodString %> | #Animeloop# ' + ' @animeloopbot',
     qzoneTitle          : socialShareTitle,
     qzoneDescription    : socialShareTitle,
     qqTitle             : socialShareTitle,
