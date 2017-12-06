@@ -48,7 +48,7 @@ let series = data.series;
             var dateFuzzy = series.start_date_fuzzy;
             var date = new Date(dateFuzzy / 10000, (dateFuzzy % 10000 / 100) - 1, dateFuzzy % 100);
             %>
-            <li><%- `${date.getUTCFullYear()}-${date.getUTCMonth()+1}` %></li>
+            <li><%- series.season %></li>
             <% series.genres.forEach((gen) => { %>
             <li><%- gen %></li>
             <% }); %>

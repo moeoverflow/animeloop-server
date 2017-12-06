@@ -6,6 +6,7 @@
   "episodes": "Episodes",
   "tags": "Tags",
   "search": "Recherche",
+  "status": "Statut",
   "api": "API",
   "about": "À propos",
   "period": "Période",
@@ -19,5 +20,4 @@
   "cover-tags-illus2vec": "Cover tags",
   "cover-tags-illus2vec-from-l": "Dataset generated from",
   "cover-tags-illus2vec-from-r": " "
-
 }

@@ -28,25 +28,14 @@
         <span class="fa-angle-right fa right-arrow text-right"></span>
     </a>
     <% if ( pageType == 'list-series' ||
-            pageType == 'list-episodes' ||
-            pageType == 'list-tags' ) { %>
+            pageType == 'list-episodes' ) { %>
     <ul class="nav nav-list tree" style="display: block;">
     <% } else { %>
     <ul class="nav nav-list tree" style="display: none;">
         <% } %>
         <li><a href="/list/series"><%= __('series') %></a></li>
         <li><a href="/list/episodes"><%= __('episodes') %></a></li>
-        <li><a href="/list/tags"><%= __('tags') %></a></li>
     </ul>
-  </li>
-
-  <% if (pageType == 'filter') { %>
-  <li class="active">
-  <% } else { %>
-  <li>
-  <% } %>
-    <a href="/search"><span class="fa-search fa"></span> <%= __('search') %>
-    </a>
   </li>
 
   <% if (pageType == 'api') { %>
@@ -54,9 +43,19 @@
   <% } else { %>
   <li>
   <% } %>
-    <a href="/src/api"><span class="icons icon-magic-wand"></span> <%= __('api') %>
+    <a href="/api/docs"><span class="icons icon-magic-wand"></span> <%= __('api') %>
     </a>
   </li>
+
+  <% if (pageType == 'status') { %>
+  <li class="active">
+  <% } else { %>
+  <li>
+  <% } %>
+    <a href="/status"><span class="fa-bar-chart fa"></span> <%= __('status') %>
+    </a>
+  </li>
+
 
   <% if (pageType == 'about') { %>
   <li class="active">

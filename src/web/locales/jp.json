@@ -6,6 +6,7 @@
   "episodes": "話数",
   "tags": "タグ",
   "search":"検索",
+  "status": "状態",
   "api": "API",
   "about": "サイトについて",
   "period": "時間帯",
