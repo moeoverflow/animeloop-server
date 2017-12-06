@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Status | Animeloop</title>
+  <title><%= __('status') %> | Animeloop</title>
 
   <%- include('partials/head') %>
 
@@ -172,7 +172,6 @@
                    data-id="tomori_mongodb_local_read_operations"
                    data-colors=""
                    role="application"></div>
-              </div>
               <div data-netdata="mongodb_local.write_operations"
                    data-width="100%"
                    data-height="180px"
@@ -183,7 +182,6 @@
                    data-colors=""
                    role="application"></div>
             </div>
-          </div>
             <div class="database-status">
               <h3>Database Statistics</h3>
               <table class="table table-bordered table-responsive table-striped">
@@ -203,7 +201,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -217,6 +214,7 @@
 <script>
   var netdataTheme = 'default'; // this is white
   var netdataServer = 'https://animeloop.org/netdata/';
+  var netdataNoBootstrap = true;
 </script>
 <script type="text/javascript" src="https://animeloop.org/netdata/dashboard.js"></script>
 <script>
