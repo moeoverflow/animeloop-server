@@ -32,7 +32,6 @@
     "mkdirp": "^0.5.1",
     "mongoose": "^4.9.7",
     "mongoose-findorcreate": "^1.0.1",
-    "mongoose-simple-random": "^0.4.1",
     "nani": "^1.2.0",
     "node-schedule": "^1.2.5",
     "randomcolor": "^0.5.3",

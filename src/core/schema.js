@@ -1,6 +1,5 @@
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
-const random = require('mongoose-simple-random');
 const findOrCreate = require('mongoose-findorcreate');
 
 const Schema = mongoose.Schema;
@@ -53,7 +52,6 @@ const LoopSchema = new Schema({
   uploadDate: { type: Date, require: true },
   review: { type: Boolean, default: false },
 });
-LoopSchema.plugin(random);
 
 const TagsSchema = new Schema({
   loopid: ObjectId,

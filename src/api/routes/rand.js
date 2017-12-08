@@ -42,7 +42,12 @@ router.get('/loop/full', (req, res) => {
  */
 router.get('/loop/:n', (req, res) => {
   const n = req.params.n;
-  Manager.getRandomLoops(n, Response.handleResponse(res));
+  const [err, count] = checkNumber(n);
+  if (err) {
+    res.json(Response.returnError(400, err));
+  }
+
+  Manager.getRandomLoops(count, Response.handleResponse(res));
 });
 
 /**
@@ -55,7 +60,24 @@ router.get('/loop/:n', (req, res) => {
  */
 router.get('/loop/:n/full', (req, res) => {
   const n = req.params.n;
-  Manager.getRandomFullLoops(n, Response.handleResponse(res));
+  const [err, count] = checkNumber(n);
+  if (err) {
+    res.json(Response.returnError(400, err));
+    return;
+  }
+
+  Manager.getRandomFullLoops(count, Response.handleResponse(res));
 });
+
+
+function checkNumber(n) {
+  const count = parseInt(n, 10);
+  if (isNaN(count)) {
+    return ['n of random loops must be a int number'];
+  } else if (count <= 0) {
+    return ['n of random loops must more than zero'];
+  }
+  return [null, count];
+}
 
 module.exports = router;
