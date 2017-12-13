@@ -12,7 +12,7 @@ const convert = require('./processes/convert.js');
 
 class Automator {
   constructor() {
-    this.queue = new Queue('animeloop', config.automator.redis);
+    this.queue = new Queue('animeloop', config.redis);
     this.queue.process('convert', 0, convert);
     this.queue.process('upload', 1, upload);
     this.queue.process('animeloop-cli', 0, animeloopCli);

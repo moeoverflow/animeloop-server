@@ -32,12 +32,8 @@ const config = {
         username: 'admin',
         password: 'pass',
       },
-      redis: {
-        host: '127.0.0.1',
-        port: 6379,
-        auth: '',
-      },
     },
+    redisN: 0,
     whatanime: {
       url: 'https://whatanime.ga/api/search',
       token: '',
@@ -57,6 +53,13 @@ const config = {
   },
   mongodb: {
     url: 'mongodb://localhost/animeloop',
+    redisCache: true,
+    redisN: 1,
+  },
+  redis: {
+    host: '127.0.0.1',
+    port: 6379,
+    auth: '',
   },
   bot: {
     twitter: {

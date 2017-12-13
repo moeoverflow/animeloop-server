@@ -31,9 +31,10 @@ watcher.on('add', (filename) => {
 const arena = Arena({
   queues: [{
     name: 'animeloop',
-    port: config.automator.redis.port,
-    host: config.automator.redis.host,
+    port: config.redis.port,
+    host: config.redis.host,
     hostId: 'Local',
+    db: config.automator.redisN,
   }],
 }, {
   port: config.automator.app.port,
