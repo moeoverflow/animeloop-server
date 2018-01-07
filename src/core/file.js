@@ -65,7 +65,7 @@ class File {
 
   static getPublicFilesUrl(id) {
     return File.FilesTags.reduce((urls, tag) => {
-      urls[tag] = `${config.app.url}/files/${tag}/${id}.${this.getExt(tag)}`;
+      urls[tag] = `${config.app.cdn}/files/${tag}/${id}.${this.getExt(tag)}`;
       return urls;
     }, {});
   }
@@ -85,11 +85,11 @@ class File {
   }
 
   static getAnilistImageLarge(id) {
-    return `${config.app.url}/files/anilist/${id}/image_large.jpg`;
+    return `${config.app.cdn}/files/anilist/${id}/image_large.jpg`;
   }
 
   static getAnilistImageBanner(id) {
-    return `${config.app.url}/files/anilist/${id}/image_banner.jpg`;
+    return `${config.app.cdn}/files/anilist/${id}/image_banner.jpg`;
   }
 }
 
