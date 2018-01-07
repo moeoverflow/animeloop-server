@@ -21,31 +21,33 @@
     <% let {current, total, prevColor, nextColor} = pagination; %>
 
     <div class="panel list-series">
-      <% if (current != 1) { %>
-      <a href="/list/series/<%- current - 1 %>">
-        <div class="pagination-button card col-md-4 col-sm-6 col-xs-12" style='background-color: <%- prevColor %>;'>
-          <div class="topcover"></div>
-          <div class="title">&laquo;</div>
-        </div>
-      </a>
-      <% } %>
+        <% if (current != 1) { %>
+          <a href="/list/series/<%- current - 1 %>" class="card-container col-lg-2 col-md-3 col-sm-4 col-xs-6">
+            <div class="card pagination-button" style='background-color: <%- prevColor %>;'>
+              <div class="topcover"></div>
+              <div class="title">&laquo;</div>
+            </div>
+          </a>
+        <% } %>
       <% grouped.forEach((group) => { %>
-        <div class="season card col-md-4 col-sm-6 col-xs-12" style="background-color: <%- group.series[0].color %>;">
-          <div class="topcover"></div>
-          <div class="title"><%- group.season %></div>
+        <div class="card-container col-lg-2 col-md-3 col-sm-4 col-xs-6">
+          <div class="card" style='background-color: <%- group.series[0].color %>;'>
+            <div class="topcover"></div>
+            <div class="title"><%- group.season %></div>
+          </div>
         </div>
         <% group.series.forEach((ser) => { %>
-        <a href="/series/<%- ser.id %>">
-          <div class="item card col-md-4 col-sm-6 col-xs-12" style='background-image: url("<%- ser.image_url_banner ? ser.image_url_banner : ser.image_url_large %>"); background-color: <%- ser.color %>;'>
-            <div class="topcover"></div>
-            <div class="title"><%- ser[__('title-key-1')] %></div>
-          </div>
-        </a>
+          <a href="/series/<%- ser.id %>" class="card-container col-lg-2 col-md-3 col-sm-4 col-xs-6">
+            <div class="card" style='background-image: url("<%- ser.image_url_banner ? ser.image_url_banner : ser.image_url_large %>"); background-color: <%- ser.color %>;'>
+              <div class="topcover"></div>
+              <div class="title"><%- ser[__('title-key-1')] %></div>
+            </div>
+          </a>
         <% }); %>
       <% }); %>
       <% if (current != total) { %>
-      <a href="/list/series/<%- current + 1 %>">
-        <div class="pagination-button card col-md-4 col-sm-6 col-xs-12" style='background-color: <%- nextColor %>;'>
+      <a href="/list/series/<%- current + 1 %>" class="card-container col-lg-2 col-md-3 col-sm-4 col-xs-6">
+        <div class="card pagination-button" style='background-color: <%- nextColor %>;'>
           <div class="topcover"></div>
           <div class="title">&raquo;</div>
         </div>

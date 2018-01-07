@@ -19,7 +19,7 @@ const config = {
     app: {
       host: '0.0.0.0',
       port: 7775,
-    }
+    },
   },
   automator: {
     uploadTTL: 5 * 60,
