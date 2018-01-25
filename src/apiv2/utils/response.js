@@ -2,6 +2,7 @@ class Response {
   static returnSuccess(message, data) {
     return {
       status: 'success',
+      code: 200,
       data,
     };
   }
@@ -9,10 +10,8 @@ class Response {
   static returnError(statusCode, message) {
     return {
       status: 'error',
-      error: {
-        code: statusCode,
-        message,
-      },
+      code: statusCode,
+      message,
     };
   }
 
