@@ -63,9 +63,10 @@ class File {
     return tag.split('_')[0];
   }
 
-  static getPublicFilesUrl(id) {
+  static getPublicFilesUrl(id, cdn) {
+    cdn = cdn === undefined ? true : cdn;
     return File.FilesTags.reduce((urls, tag) => {
-      urls[tag] = `${config.app.cdn}/files/${tag}/${id}.${this.getExt(tag)}`;
+      urls[tag] = `${cdn ? config.app.cdn : config.app.url}/files/${tag}/${id}.${this.getExt(tag)}`;
       return urls;
     }, {});
   }
@@ -93,6 +94,20 @@ class File {
   }
 }
 
+File.contentType = {
+  // 360p
+  jpg_360p: 'image/jpeg',
+  mp4_360p: 'video/mp4',
+  // 'webm_360p',
+  gif_360p: 'image/gif',
+  // 720p
+  jpg_720p: 'image/jpeg',
+  mp4_720p: 'video/mp4',
+  // 1080p
+  mp4_1080p: 'video/mp4',
+  // 'webm_1080p',
+  jpg_1080p: 'image/jpeg',
+};
 
 File.FilesTags = [
   // 360p
