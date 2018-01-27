@@ -1,6 +1,7 @@
 const async = require('async');
 const express = require('express');
 const jwt = require('jwt-simple');
+const bcrypt = require('bcryptjs');
 
 const router = express.Router();
 const Database = require('../../core/database.js');
@@ -48,10 +49,13 @@ router.post('/register', (req, res) => {
     if (doc) {
       res.send(Response.returnError(409, 'this username has been registered.'));
     } else {
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(password, salt);
+
       const user = new Database.UserModel({
         username,
         email,
-        password,
+        password: hash,
       });
 
       user.save((err, doc) => {
@@ -102,7 +106,7 @@ router.post('/verify/sendemail', (req, res) => {
       return;
     }
 
-    if (doc.password === password) {
+    if (bcrypt.compareSync(password, doc.password)) {
       sendEmail(doc, () => {});
       res.json(Response.returnSuccess('send email successfully.', {}));
     }
@@ -149,7 +153,7 @@ function tokenAction(username, password, type, res) {
           return;
         }
 
-        if (user.password !== password) {
+        if (!bcrypt.compareSync(password, user.password)) {
           callback(Response.returnError(401, 'unauthorized.'));
           return;
         }
@@ -164,7 +168,7 @@ function tokenAction(username, password, type, res) {
     },
     (user, callback) => {
       if (type === 'get') {
-        callback(null, Response.returnSuccess('request the token successfully.', { token: user.token }));
+        callback(null, Response.returnSuccess('request the token successfully.', { token: user.token ? user.token : null }));
         return;
       }
 

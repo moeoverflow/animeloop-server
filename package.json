@@ -15,6 +15,7 @@
   "dependencies": {
     "async": "^2.5.0",
     "basic-auth-connect": "^1.0.0",
+    "bcryptjs": "^2.4.3",
     "body-parser": "~1.12.4",
     "bull": "^3.3.6",
     "bull-arena": "^2.2.1",
