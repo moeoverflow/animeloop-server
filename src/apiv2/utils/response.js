@@ -3,6 +3,7 @@ class Response {
     return {
       status: 'success',
       code: 200,
+      message,
       data,
     };
   }

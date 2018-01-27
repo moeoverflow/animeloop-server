@@ -1,10 +1,12 @@
 /* eslint-disable no-underscore-dangle */
 const mongoose = require('mongoose');
 const findOrCreate = require('mongoose-findorcreate');
+const autoIncrement = require('mongoose-auto-increment');
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
+autoIncrement.initialize(mongoose.connection);
 
 const SeriesSchema = new Schema({
   title: String,
@@ -62,9 +64,22 @@ const TagsSchema = new Schema({
   lang: Number,
 });
 
+const UserSchema = new Schema({
+  uid: { type: Number, require: true, unique: true },
+  username: { type: String, require: true },
+  email: { type: String, require: true },
+  password: { type: String, require: true },
+  admin: { type: Boolean, default: false },
+  verified: { type: Boolean, default: false },
+  token: String,
+});
+
+UserSchema.plugin(autoIncrement.plugin, { model: 'User', field: 'uid' });
+
 module.exports = {
   LoopSchema,
   EpisodeSchema,
   SeriesSchema,
   TagsSchema,
+  UserSchema,
 };

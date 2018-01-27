@@ -21,6 +21,12 @@ const config = {
       port: 7775,
     },
   },
+  auth: {
+    secret: '',
+  },
+  mailgun: {
+    apikey: '',
+  },
   automator: {
     uploadTTL: 5 * 60,
     uploadDelay: 3,

@@ -1,5 +1,7 @@
 const express = require('express');
 const log4js = require('log4js');
+const passport = require('passport');
+const bodyParser = require('body-parser');
 
 const logger = log4js.getLogger('api');
 const config = require('../../config.js');
@@ -11,8 +13,11 @@ const router = require('./router.js');
 
 const app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(log4js.connectLogger(logger));
 app.use(cors);
+app.use(passport.initialize());
 
 app.use('/api/v2', router);
 
