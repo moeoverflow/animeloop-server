@@ -175,6 +175,7 @@ function tokenAction(username, password, type, res) {
       let token = null;
       if (type === 'new') {
         token = jwt.encode({
+          uid: user.uid,
           username: user.username,
         }, config.auth.secret);
       }

@@ -4,7 +4,7 @@ class Response {
       status: 'success',
       code: 200,
       message,
-      data,
+      data: (data === undefined ? {} : data),
     };
   }
 

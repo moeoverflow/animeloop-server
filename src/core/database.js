@@ -408,6 +408,9 @@ Database.SeriesModel = mongoose.model('Series', Schema.SeriesSchema);
 Database.EpisodeModel = mongoose.model('Episode', Schema.EpisodeSchema);
 Database.LoopModel = mongoose.model('Loop', Schema.LoopSchema);
 Database.TagsModel = mongoose.model('tags', Schema.TagsSchema);
+
 Database.UserModel = mongoose.model('User', Schema.UserSchema);
+Database.CollectionModel = mongoose.model('Collection', Schema.CollectionSchema);
+Database.CollectionLoopModel = mongoose.model('CollectionLoop', Schema.CollectionLoopSchema);
 
 module.exports = Database;

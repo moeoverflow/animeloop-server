@@ -52,7 +52,7 @@ const LoopSchema = new Schema({
   r18: { type: Boolean, default: false },
   sourceFrom: String,
   uploadDate: { type: Date, require: true },
-  review: { type: Boolean, default: false },
+  likes: { type: Number, default: 0 },
 });
 
 const TagsSchema = new Schema({
@@ -73,8 +73,21 @@ const UserSchema = new Schema({
   verified: { type: Boolean, default: false },
   token: String,
 });
-
 UserSchema.plugin(autoIncrement.plugin, { model: 'User', field: 'uid' });
+
+const CollectionSchema = new Schema({
+  cid: { type: Number, require: true, unique: true },
+  title: { type: String, require: true },
+  description: { type: String, require: true },
+  userid: { type: Number, require: true },
+  type: { type: String, require: true },
+});
+CollectionSchema.plugin(autoIncrement.plugin, { model: 'Collection', field: 'cid' });
+
+const CollectionLoopSchema = new Schema({
+  collectionid: { type: Number, require: true, unique: true },
+  loopid: { type: ObjectId, ref: 'Loop', require: true },
+});
 
 module.exports = {
   LoopSchema,
@@ -82,4 +95,6 @@ module.exports = {
   SeriesSchema,
   TagsSchema,
   UserSchema,
+  CollectionSchema,
+  CollectionLoopSchema,
 };

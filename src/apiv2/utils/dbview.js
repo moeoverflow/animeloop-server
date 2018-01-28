@@ -112,6 +112,21 @@ class DBView {
         callback(null, result.map(tagView()));
       });
   }
+
+  /*
+   -------------- Collection --------------
+   */
+  static findCollection(query, callback) {
+    Database.CollectionModel
+      .find(query)
+      .exec((err, result) => {
+        if (err) {
+          callback(new Error('Database error.'));
+        }
+
+        callback(null, result.map(collectinoView()));
+      });
+  }
 }
 
 /*
@@ -211,6 +226,16 @@ function tagView() {
     const data = Object.assign({}, doc._doc);
     data.id = doc._id;
     delete data._id;
+    delete data.__v;
+    return data;
+  };
+}
+
+function collectinoView() {
+  return (doc) => {
+    const data = Object.assign({}, doc._doc);
+    delete data._id;
+    delete data.__v;
     return data;
   };
 }

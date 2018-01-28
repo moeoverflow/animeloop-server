@@ -13,6 +13,9 @@ const search = require('./routes/search.js');
 
 const auth = require('./routes/auth.js');
 
+const collection = require('./routes/collection.js');
+
+
 router.use('/netdata', netdata);
 router.use('/rand', rand);
 router.use('/loop', loop);
@@ -22,6 +25,8 @@ router.use('/tag', tag);
 router.use('/search', search);
 
 router.use('/auth', auth);
+
+router.use('/collection', collection);
 
 
 module.exports = router;
