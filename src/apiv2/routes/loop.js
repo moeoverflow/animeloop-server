@@ -8,12 +8,15 @@ const Query = require('../utils/query.js');
 router.get('/', (req, res) => {
   const queryLength = Object.keys(req.query).length;
   const id = req.query.id;
-  if (queryLength === 1 && id) {
-    DBView.findLoop({
-      _id: id,
-    }, {
-      full: true,
-    }, (err, result) => {
+  if (queryLength === 1) {
+    const query = {};
+
+    if (!Query.paramObjectId(id, '_id', query)) {
+      res.json(Response.returnError(400, 'query parameter [id] was not correct, please provide a 24 length MongoDB ObjectId string.'));
+      return;
+    }
+
+    DBView.findLoop(query, { full: true }, (err, result) => {
       if (err) {
         res.json(err);
         return;
