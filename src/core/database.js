@@ -410,7 +410,7 @@ Database.LoopModel = mongoose.model('Loop', Schema.LoopSchema);
 Database.TagsModel = mongoose.model('tags', Schema.TagsSchema);
 
 Database.UserModel = mongoose.model('User', Schema.UserSchema);
-Database.CollectionModel = mongoose.model('Collection', Schema.CollectionSchema);
+Database.LoopCollectionModel = mongoose.model('LoopCollection', Schema.LoopCollectionSchema);
 Database.CollectionLoopModel = mongoose.model('CollectionLoop', Schema.CollectionLoopSchema);
 
 module.exports = Database;

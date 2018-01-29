@@ -75,17 +75,17 @@ const UserSchema = new Schema({
 });
 UserSchema.plugin(autoIncrement.plugin, { model: 'User', field: 'uid' });
 
-const CollectionSchema = new Schema({
+const LoopCollectionSchema = new Schema({
   cid: { type: Number, require: true, unique: true },
+  name: { type: String, require: true, unique: true },
   title: { type: String, require: true },
   description: { type: String, require: true },
   userid: { type: Number, require: true },
-  type: { type: String, require: true },
 });
-CollectionSchema.plugin(autoIncrement.plugin, { model: 'Collection', field: 'cid' });
+LoopCollectionSchema.plugin(autoIncrement.plugin, { model: 'LoopCollection', field: 'cid' });
 
 const CollectionLoopSchema = new Schema({
-  collectionid: { type: Number, require: true, unique: true },
+  collectionid: { type: Number, require: true },
   loopid: { type: ObjectId, ref: 'Loop', require: true },
 });
 
@@ -95,6 +95,6 @@ module.exports = {
   SeriesSchema,
   TagsSchema,
   UserSchema,
-  CollectionSchema,
+  LoopCollectionSchema,
   CollectionLoopSchema,
 };

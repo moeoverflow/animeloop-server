@@ -117,7 +117,7 @@ class DBView {
    -------------- Collection --------------
    */
   static findCollection(query, callback) {
-    Database.CollectionModel
+    Database.LoopCollectionModel
       .find(query)
       .exec((err, result) => {
         if (err) {

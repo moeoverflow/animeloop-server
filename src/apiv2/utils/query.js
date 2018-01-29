@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const ObjectId = mongoose.Types.ObjectId;
 const Response = require('./response.js');
+const Database = require('../../core/database.js');
 
 
 class Query {
@@ -9,6 +10,7 @@ class Query {
     const cdn = req.query.cdn;
     const episodeId = req.query.episodeid;
     const seriesId = req.query.seriesid;
+    const collectionId = req.query.collectionid;
     const duration = req.query.duration;
     const sourceFrom = req.query.source_from;
     const full = req.query.full;
@@ -46,9 +48,17 @@ class Query {
       return;
     }
 
-    callback(null, {
-      query,
-      opts,
+
+    Query.paramCollectionId(collectionId, '_id', query, (err) => {
+      if (err) {
+        callback(Response.returnError(400, 'query parameter [collectionid] was not correct, please provide a integer number.'));
+        return;
+      }
+
+      callback(null, {
+        query,
+        opts,
+      });
     });
   }
 
@@ -196,6 +206,30 @@ class Query {
       };
     }
     return true;
+  }
+
+  static paramCollectionId(id, key, query, callback) {
+    if (id) {
+      id = parseInt(id, 10);
+      if (isNaN(id)) {
+        callback('err');
+        return;
+      }
+
+      Database.CollectionLoopModel.find({ collectionid: id }, (err, docs) => {
+        if (err) {
+          callback(err);
+          return;
+        }
+
+        query[key] = {
+          $in: docs.map(id => id.loopid.toString()),
+        };
+        callback(null);
+      });
+      return;
+    }
+    callback(null);
   }
 }
 
