@@ -254,7 +254,7 @@ class Query {
         }
 
         query[key] = {
-          $in: docs.map(id => id.loopid.toString()),
+          $in: docs.map(id => id.loopid),
         };
         callback(null);
       });
