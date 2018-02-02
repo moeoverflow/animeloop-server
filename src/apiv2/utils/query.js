@@ -99,6 +99,7 @@ class Query {
   static series(req, callback) {
     const cdn = req.query.cdn;
     const type = req.query.type;
+    const season = req.query.season;
     const page = req.query.page;
     const limit = req.query.limit;
 
@@ -107,7 +108,12 @@ class Query {
 
     Query.paramBoolString(cdn, 'cdn', opts);
 
+
     Query.paramExist(type, 'type', query);
+    if (!Query.paramSeriesSeason(season, 'start_date_fuzzy', query)) {
+      callback(Response.returnError(400, 'query parameter [season] parse failed, please provide an YYYY-M date string.'));
+      return;
+    }
     if (!Query.paramInt(limit, 'limit', opts)) {
       callback(Response.returnError(400, 'query parameter [limit] parse failed, please provide an integer number.'));
       return;
@@ -162,6 +168,31 @@ class Query {
     });
   }
 
+  static paramSeriesSeason(season, key, query) {
+    if (season) {
+      season = season.split('-');
+      if (season.length !== 2) {
+        return false;
+      }
+
+      const year = parseInt(season[0], 10);
+      const month = parseInt(season[1], 10);
+
+      if (isNaN(year) || isNaN(month)) {
+        return false;
+      }
+
+      const dateFuzzyGt = (year * 10000) + (month * 100);
+      const dateFuzzyLt = dateFuzzyGt + 99;
+
+      query[key] = {
+        $gt: dateFuzzyGt,
+        $lt: dateFuzzyLt,
+      };
+      return true;
+    }
+    return true;
+  }
   static paramBoolString(str, key, opts) {
     if (str) {
       opts[key] = (str === 'true');
