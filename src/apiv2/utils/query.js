@@ -118,7 +118,7 @@ class Query {
       callback(Response.returnError(400, 'query parameter [limit] parse failed, please provide an integer number.'));
       return;
     }
-    if (!Query.paramInt(page, 'limit', opts)) {
+    if (!Query.paramInt(page, 'page', opts)) {
       callback(Response.returnError(400, 'query parameter [page] parse failed, please provide an integer number.'));
       return;
     }
