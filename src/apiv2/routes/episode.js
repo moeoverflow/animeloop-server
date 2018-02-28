@@ -2,6 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 const Response = require('../utils/response.js');
+const Database = require('../../core/database.js');
 const DBView = require('../utils/dbview.js');
 const Query = require('../utils/query.js');
 
@@ -30,6 +31,18 @@ router.get('/', (req, res) => {
       return;
     }
     DBView.findEpisode(data.query, data.opts, Response.handleResponse(res));
+  });
+});
+
+router.get('/count', (req, res) => {
+  Query.episode(req, (err, data) => {
+    if (err) {
+      res.json(Response.returnError(400, err));
+      return;
+    }
+    Database.EpisodeModel.count(data.query, (err, count) => {
+      res.send(Response.returnSuccess('success', { count }));
+    });
   });
 });
 

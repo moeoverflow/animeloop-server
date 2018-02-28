@@ -69,4 +69,16 @@ router.get('/', (req, res) => {
 //   }
 });
 
+router.get('/count', (req, res) => {
+  Query.loop(req, (err, data) => {
+    if (err) {
+      res.json(Response.returnError(400, err));
+      return;
+    }
+    Database.LoopModel.count(data.query, (err, count) => {
+      res.send(Response.returnSuccess('success', { count }));
+    });
+  });
+});
+
 module.exports = router;
