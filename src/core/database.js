@@ -2,7 +2,6 @@
 const mongoose = require('mongoose');
 const log4js = require('log4js');
 const async = require('async');
-const cachegoose = require('cachegoose');
 
 const logger = log4js.getLogger('database');
 const Schema = require('./schema.js');
@@ -11,20 +10,6 @@ const config = require('../../config');
 mongoose.Promise = global.Promise;
 mongoose.connect(config.mongodb.url, { useMongoClient: true });
 
-if (config.mongodb.redisCache) {
-  cachegoose(mongoose, {
-    engine: 'redis',
-    port: config.redis.port,
-    host: config.redis.host,
-    database: config.mongodb.redisN,
-  });
-}
-
-const ttlMinute = 60;
-const ttlHour = ttlMinute * 60;
-const ttlDay = ttlHour * 24;
-const ttlWeek = ttlDay * 7;
-const ttlMonth = ttlDay * 30;
 
 class Database {
   /*
@@ -65,22 +50,18 @@ class Database {
     Database.LoopModel
       .findById(id)
       .populate('episode series')
-      .lean()
-      .cache(ttlMonth)
       .exec(handleResult(callback));
   }
 
   static findLoopById(id, callback) {
     Database.LoopModel
       .findById(id)
-      .cache(ttlMonth)
       .exec(handleResult(callback));
   }
 
   static findFullLoopsBySeries(id, callback) {
     Database.LoopModel
       .find({ series: id })
-      .cache(ttlHour)
       .exec(handleFullResult({
         series: Database.SeriesModel,
         episode: Database.EpisodeModel,
@@ -90,14 +71,12 @@ class Database {
   static findLoopsBySeries(id, callback) {
     Database.LoopModel
       .find({ series: id })
-      .cache(ttlHour)
       .exec(handleResult(callback));
   }
 
   static findFullLoopsByEpisode(id, callback) {
     Database.LoopModel
       .find({ episode: id })
-      .cache(ttlWeek)
       .exec(handleFullResult({
         series: Database.SeriesModel,
         episode: Database.EpisodeModel,
@@ -107,7 +86,6 @@ class Database {
   static findLoopsByEpisode(id, callback) {
     Database.LoopModel
       .find({ episode: id })
-      .cache(ttlWeek)
       .exec(handleResult(callback));
   }
 
@@ -162,7 +140,6 @@ class Database {
   static findLoopsCount(callback) {
     Database.LoopModel
       .count({})
-      .cache(ttlHour)
       .exec(handleResult(callback));
   }
 
@@ -174,14 +151,12 @@ class Database {
   static findEpisodesBySeries(id, callback) {
     Database.EpisodeModel
       .find({ series: id })
-      .cache(ttlDay)
       .exec(handleResult(callback));
   }
 
   static findFullEpisodesBySeries(id, callback) {
     Database.EpisodeModel
       .find({ series: id })
-      .cache(ttlDay)
       .exec(handleFullResult({
         series: Database.SeriesModel,
       }, callback));
@@ -190,7 +165,6 @@ class Database {
   static findEpisodeById(id, callback) {
     Database.EpisodeModel
       .findOne({ _id: id })
-      .cache(ttlMonth)
       .exec(handleResult(callback));
   }
 
@@ -198,22 +172,18 @@ class Database {
     Database.EpisodeModel
       .findOne({ _id: id })
       .populate('series')
-      .lean()
-      .cache(ttlMonth)
       .exec(handleResult(callback));
   }
 
   static findAllEpisodes(callback) {
     Database.EpisodeModel
       .find({})
-      .cache(ttlHour)
       .exec(handleResult(callback));
   }
 
   static findAllFullEpisodes(callback) {
     Database.EpisodeModel
       .find({})
-      .cache(ttlHour)
       .exec(handleFullResult({
         series: Database.SeriesModel,
       }, callback));
@@ -222,7 +192,6 @@ class Database {
   static findEpisodesCount(callback) {
     Database.EpisodeModel
       .count({})
-      .cache(ttlHour)
       .exec(handleResult(callback));
   }
 
@@ -258,14 +227,12 @@ class Database {
   static findSeriesById(id, callback) {
     Database.SeriesModel
       .findOne({ _id: id })
-      .cache(ttlMonth)
       .exec(handleResult(callback));
   }
 
   static findSeriesesCount(callback) {
     Database.SeriesModel
       .count({})
-      .cache(ttlDay)
       .exec(handleResult(callback));
   }
 
@@ -288,7 +255,6 @@ class Database {
     };
     Database.SeriesModel
       .find(queries)
-      .cache(ttlMinute)
       .exec(handleResult(callback));
   }
 
@@ -300,7 +266,6 @@ class Database {
     this.TagsModel
       .find({ loopid: id })
       .sort({ confidence: -1 })
-      .cache(ttlMonth)
       .exec(handleResult(callback));
   }
 
@@ -308,7 +273,6 @@ class Database {
     this.TagsModel
       .find({ value: tagName })
       .sort({ confidence: -1 })
-      .cache(ttlMonth)
       .exec(handleResult(callback));
   }
 }
