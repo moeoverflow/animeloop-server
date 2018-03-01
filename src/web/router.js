@@ -19,6 +19,7 @@ const episode = require('./routes/episode');
 const series = require('./routes/series');
 const loop = require('./routes/loop');
 
+const sitemap = require('./routes/sitemap');
 
 router.use(express.static(path.join(__dirname, 'public')));
 router.use('/miminium', express.static(path.join(__dirname, 'modules/miminium/asset')));
@@ -45,5 +46,7 @@ router.use('/status', status);
 router.use('/episode', episode);
 router.use('/series', series);
 router.use('/loop', loop);
+
+router.use('/', sitemap);
 
 module.exports = router;

@@ -47,6 +47,7 @@
     "sharp": "^0.18.2",
     "shell-escape": "^0.2.0",
     "shelljs": "^0.7.7",
+    "sitemap": "^1.13.0",
     "twit": "^2.2.9"
   },
   "devDependencies": {
