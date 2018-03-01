@@ -46,12 +46,12 @@
       </div>
     </div>
 
-    <div class="loop-cards">
+    <div class="col-xs-12 col-md-12">
       <% loops.forEach((loop) => { %>
       <%- include('partials/loop-card', {
-        series,
-        episode,
-        loop
+      series,
+      episode,
+      loop
       }) %>
       <% }); %>
     </div>

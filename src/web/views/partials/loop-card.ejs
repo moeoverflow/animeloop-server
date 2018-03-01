@@ -1,23 +1,23 @@
-<div class="loop-card">
+<div class="col-xs-6 col-sm-4 col-md-3 loop-card">
   <div class="panel panel-default">
     <div class="panel-body">
-      <a id="loop-<%- loop.id %>" class="video-golink" loop-id="<%- loop.id %>" href="/loop/<%- loop.id %>">
-        <img class="video-cover" src="/images/akkarin.png" data-src="<%- loop.files.gif_360p %>" alt="<%- series[__('title-key-1')] %> <%- episode.no %>">
+      <a id="loop-<%- loop.id %>" class="loop-golink" loop-id="<%- loop.id %>" href="/loop/<%- loop.id %>">
+        <div class="loop-gif-responsive">
+          <img class="loop-gif" src="/images/akkarin.png" data-src="<%- loop.files.gif_360p %>" alt="<%- series[__('title-key-1')] %> <%- episode.no %>">
+        </div>
       </a>
     </div>
     <div class="panel-footer">
       <ul class="info">
         <li class="title">
-          <% if (episode.no) { %>
-          <%- `${series[__('title-key-1')]} ${ episode.no }` %>
-          <% } else { %>
-          <%- `${series[__('title-key-1')] }` %>
-          <% } %>
+            <% if (episode.no) { %>
+            <%- `${series[__('title-key-1')]} ${ episode.no }` %>
+            <% } else { %>
+            <%- `${series[__('title-key-1')] }` %>
+            <% } %>
         </li>
         <li class="period"><%- loop.period.begin.slice(0, 11) %> ~ <%- loop.period.end.slice(0, 11) %></li>
       </ul>
     </div>
   </div>
-
-  <%- include('modal') %>
 </div>
