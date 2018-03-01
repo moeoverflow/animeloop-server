@@ -12,10 +12,10 @@ router.get('/sitemap-loop-:no.xml', (req, res) => {
   const no = req.params.no;
   const n = parseInt(no, 10);
   if (isNaN(n)) {
-    res.status(404);
+    res.status(404).end();
     return;
   } else if (n === 0) {
-    res.status(404);
+    res.status(404).end();
     return;
   }
 
