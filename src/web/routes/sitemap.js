@@ -35,10 +35,10 @@ router.get('/sitemap-loop-:no.xml', (req, res) => {
           description: `${doc.series.title_japanese} ${doc.episode.no}`,
         }],
         links: [
-          { lang: 'jp', url: `${config.app.url}/loop/${doc._id}?lang=jp` },
+          { lang: 'ja', url: `${config.app.url}/loop/${doc._id}?lang=ja` },
           { lang: 'en', url: `${config.app.url}/loop/${doc._id}?lang=en` },
           { lang: 'fr', url: `${config.app.url}/loop/${doc._id}?lang=fr` },
-          { lang: 'fr', url: `${config.app.url}/loop/${doc._id}?lang=zh` },
+          { lang: 'zh', url: `${config.app.url}/loop/${doc._id}?lang=zh` },
         ],
       }));
 
@@ -52,10 +52,10 @@ router.get('/sitemap-episode.xml', (req, res) => {
       url: `/episode/${doc._id}`,
       changefreq: 'weekly',
       links: [
-        { lang: 'jp', url: `${config.app.url}/episode/${doc._id}?lang=jp` },
+        { lang: 'ja', url: `${config.app.url}/episode/${doc._id}?lang=ja` },
         { lang: 'en', url: `${config.app.url}/episode/${doc._id}?lang=en` },
         { lang: 'fr', url: `${config.app.url}/episode/${doc._id}?lang=fr` },
-        { lang: 'fr', url: `${config.app.url}/episode/${doc._id}?lang=zh` },
+        { lang: 'zh', url: `${config.app.url}/episode/${doc._id}?lang=zh` },
       ],
     }));
 
@@ -70,10 +70,10 @@ router.get('/sitemap-series.xml', (req, res) => {
       changefreq: 'monthly',
       img: [{ url: doc.image_url_large }],
       links: [
-        { lang: 'jp', url: `${config.app.url}/series/${doc._id}?lang=jp` },
+        { lang: 'ja', url: `${config.app.url}/series/${doc._id}?lang=ja` },
         { lang: 'en', url: `${config.app.url}/series/${doc._id}?lang=en` },
         { lang: 'fr', url: `${config.app.url}/series/${doc._id}?lang=fr` },
-        { lang: 'fr', url: `${config.app.url}/series/${doc._id}?lang=zh` },
+        { lang: 'zh', url: `${config.app.url}/series/${doc._id}?lang=zh` },
       ],
     }));
 
