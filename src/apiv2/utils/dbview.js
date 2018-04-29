@@ -267,7 +267,7 @@ function populate(docs, attrs, callback) {
 function defaultOpts(opts) {
   opts.full = opts.full || false;
   opts.limit = opts.limit || 30;
-  opts.limit = opts.limit > 100 ? 100 : opts.limit;
+  opts.limit = opts.limit > 1000 ? 1000 : opts.limit;
   opts.page = opts.page || 1;
   opts.page = opts.page <= 0 ? 1 : opts.page;
 }
