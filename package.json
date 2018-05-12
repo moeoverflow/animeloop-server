@@ -1,7 +1,7 @@
 {
-  "name": "animeloop",
+  "name": "animeloop-server",
   "repository": {
-    "url": "https://github.com/moeoverflow/animeloop.git",
+    "url": "https://github.com/moeoverflow/animeloop-server.git",
     "type": "git"
   },
   "version": "2.0.0",
@@ -34,7 +34,7 @@
     "markdown": "^0.5.0",
     "method-override": "^2.3.8",
     "mkdirp": "^0.5.1",
-    "mongoose": "^4.9.7",
+    "mongoose": "^5.1.0",
     "mongoose-auto-increment": "^5.0.1",
     "mongoose-findorcreate": "^1.0.1",
     "nani": "^1.2.0",
@@ -43,7 +43,7 @@
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "randomcolor": "^0.5.3",
-    "request": "^2.81.0",
+    "request": "^2.85.0",
     "sharp": "^0.18.2",
     "shell-escape": "^0.2.0",
     "shelljs": "^0.7.7",

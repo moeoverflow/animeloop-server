@@ -39,6 +39,7 @@ class DBView {
     ], (err, result) => {
       if (err) {
         callback(new Error('Database error.'));
+        return;
       }
 
       callback(null, result.map(loopView(opts.cdn, opts.full)));

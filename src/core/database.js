@@ -8,7 +8,7 @@ const Schema = require('./schema.js');
 const config = require('../../config');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(config.mongodb.url, { useMongoClient: true });
+mongoose.connect(config.mongodb.url, {});
 
 
 class Database {
