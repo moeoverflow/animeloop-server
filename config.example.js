@@ -18,8 +18,19 @@ const config = {
     version: 'v1',
     app: {
       host: '0.0.0.0',
+      port: 7771,
+    },
+  },
+  apiv2: {
+    app: {
+      host: '0.0.0.0',
       port: 7775,
     },
+    sessionSecret: '',
+  },
+  recaptcha: {
+    url: 'https://www.google.com/recaptcha/api/siteverify',
+    secret: '',
   },
   auth: {
     secret: '',

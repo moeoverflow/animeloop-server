@@ -2,6 +2,7 @@ const express = require('express');
 const log4js = require('log4js');
 const passport = require('passport');
 const bodyParser = require('body-parser');
+const session = require('express-session');
 
 const logger = log4js.getLogger('api');
 const config = require('../../config.js');
@@ -19,6 +20,13 @@ app.use(log4js.connectLogger(logger));
 app.use(cors);
 app.use(passport.initialize());
 
+app.use(session({
+  secret: config.apiv2.sessionSecret,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 60000 },
+}));
+
 app.use('/api/v2', router);
 
 // 400 handler
@@ -27,6 +35,6 @@ app.use((req, res) => {
   res.json(Response.returnError(400, 'Bad request'));
 });
 
-app.listen(config.api.app.port, config.api.app.host, () => {
-  logger.info(`app run in ${config.api.app.host}:${config.api.app.port}`);
+app.listen(config.apiv2.app.port, config.apiv2.app.host, () => {
+  logger.info(`app run in ${config.apiv2.app.host}:${config.apiv2.app.port}`);
 });

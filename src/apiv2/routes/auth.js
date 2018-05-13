@@ -2,6 +2,7 @@ const async = require('async');
 const express = require('express');
 const jwt = require('jwt-simple');
 const bcrypt = require('bcryptjs');
+const request = require('request');
 
 const router = express.Router();
 const Database = require('../../core/database.js');
@@ -10,8 +11,30 @@ const config = require('../../../config.js');
 const email = require('../utils/email.js');
 
 
+router.post('/login', (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
+
+  async.series({
+    recaptcha: (callback) => {
+      recaptchaValidate(req, res, callback);
+    },
+    user: (callback) => {
+      validateUser(username, password, callback);
+    },
+  }, (err, results) => {
+    if (err) {
+      res.json(err);
+      return;
+    }
+
+    const { user } = results;
+    req.session.authUser = { username: user.username };
+    res.json(Response.returnSuccess('login successfully.', { authUser: user.username }));
+  });
+});
+
 router.post('/register', (req, res) => {
-  console.log(req.body);
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
@@ -40,33 +63,43 @@ router.post('/register', (req, res) => {
     return;
   }
 
-  Database.UserModel.findOne({ username }, (err, doc) => {
-    if (err) {
-      res.send(Response.returnError(500, err));
-      return;
-    }
-
-    if (doc) {
-      res.send(Response.returnError(409, 'this username has been registered.'));
-    } else {
-      const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(password, salt);
-
-      const user = new Database.UserModel({
-        username,
-        email,
-        password: hash,
-      });
-
-      user.save((err, doc) => {
+  async.series({
+    recaptcha: (callback) => {
+      recaptchaValidate(req, res, callback);
+    },
+    database: (callback) => {
+      Database.UserModel.findOne({ username }, (err, doc) => {
         if (err) {
-          res.json(Response.returnError(500, 'database error.'));
+          res.send(Response.returnError(500, err));
           return;
         }
 
-        sendEmail(doc, () => {});
-        res.json(Response.returnSuccess('register successfully.', {}));
+        if (doc) {
+          res.send(Response.returnError(409, 'this username has been registered.'));
+          return;
+        }
+
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(password, salt);
+
+        Database.UserModel.create({
+          username,
+          email,
+          password: hash,
+        }, (err, doc) => {
+          if (err) {
+            res.json(Response.returnError(500, 'database error.'));
+            return;
+          }
+          callback(null, doc);
+        });
       });
+    },
+  }, (err, results) => {
+    if (results.database && results.recaptcha) {
+      const doc = results.recaptcha;
+      sendEmail(doc, () => {});
+      res.json(Response.returnSuccess('register successfully.', {}));
     }
   });
 });
@@ -127,44 +160,69 @@ router.post('/token', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  tokenAction(username, password, 'get', res);
+  async.series({
+    recaptcha: (callback) => {
+      recaptchaValidate(req, res, callback);
+    },
+    tokenAction: () => {
+      tokenAction(username, password, 'get', res);
+    },
+  });
 });
 
 router.post('/token/new', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  tokenAction(username, password, 'new', res);
+  async.series({
+    recaptcha: (callback) => {
+      recaptchaValidate(req, res, callback);
+    },
+    tokenAction: () => {
+      tokenAction(username, password, 'new', res);
+    },
+  });
 });
 
 router.post('/token/revoke', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  tokenAction(username, password, 'revoke', res);
+  async.series({
+    recaptcha: (callback) => {
+      recaptchaValidate(req, res, callback);
+    },
+    tokenAction: () => {
+      tokenAction(username, password, 'revoke', res);
+    },
+  });
 });
+
+function validateUser(username, password, callback) {
+  Database.UserModel.findOne({ username }, (err, user) => {
+    if (err) {
+      callback(Response.returnError(500, 'database error.'));
+      return;
+    }
+
+    if (!bcrypt.compareSync(password, user.password)) {
+      callback(Response.returnError(401, 'unauthorized.'));
+      return;
+    }
+
+    if (!user.verified) {
+      callback(Response.returnError(401, 'unverified.'));
+      return;
+    }
+
+    callback(null, user);
+  });
+}
 
 function tokenAction(username, password, type, res) {
   async.waterfall([
     (callback) => {
-      Database.UserModel.findOne({ username }, (err, user) => {
-        if (err) {
-          callback(Response.returnError(500, 'database error.'));
-          return;
-        }
-
-        if (!bcrypt.compareSync(password, user.password)) {
-          callback(Response.returnError(401, 'unauthorized.'));
-          return;
-        }
-
-        if (!user.verified) {
-          callback(Response.returnError(401, 'unverified.'));
-          return;
-        }
-
-        callback(null, user);
-      });
+      validateUser(username, password, callback);
     },
     (user, callback) => {
       if (type === 'get') {
@@ -199,6 +257,30 @@ function tokenAction(username, password, type, res) {
     } else {
       res.json(data);
     }
+  });
+}
+
+function recaptchaValidate(req, res, callback) {
+  const url = config.recaptcha.url;
+  const form = {
+    secret: config.recaptcha.secret,
+    response: req.body['g-recaptcha-response'],
+    // remoteip: req.connection.remoteAddress,
+    remoteIp: '23.102.235.17', // for dev - proxy ip
+  };
+
+  request.post(url, { form }, (err, httpResponse, body) => {
+    if (err) {
+      callback(err);
+      return;
+    }
+    const data = JSON.parse(body);
+    if (!data.success) {
+      res.json(Response.returnError(400, 'Google ReCaptcha validation failed.'));
+      return;
+    }
+
+    callback(null, data);
   });
 }
 
