@@ -26,7 +26,15 @@ const config = {
       host: '0.0.0.0',
       port: 7775,
     },
-    sessionSecret: '',
+    session: {
+      name: 'animeloop.auth.sid',
+      secret: '',
+      redisStore: {
+        host: '127.0.0.1',
+        port: '6379',
+        db: 10,
+      }
+    },
   },
   recaptcha: {
     url: 'https://www.google.com/recaptcha/api/siteverify',

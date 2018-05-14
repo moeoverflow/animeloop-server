@@ -29,8 +29,12 @@ router.post('/login', (req, res) => {
     }
 
     const { user } = results;
-    req.session.authUser = { username: user.username };
-    res.json(Response.returnSuccess('login successfully.', { authUser: user.username }));
+    const data = {
+      username: user.username,
+      email: user.email,
+    };
+    req.session.authUser = data;
+    res.json(Response.returnSuccess('login successfully.', data));
   });
 });
 
@@ -40,18 +44,18 @@ router.post('/register', (req, res) => {
   const password = req.body.password;
 
   if (!username) {
-    res.json(Response.returnError(400, '[username] is empty, please provide a correct one.'));
+    res.json(Response.returnError(40001, '[username] is empty, please provide a correct one.'));
     return;
   } else if (!isUsername(username)) {
-    res.json(Response.returnError(400, '[username] must be at least 5 at most 15 characters long, please try another.'));
+    res.json(Response.returnError(40002, '[username] must be at least 5 at most 15 characters long, please try another.'));
     return;
   }
 
   if (!password) {
-    res.json(Response.returnError(400, '[password] is empty, please provide a correct one.'));
+    res.json(Response.returnError(40003, '[password] is empty, please provide a correct one.'));
     return;
   } else if (!isPassword(password)) {
-    res.json(Response.returnError(400, '[password] must be at least 6 at most 17 characters long, please try another.'));
+    res.json(Response.returnError(40004, '[password] must be at least 6 at most 17 characters long, please try another.'));
     return;
   }
 
@@ -265,8 +269,7 @@ function recaptchaValidate(req, res, callback) {
   const form = {
     secret: config.recaptcha.secret,
     response: req.body['g-recaptcha-response'],
-    // remoteip: req.connection.remoteAddress,
-    remoteIp: '23.102.235.17', // for dev - proxy ip
+    remoteip: req.connection.remoteAddress,
   };
 
   request.post(url, { form }, (err, httpResponse, body) => {

@@ -1,8 +1,9 @@
 const express = require('express');
 const log4js = require('log4js');
-const passport = require('passport');
 const bodyParser = require('body-parser');
+
 const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
 
 const logger = log4js.getLogger('api');
 const config = require('../../config.js');
@@ -18,13 +19,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(log4js.connectLogger(logger));
 app.use(cors);
-app.use(passport.initialize());
 
 app.use(session({
-  secret: config.apiv2.sessionSecret,
+  name: config.apiv2.session.name,
+  store: new RedisStore(config.apiv2.session.redisStore),
+  secret: config.apiv2.session.secret,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 60000 },
+  cookie: { maxAge: 30 * 60 * 60 * 1000 },
 }));
 
 app.use('/api/v2', router);
