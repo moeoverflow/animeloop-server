@@ -101,7 +101,7 @@ router.post('/register', (req, res) => {
     },
   }, (err, results) => {
     if (results.database && results.recaptcha) {
-      const doc = results.recaptcha;
+      const doc = results.database;
       sendEmail(doc, () => {});
       res.json(Response.returnSuccess('register successfully.', {}));
     }
