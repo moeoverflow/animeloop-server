@@ -2,117 +2,117 @@ const async = require('async');
 const express = require('express');
 const jwt = require('jwt-simple');
 const bcrypt = require('bcryptjs');
-const request = require('request');
 
 const router = express.Router();
 const Database = require('../../core/database.js');
 const Response = require('../utils/response.js');
 const config = require('../../../config.js');
+const recaptcha = require('../middleware/google-recaptcha.js');
+const sessionValidate = require('../middleware/session-validate');
+
 const email = require('../utils/email.js');
 
-
-router.post('/login', (req, res) => {
+/*
+*
+* Login API
+*
+* */
+router.post('/login', recaptcha, (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  async.series({
-    recaptcha: (callback) => {
-      recaptchaValidate(req, res, callback);
-    },
-    user: (callback) => {
-      validateUser(username, password, callback);
-    },
-  }, (err, results) => {
+  validateUser(username, password, (err, doc) => {
     if (err) {
       res.json(err);
       return;
     }
 
-    const { user } = results;
     const data = {
-      username: user.username,
-      email: user.email,
+      username: doc.username,
+      email: doc.email,
     };
+
     req.session.authUser = data;
-    res.json(Response.returnSuccess('login successfully.', data));
+    res.json(Response.returnSuccess(1220001, 'login successfully.', data));
   });
 });
 
-router.post('/register', (req, res) => {
+
+/*
+*
+* Register API
+*
+* */
+router.post('/register', recaptcha, (req, res) => {
   const username = req.body.username;
   const email = req.body.email;
   const password = req.body.password;
 
   if (!username) {
-    res.json(Response.returnError(40001, '[username] is empty, please provide a correct one.'));
+    res.json(Response.returnError(1140001, '[username] is empty, please provide a correct one.'));
     return;
   } else if (!isUsername(username)) {
-    res.json(Response.returnError(40002, '[username] must be at least 5 at most 15 characters long, please try another.'));
+    res.json(Response.returnError(1140002, '[username] must be at least 5 at most 15 characters long, please try another.'));
     return;
   }
 
   if (!password) {
-    res.json(Response.returnError(40003, '[password] is empty, please provide a correct one.'));
+    res.json(Response.returnError(1140003, '[password] is empty, please provide a correct one.'));
     return;
   } else if (!isPassword(password)) {
-    res.json(Response.returnError(40004, '[password] must be at least 6 at most 17 characters long, please try another.'));
+    res.json(Response.returnError(1140004, '[password] must be at least 6 at most 17 characters long, please try another.'));
     return;
   }
 
   if (!email) {
-    res.json(Response.returnError(400, '[email] is empty, please provide a correct one.'));
+    res.json(Response.returnError(1140005, '[email] is empty, please provide a correct one.'));
     return;
   } else if (!isEmail(email)) {
-    res.json(Response.returnError(400, '[email] is not in correct format, please try another.'));
+    res.json(Response.returnError(1140006, '[email] is not in correct format, please try another.'));
     return;
   }
 
-  async.series({
-    recaptcha: (callback) => {
-      recaptchaValidate(req, res, callback);
-    },
-    database: (callback) => {
-      Database.UserModel.findOne({ username }, (err, doc) => {
-        if (err) {
-          res.send(Response.returnError(500, err));
-          return;
-        }
-
-        if (doc) {
-          res.send(Response.returnError(409, 'this username has been registered.'));
-          return;
-        }
-
-        const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(password, salt);
-
-        Database.UserModel.create({
-          username,
-          email,
-          password: hash,
-        }, (err, doc) => {
-          if (err) {
-            res.json(Response.returnError(500, 'database error.'));
-            return;
-          }
-          callback(null, doc);
-        });
-      });
-    },
-  }, (err, results) => {
-    if (results.database && results.recaptcha) {
-      const doc = results.database;
-      sendEmail(doc, () => {});
-      res.json(Response.returnSuccess('register successfully.', {}));
+  Database.UserModel.findOne({ username }, (err, doc) => {
+    if (err) {
+      res.json(Response.returnError(1950301, 'internal server error, database error.'));
+      return;
     }
+
+    if (doc) {
+      res.send(Response.returnError(1140901, 'this username has been registered.'));
+      return;
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+
+    Database.UserModel.create({
+      username,
+      email,
+      password: hash,
+    }, (err, doc) => {
+      if (err) {
+        res.json(Response.returnError(1950301, 'internal server error, database error.'));
+        return;
+      }
+
+      sendEmail(doc, () => {
+        res.json(Response.returnSuccess(1120001, 'register successfully.', {}));
+      });
+    });
   });
 });
 
+/*
+*
+* Email verification API
+*
+* */
 router.get('/verify', (req, res) => {
   const code = req.query.code;
 
   if (!code) {
-    res.json(Response.returnError(400, '[code] is empty, please provide a correct one.'));
+    res.json(Response.returnError(1440001, '[code] is empty, please provide a correct one.'));
     return;
   }
 
@@ -121,15 +121,17 @@ router.get('/verify', (req, res) => {
   if (action === 'verify') {
     Database.UserModel.update({ username }, { $set: { verified: true } }, (err, doc) => {
       if (err) {
-        res.json(Response.returnError(500, 'database error.'));
+        res.json(Response.returnError(1950301, 'internal server error, database error.'));
         return;
       }
 
-      res.json(Response.returnSuccess(200, 'verify successfully.', {
+      res.json(Response.returnSuccess(1420001, 'verify account successfully.', {
         uid: doc.uid,
         username: doc.username,
       }));
     });
+  } else {
+    res.json(Response.returnError(1440002, '[code] is invalid, please provide a correct one.'));
   }
 });
 
@@ -137,16 +139,28 @@ router.post('/verify/sendemail', (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  Database.UserModel.findOne({ username }, (err, doc) => {
+  if (username === null || username === undefined) {
+    res.json(Response.returnError(1440003, 'empty username or password.'));
+    return;
+  }
+  if (password === null || password === undefined) {
+    res.json(Response.returnError(1440003, 'empty username or password.'));
+    return;
+  }
+
+  validateUser(username, password, (err, doc) => {
     if (err) {
-      res.json(Response.returnError(500, 'database error.'));
+      res.json(Response.returnError(1950301, 'internal server error, database error.'));
       return;
     }
 
-    if (bcrypt.compareSync(password, doc.password)) {
-      sendEmail(doc, () => {});
-      res.json(Response.returnSuccess(200, 'send email successfully.', {}));
+    if (doc.verified === true) {
+      res.json(Response.returnSuccess(1420003, 'this account has already been verified', {}));
+      return;
     }
+
+    sendEmail(doc, () => {});
+    res.json(Response.returnSuccess(1420002, 'send verification email successfully.', {}));
   });
 });
 
@@ -160,62 +174,43 @@ function sendEmail(doc, callback) {
   email(doc.email, doc.username, verifyUrl, callback);
 }
 
-router.post('/token', (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
 
-  async.series({
-    recaptcha: (callback) => {
-      recaptchaValidate(req, res, callback);
-    },
-    tokenAction: () => {
-      tokenAction(username, password, 'get', res);
-    },
-  });
-});
+/*
+*
+* Token API
+*
+* */
+router.post('/token', sessionValidate, tokenAction('get'));
 
-router.post('/token/new', (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+router.post('/token/new', sessionValidate, tokenAction('new'));
 
-  async.series({
-    recaptcha: (callback) => {
-      recaptchaValidate(req, res, callback);
-    },
-    tokenAction: () => {
-      tokenAction(username, password, 'new', res);
-    },
-  });
-});
+router.post('/token/revoke', sessionValidate, tokenAction('revoke'));
 
-router.post('/token/revoke', (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
 
-  async.series({
-    recaptcha: (callback) => {
-      recaptchaValidate(req, res, callback);
-    },
-    tokenAction: () => {
-      tokenAction(username, password, 'revoke', res);
-    },
-  });
-});
-
+/*
+*
+* Tool function
+*
+* */
 function validateUser(username, password, callback) {
   Database.UserModel.findOne({ username }, (err, user) => {
     if (err) {
-      callback(Response.returnError(500, 'database error.'));
+      callback(Response.returnError(1950301, 'service unavailable, database error.'));
+      return;
+    }
+
+    if (!user) {
+      callback(Response.returnError(1240101, 'incorrect username or password.'));
       return;
     }
 
     if (!bcrypt.compareSync(password, user.password)) {
-      callback(Response.returnError(401, 'unauthorized.'));
+      callback(Response.returnError(1240101, 'incorrect username or password.'));
       return;
     }
 
     if (!user.verified) {
-      callback(Response.returnError(401, 'unverified.'));
+      callback(Response.returnError(1240102, 'this account has not yet verified.'));
       return;
     }
 
@@ -223,68 +218,43 @@ function validateUser(username, password, callback) {
   });
 }
 
-function tokenAction(username, password, type, res) {
-  async.waterfall([
-    (callback) => {
-      validateUser(username, password, callback);
-    },
-    (user, callback) => {
-      if (type === 'get') {
-        callback(null, Response.returnSuccess(200, 'request the token successfully.', { token: user.token ? user.token : null }));
+function tokenAction(type) {
+  return (req, res) => {
+    const user = req.user;
+
+
+    if (type === 'get') {
+      if (user.token) {
+        res.json(Response.returnSuccess(1320001, 'request token successfully.', { token: user.token }));
+      } else {
+        res.json(Response.returnError(1340401, 'request token failed. token doesn\'t exist.'));
+      }
+      return;
+    }
+
+    let token = null;
+    if (type === 'new') {
+      token = jwt.encode({
+        uid: user.uid,
+        username: user.username,
+        date: new Date(),
+      }, config.auth.secret);
+    }
+
+    const username = user.username;
+    Database.UserModel.update({ username }, { $set: { token } }, (err) => {
+      if (err) {
+        res.json(Response.returnError(1950301, 'internal server error, database error.'));
         return;
       }
 
-      let token = null;
-      if (type === 'new') {
-        token = jwt.encode({
-          uid: user.uid,
-          username: user.username,
-        }, config.auth.secret);
-      }
+      const message = (type === 'new') ?
+        Response.returnSuccess(1320002, 'request a new token successfully.', { token }) :
+        Response.returnSuccess(1320003, 'revoke the token successfully.', {});
 
-      Database.UserModel.update({ username }, { $set: { token } }, (err) => {
-        if (err) {
-          callback(Response.returnError(500, 'database error.'));
-          return;
-        }
-
-        const message = (type === 'new') ?
-          Response.returnSuccess(200, 'request a new token successfully.', { token }) :
-          Response.returnSuccess(200, 'revoke the token successfully.', {});
-
-        callback(null, message);
-      });
-    },
-  ], (err, data) => {
-    if (err) {
-      res.json(err);
-    } else {
-      res.json(data);
-    }
-  });
-}
-
-function recaptchaValidate(req, res, callback) {
-  const url = config.recaptcha.url;
-  const form = {
-    secret: config.recaptcha.secret,
-    response: req.body['g-recaptcha-response'],
-    remoteip: req.connection.remoteAddress,
+      res.json(message);
+    });
   };
-
-  request.post(url, { form }, (err, httpResponse, body) => {
-    if (err) {
-      callback(err);
-      return;
-    }
-    const data = JSON.parse(body);
-    if (!data.success) {
-      res.json(Response.returnError(400, 'Google ReCaptcha validation failed.'));
-      return;
-    }
-
-    callback(null, data);
-  });
 }
 
 function isUsername(username) {
@@ -293,7 +263,7 @@ function isUsername(username) {
 }
 
 function isPassword(password) {
-  const pattern = /^[a-zA-Z]\w{6,17}$/;
+  const pattern = /^\w{8,32}$/;
   return pattern.test(password);
 }
 
