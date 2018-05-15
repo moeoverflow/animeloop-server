@@ -76,7 +76,7 @@ router.get('/count', (req, res) => {
       return;
     }
     Database.LoopModel.count(data.query, (err, count) => {
-      res.send(Response.returnSuccess('success', { count }));
+      res.send(Response.returnSuccess(200, 'success', { count }));
     });
   });
 });

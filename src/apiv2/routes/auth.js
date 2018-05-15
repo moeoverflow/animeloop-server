@@ -125,7 +125,7 @@ router.get('/verify', (req, res) => {
         return;
       }
 
-      res.json(Response.returnSuccess('verify successfully.', {
+      res.json(Response.returnSuccess(200, 'verify successfully.', {
         uid: doc.uid,
         username: doc.username,
       }));
@@ -145,7 +145,7 @@ router.post('/verify/sendemail', (req, res) => {
 
     if (bcrypt.compareSync(password, doc.password)) {
       sendEmail(doc, () => {});
-      res.json(Response.returnSuccess('send email successfully.', {}));
+      res.json(Response.returnSuccess(200, 'send email successfully.', {}));
     }
   });
 });
@@ -230,7 +230,7 @@ function tokenAction(username, password, type, res) {
     },
     (user, callback) => {
       if (type === 'get') {
-        callback(null, Response.returnSuccess('request the token successfully.', { token: user.token ? user.token : null }));
+        callback(null, Response.returnSuccess(200, 'request the token successfully.', { token: user.token ? user.token : null }));
         return;
       }
 
@@ -249,8 +249,8 @@ function tokenAction(username, password, type, res) {
         }
 
         const message = (type === 'new') ?
-          Response.returnSuccess('request a new token successfully.', { token }) :
-          Response.returnSuccess('revoke the token successfully.', {});
+          Response.returnSuccess(200, 'request a new token successfully.', { token }) :
+          Response.returnSuccess(200, 'revoke the token successfully.', {});
 
         callback(null, message);
       });

@@ -87,7 +87,7 @@ router.post('/new', (req, res) => {
             return;
           }
 
-          callback(null, Response.returnSuccess('create loop collection successfully.', {
+          callback(null, Response.returnSuccess(200, 'create loop collection successfully.', {
             id: doc.id,
             cid: doc.cid,
             title: doc.title,
@@ -127,7 +127,7 @@ router.post('/delete', (req, res) => {
         return;
       }
 
-      res.json(Response.returnSuccess('delete loop collection successfully.'));
+      res.json(Response.returnSuccess(200, 'delete loop collection successfully.'));
     });
   });
 });
@@ -223,7 +223,7 @@ function collectionLoopAction(req, res, action) {
         return;
       }
 
-      res.json(Response.returnSuccess('add item to collection successfully.'));
+      res.json(Response.returnSuccess(200, 'add item to collection successfully.'));
     });
   });
 }

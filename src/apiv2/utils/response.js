@@ -1,8 +1,8 @@
 class Response {
-  static returnSuccess(message, data) {
+  static returnSuccess(code, message, data) {
     return {
       status: 'success',
-      code: 200,
+      code,
       message,
       data: (data === undefined ? {} : data),
     };
@@ -22,7 +22,7 @@ class Response {
         res.json(Response.returnError(500, err.message));
         return;
       }
-      res.json(this.returnSuccess('success', data));
+      res.json(this.returnSuccess(200, 'success', data));
     };
   }
 }
