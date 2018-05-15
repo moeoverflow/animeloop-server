@@ -1,4 +1,3 @@
-const async = require('async');
 const express = require('express');
 const jwt = require('jwt-simple');
 const bcrypt = require('bcryptjs');
@@ -14,7 +13,7 @@ const email = require('../utils/email.js');
 
 /*
 *
-* Login API
+* Login/Logout API
 *
 * */
 router.post('/login', recaptcha, (req, res) => {
@@ -37,6 +36,10 @@ router.post('/login', recaptcha, (req, res) => {
   });
 });
 
+router.post('/logout', sessionValidate, (req, res) => {
+  req.session.destroy();
+  res.json(Response.returnSuccess(1220002, 'logout successfully.'));
+});
 
 /*
 *
