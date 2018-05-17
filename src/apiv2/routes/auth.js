@@ -89,9 +89,8 @@ router.post('/register', recaptcha, (req, res) => {
         return;
       }
 
-      sendEmail(doc, () => {
-        res.json(Response.returnSuccess(1120001, 'register successfully.', {}));
-      });
+      sendEmail(doc, () => {});
+      res.json(Response.returnSuccess(1120001, 'register successfully.', {}));
     });
   });
 });
@@ -141,9 +140,9 @@ router.post('/verify/sendemail', userValidate, (req, res) => {
     return;
   }
 
-  sendEmail(user, (err, body) => {
+  sendEmail(user, (err) => {
     if (err) {
-      console.log(err);
+      res.json(Response.returnError(1450301, 'mail smtp server error.'));
       return;
     }
 
