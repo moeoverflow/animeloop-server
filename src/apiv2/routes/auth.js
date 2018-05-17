@@ -141,14 +141,20 @@ router.post('/verify/sendemail', userValidate, (req, res) => {
     return;
   }
 
-  sendEmail(user, () => {});
-  res.json(Response.returnSuccess(1420002, 'send verification email successfully.', {}));
+  sendEmail(user, (err, body) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+
+    res.json(Response.returnSuccess(1420002, 'send verification email successfully.', {}));
+  });
 });
 
 
 /*
 *
-* Token API
+* Token
 *
 * */
 router.post('/token', sessionValidate, tokenAction('get'));

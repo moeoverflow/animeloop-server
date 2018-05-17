@@ -43,8 +43,14 @@ const config = {
   auth: {
     secret: '',
   },
-  mailgun: {
-    apikey: '',
+  mail: {
+    host: 'smtp.examle.email',
+    port: 465,
+    secure: true, // true for 465, false for other ports
+    auth: {
+      user: '',
+      pass: ''
+    }
   },
   automator: {
     uploadTTL: 5 * 60,

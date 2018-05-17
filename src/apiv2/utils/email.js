@@ -1,14 +1,14 @@
 const config = require('../../../config.js');
-
-const domain = 'animeloop.org';
-const mailgun = require('mailgun-js')({ apiKey: config.mailgun.apikey, domain });
+const nodemailer = require('nodemailer');
 
 
 module.exports = (to, username, verifyUrl, callback) => {
-  const data = {
-    from: 'Animeloop <admin@animeloop.org>',
+  const transporter = nodemailer.createTransport(config.mail);
+
+  const mailOptions = {
+    from: 'Animeloop <animeloop@moeoverflow.com>',
     to,
-    subject: 'Animeloop Account Verification',
+    subject: 'Animeloop Account Verification ',
     html:
     '<h1>Welcome to Animeloop</h1>' +
     `<p>Hi ${username}, please click follow url for verifying:</p>` +
@@ -16,5 +16,5 @@ module.exports = (to, username, verifyUrl, callback) => {
     `<p>${verifyUrl}</p>`,
   };
 
-  mailgun.messages().send(data, callback);
+  transporter.sendMail(mailOptions, callback);
 };
