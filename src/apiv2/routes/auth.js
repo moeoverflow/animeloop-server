@@ -1,39 +1,30 @@
 const express = require('express');
 const jwt = require('jwt-simple');
-const bcrypt = require('bcryptjs');
 
 const router = express.Router();
 const Database = require('../../core/database.js');
 const Response = require('../utils/response.js');
 const config = require('../../../config.js');
 const recaptcha = require('../middleware/google-recaptcha.js');
-const sessionValidate = require('../middleware/session-validate');
-
+const sessionValidate = require('../middleware/session-validate.js');
+const userValidate = require('../middleware/user-validate.js');
+const passwordHash = require('../utils/password-hash.js');
 const email = require('../utils/email.js');
 
 /*
 *
-* Login/Logout API
+* Login/Logout
 *
 * */
-router.post('/login', recaptcha, (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+router.post('/login', recaptcha, userValidate, (req, res) => {
+  const user = req.user;
+  const data = {
+    username: user.username,
+    email: user.email,
+  };
 
-  validateUser(username, password, (err, doc) => {
-    if (err) {
-      res.json(err);
-      return;
-    }
-
-    const data = {
-      username: doc.username,
-      email: doc.email,
-    };
-
-    req.session.authUser = data;
-    res.json(Response.returnSuccess(1220001, 'login successfully.', data));
-  });
+  req.session.authUser = data;
+  res.json(Response.returnSuccess(1220001, 'login successfully.', data));
 });
 
 router.post('/logout', sessionValidate, (req, res) => {
@@ -43,7 +34,7 @@ router.post('/logout', sessionValidate, (req, res) => {
 
 /*
 *
-* Register API
+* Register
 *
 * */
 router.post('/register', recaptcha, (req, res) => {
@@ -86,8 +77,7 @@ router.post('/register', recaptcha, (req, res) => {
       return;
     }
 
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
+    const hash = passwordHash(password);
 
     Database.UserModel.create({
       username,
@@ -106,9 +96,10 @@ router.post('/register', recaptcha, (req, res) => {
   });
 });
 
+
 /*
 *
-* Email verification API
+* Email verification
 *
 * */
 router.get('/verify', (req, res) => {
@@ -138,44 +129,21 @@ router.get('/verify', (req, res) => {
   }
 });
 
-router.post('/verify/sendemail', (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-
-  if (username === null || username === undefined) {
-    res.json(Response.returnError(1440003, 'empty username or password.'));
+/*
+*
+* Send verification email
+*
+* */
+router.post('/verify/sendemail', userValidate, (req, res) => {
+  const user = req.user;
+  if (user.verified === true) {
+    res.json(Response.returnSuccess(1420003, 'this account has already been verified', {}));
     return;
   }
-  if (password === null || password === undefined) {
-    res.json(Response.returnError(1440003, 'empty username or password.'));
-    return;
-  }
 
-  validateUser(username, password, (err, doc) => {
-    if (err) {
-      res.json(Response.returnError(1950301, 'internal server error, database error.'));
-      return;
-    }
-
-    if (doc.verified === true) {
-      res.json(Response.returnSuccess(1420003, 'this account has already been verified', {}));
-      return;
-    }
-
-    sendEmail(doc, () => {});
-    res.json(Response.returnSuccess(1420002, 'send verification email successfully.', {}));
-  });
+  sendEmail(user, () => {});
+  res.json(Response.returnSuccess(1420002, 'send verification email successfully.', {}));
 });
-
-function sendEmail(doc, callback) {
-  const verifyToken = jwt.encode({
-    action: 'verify',
-    username: doc.username,
-    date: new Date(),
-  }, config.auth.secret);
-  const verifyUrl = `${config.app.url}/api/v2/auth/verify?code=${verifyToken}`;
-  email(doc.email, doc.username, verifyUrl, callback);
-}
 
 
 /*
@@ -195,36 +163,9 @@ router.post('/token/revoke', sessionValidate, tokenAction('revoke'));
 * Tool function
 *
 * */
-function validateUser(username, password, callback) {
-  Database.UserModel.findOne({ username }, (err, user) => {
-    if (err) {
-      callback(Response.returnError(1950301, 'service unavailable, database error.'));
-      return;
-    }
-
-    if (!user) {
-      callback(Response.returnError(1240101, 'incorrect username or password.'));
-      return;
-    }
-
-    if (!bcrypt.compareSync(password, user.password)) {
-      callback(Response.returnError(1240101, 'incorrect username or password.'));
-      return;
-    }
-
-    if (!user.verified) {
-      callback(Response.returnError(1240102, 'this account has not yet verified.'));
-      return;
-    }
-
-    callback(null, user);
-  });
-}
-
 function tokenAction(type) {
   return (req, res) => {
     const user = req.user;
-
 
     if (type === 'get') {
       if (user.token) {
@@ -258,6 +199,16 @@ function tokenAction(type) {
       res.json(message);
     });
   };
+}
+
+function sendEmail(doc, callback) {
+  const verifyToken = jwt.encode({
+    action: 'verify',
+    username: doc.username,
+    date: new Date(),
+  }, config.auth.secret);
+  const verifyUrl = `${config.app.url}/api/v2/auth/verify?code=${verifyToken}`;
+  email(doc.email, doc.username, verifyUrl, callback);
 }
 
 function isUsername(username) {

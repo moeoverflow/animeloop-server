@@ -23,7 +23,7 @@ router.use((req, res, next) => {
       next();
     });
   } else {
-    res.json(Response.returnError(1940102, 'cookie session doesn\'t exist.'));
+    res.json(Response.returnError(1940102, 'cookie session validation failed.'));
   }
 });
 

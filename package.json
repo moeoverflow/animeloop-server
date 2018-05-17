@@ -41,7 +41,6 @@
     "mongoose-findorcreate": "^1.0.1",
     "nani": "^1.2.0",
     "node-schedule": "^1.2.5",
-    "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
     "randomcolor": "^0.5.3",
