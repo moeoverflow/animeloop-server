@@ -64,5 +64,11 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
-  "scripts": {}
+  "scripts": {
+    "apiv1": "node bin/api.js",
+    "apiv2": "node bin/apiv2.js",
+    "automator": "node bin/automator.js",
+    "web": "node bin/web.js",
+    "bot": "node bin/bot.js"
+  }
 }
