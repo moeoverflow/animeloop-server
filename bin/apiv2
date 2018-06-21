@@ -1,1 +1,2 @@
+#!/usr/bin/env node
 require('../src/apiv2/app.js');

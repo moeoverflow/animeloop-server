@@ -65,10 +65,10 @@
     "npm": ">= 3.0.0"
   },
   "scripts": {
-    "apiv1": "node bin/api.js",
-    "apiv2": "node bin/apiv2.js",
-    "automator": "node bin/automator.js",
-    "web": "node bin/web.js",
-    "bot": "node bin/bot.js"
+    "apiv1": "bin/api",
+    "apiv2": "bin/apiv2",
+    "automator": "bin/automator",
+    "web": "bin/web",
+    "bot": "bin/bot"
   }
 }
