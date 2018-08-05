@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jwt-simple');
+const _ = require('lodash');
 
 const router = express.Router();
 const Database = require('../../core/database.js');
@@ -10,19 +11,14 @@ const sessionValidate = require('../middleware/session-validate.js');
 const userValidate = require('../middleware/user-validate.js');
 const passwordHash = require('../utils/password-hash.js');
 const email = require('../utils/email.js');
-
+const { isEmail, isPassword, isUsername } = require('../utils/field-validation.js');
 /*
 *
 * Login/Logout
 *
 * */
 router.post('/login', recaptcha, userValidate, (req, res) => {
-  const user = req.user;
-  const data = {
-    username: user.username,
-    email: user.email,
-  };
-
+  const data = _.pick(req.user, ['username', 'email', 'uid']);
   req.session.authUser = data;
   res.json(Response.returnSuccess(1220001, 'login successfully.', data));
 });
@@ -214,21 +210,6 @@ function sendEmail(doc, callback) {
   }, config.auth.secret);
   const verifyUrl = `${config.app.url}/api/v2/auth/verify?code=${verifyToken}`;
   email(doc.email, doc.username, verifyUrl, callback);
-}
-
-function isUsername(username) {
-  const pattern = /^[a-zA-Z0-9_-]{5,15}$/;
-  return pattern.test(username);
-}
-
-function isPassword(password) {
-  const pattern = /^\w{8,32}$/;
-  return pattern.test(password);
-}
-
-function isEmail(email) {
-  const pattern = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
-  return pattern.test(email);
 }
 
 module.exports = router;

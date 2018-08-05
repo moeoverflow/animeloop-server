@@ -13,6 +13,8 @@ const search = require('./routes/search.js');
 
 const auth = require('./routes/auth.js');
 
+const profile = require('./routes/profile.js');
+
 const collection = require('./routes/collection.js');
 
 
@@ -25,6 +27,8 @@ router.use('/tag', tag);
 router.use('/search', search);
 
 router.use('/auth', auth);
+
+router.use('/profile', profile);
 
 router.use('/collection', collection);
 
