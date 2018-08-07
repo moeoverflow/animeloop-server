@@ -47,7 +47,7 @@ router.post('/update-userinfo', sessionValidate, (req, res) => {
       return;
     }
 
-    res.json(Response.returnSuccess(21));
+    res.json(Response.returnSuccess(1520002, 'update userinfo success'));
   });
 });
 
@@ -85,7 +85,7 @@ router.post('/upload-new-avatar', sessionValidate, upload.single('avatar'), (req
       return;
     }
 
-    res.json(Response.returnSuccess(1520002, 'upload new avatar success.', { avatar: savePath }));
+    res.json(Response.returnSuccess(1520003, 'upload new avatar success.', { avatar: savePath }));
   });
 });
 
