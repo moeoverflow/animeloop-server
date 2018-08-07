@@ -152,55 +152,61 @@ router.post('/verify/sendemail', userValidate, (req, res) => {
 * Token
 *
 * */
-router.post('/token', sessionValidate, tokenAction('get'));
 
-router.post('/token/new', sessionValidate, tokenAction('new'));
-
-router.post('/token/revoke', sessionValidate, tokenAction('revoke'));
-
-
-/*
-*
-* Tool function
-*
-* */
-function tokenAction(type) {
-  return (req, res) => {
-    const user = req.user;
-
-    if (type === 'get') {
-      if (user.token) {
-        res.json(Response.returnSuccess(1320001, 'request token successfully.', { token: user.token }));
-      } else {
-        res.json(Response.returnError(1340401, 'request token failed. token doesn\'t exist.'));
-      }
+router.get('/token', sessionValidate, (req, res) => {
+  const user = req.user;
+  console.log(user.uid);
+  Database.UserTokenModel.find({
+    userid: user.uid,
+  }, (err, docs) => {
+    if (err) {
+      res.json(Response.returnError(1950301, 'internal server error, database error.'));
       return;
     }
+    const data = docs.map(doc => _.pick(doc, ['_id', 'name', 'token']));
+    res.json(Response.returnSuccess(1320001, 'get token success.', data));
+  });
+});
 
-    let token = null;
-    if (type === 'new') {
-      token = jwt.encode({
-        uid: user.uid,
-        username: user.username,
-        date: new Date(),
-      }, config.auth.secret);
+router.post('/token/new', sessionValidate, (req, res) => {
+  const user = req.user;
+  const { name } = req.body;
+
+  const token = jwt.encode({
+    uid: user.uid,
+    username: user.username,
+    date: new Date(),
+  }, config.auth.secret);
+
+  Database.UserTokenModel.create({
+    name,
+    token,
+    userid: user.uid,
+  }, (err, doc) => {
+    if (err) {
+      res.json(Response.returnError(1950301, 'internal server error, database error.'));
+      return;
     }
+    const data = _.pick(doc, ['_id', 'name', 'token']);
+    res.json(Response.returnSuccess(1320002, 'create a new token success.', data));
+  });
+});
 
-    const username = user.username;
-    Database.UserModel.update({ username }, { $set: { token } }, (err) => {
-      if (err) {
-        res.json(Response.returnError(1950301, 'internal server error, database error.'));
-        return;
-      }
 
-      const message = (type === 'new') ?
-        Response.returnSuccess(1320002, 'request a new token successfully.', { token }) :
-        Response.returnSuccess(1320003, 'revoke the token successfully.', {});
+router.post('/token/revoke', sessionValidate, (req, res) => {
+  const { id } = req.body;
 
-      res.json(message);
-    });
-  };
-}
+  Database.UserTokenModel.remove({
+    _id: id,
+  }, (err) => {
+    if (err) {
+      console.log(err);
+      res.json(Response.returnError(1950301, 'internal server error, database error.'));
+      return;
+    }
+    res.json(Response.returnSuccess(1320003, 'revoke the token success.'));
+  });
+});
 
 function sendEmail(doc, callback) {
   const verifyToken = jwt.encode({

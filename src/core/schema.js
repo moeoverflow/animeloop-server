@@ -72,9 +72,16 @@ const UserSchema = new Schema({
   password: { type: String, require: true },
   admin: { type: Boolean, default: false },
   verified: { type: Boolean, default: false },
-  token: String,
 });
 UserSchema.plugin(autoIncrement.plugin, { model: 'User', field: 'uid' });
+
+const UserTokenSchema = new Schema({
+  tid: { type: Number, require: true, unique: true },
+  name: { type: String, require: true },
+  token: { type: String, require: true },
+  userid: { type: Number, require: true },
+});
+UserTokenSchema.plugin(autoIncrement.plugin, { model: 'UserToken', filed: 'tid' });
 
 const LoopCollectionSchema = new Schema({
   cid: { type: Number, require: true, unique: true },
@@ -96,6 +103,7 @@ module.exports = {
   SeriesSchema,
   TagsSchema,
   UserSchema,
+  UserTokenSchema,
   LoopCollectionSchema,
   CollectionLoopSchema,
 };

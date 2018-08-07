@@ -374,6 +374,7 @@ Database.LoopModel = mongoose.model('Loop', Schema.LoopSchema);
 Database.TagsModel = mongoose.model('tags', Schema.TagsSchema);
 
 Database.UserModel = mongoose.model('User', Schema.UserSchema);
+Database.UserTokenModel = mongoose.model('UserToken', Schema.UserTokenSchema);
 Database.LoopCollectionModel = mongoose.model('LoopCollection', Schema.LoopCollectionSchema);
 Database.CollectionLoopModel = mongoose.model('CollectionLoop', Schema.CollectionLoopSchema);
 
