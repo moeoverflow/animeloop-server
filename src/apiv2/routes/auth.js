@@ -23,7 +23,7 @@ router.post('/login', recaptcha, userValidate, (req, res) => {
   res.json(Response.returnSuccess(1220001, 'login successfully.', data));
 });
 
-router.post('/logout', sessionValidate, (req, res) => {
+router.post('/logout', sessionValidate(), (req, res) => {
   req.session.destroy();
   res.json(Response.returnSuccess(1220002, 'logout successfully.'));
 });
@@ -153,7 +153,7 @@ router.post('/verify/sendemail', userValidate, (req, res) => {
 *
 * */
 
-router.get('/token', sessionValidate, (req, res) => {
+router.get('/token', sessionValidate(), (req, res) => {
   const user = req.user;
   console.log(user.uid);
   Database.UserTokenModel.find({
@@ -168,7 +168,7 @@ router.get('/token', sessionValidate, (req, res) => {
   });
 });
 
-router.post('/token/new', sessionValidate, (req, res) => {
+router.post('/token/new', sessionValidate(), (req, res) => {
   const user = req.user;
   const { name } = req.body;
 
@@ -193,7 +193,7 @@ router.post('/token/new', sessionValidate, (req, res) => {
 });
 
 
-router.post('/token/revoke', sessionValidate, (req, res) => {
+router.post('/token/revoke', sessionValidate(), (req, res) => {
   const { id } = req.body;
 
   Database.UserTokenModel.remove({

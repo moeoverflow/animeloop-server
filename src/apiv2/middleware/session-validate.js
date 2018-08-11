@@ -1,30 +1,33 @@
-const express = require('express');
-
-const router = express.Router();
 const Database = require('../../core/database.js');
 const Response = require('../utils/response.js');
 
-
-router.use((req, res, next) => {
+/**
+ * validate session
+ * @param returnDirect return response if validation failed.
+ */
+module.exports = ({ returnDirect } = { returnDirect: true }) => async (req, res, next) => {
   if (req.session && req.session.authUser) {
     const username = req.session.authUser.username;
-    Database.UserModel.findOne({ username }, (err, user) => {
-      if (err) {
-        res.json(Response.returnError(1950301, 'internal server error, database error.'));
-        return;
-      }
-
-      if (!user) {
+    try {
+      const user = await Database.UserModel.findOne({ username });
+      if (user) {
+        req.user = user;
+        next();
+      } else if (returnDirect) {
         res.json(Response.returnError(1940102, 'cookie session validation failed.'));
-        return;
+      } else {
+        next();
       }
-
-      req.user = user;
-      next();
-    });
+    } catch (e) {
+      if (returnDirect) {
+        res.json(Response.returnError(1950301, 'internal server error, database error.'));
+      } else {
+        next();
+      }
+    }
+  } else if (returnDirect) {
+    res.json(Response.returnError(1940103, 'cookie session doesn\'t exist.'));
   } else {
-    res.json(Response.returnError(1940102, 'cookie session validation failed.'));
+    next();
   }
-});
-
-module.exports = router;
+};

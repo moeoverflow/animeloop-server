@@ -14,7 +14,7 @@ const passwordHash = require('../utils/password-hash.js');
 const { isEmail, isPassword } = require('../utils/field-validation.js');
 const config = require('../../../config.js');
 
-router.get('/get-userinfo', sessionValidate, (req, res) => {
+router.get('/get-userinfo', sessionValidate(), (req, res) => {
   const { username } = req.user;
   Database.UserModel.findOne({ username }, (err, doc) => {
     if (err) {
@@ -26,10 +26,9 @@ router.get('/get-userinfo', sessionValidate, (req, res) => {
   });
 });
 
-router.post('/update-userinfo', sessionValidate, (req, res) => {
+router.post('/update-userinfo', sessionValidate(), (req, res) => {
   const { username } = req.user;
 
-  console.log(req.body);
   const email = req.body.email;
   const password = req.body.newPassword;
 
@@ -54,7 +53,7 @@ router.post('/update-userinfo', sessionValidate, (req, res) => {
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.post('/upload-new-avatar', sessionValidate, upload.single('avatar'), (req, res) => {
+router.post('/upload-new-avatar', sessionValidate(), upload.single('avatar'), (req, res) => {
   const user = req.user;
   const { uid } = user;
   const { originalname, buffer } = req.file;
