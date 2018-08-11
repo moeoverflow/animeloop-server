@@ -8,7 +8,7 @@ const Schema = require('./schema.js');
 const config = require('../../config');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(config.mongodb.url, {});
+mongoose.connect(config.mongodb.url, { useNewUrlParser: true });
 
 
 class Database {

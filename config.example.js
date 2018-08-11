@@ -84,7 +84,7 @@ const config = {
     },
   },
   mongodb: {
-    url: 'mongodb://localhost/animeloop',
+    url: 'mongodb://localhost:27017/animeloop',
   },
   redis: {
     host: '127.0.0.1',
